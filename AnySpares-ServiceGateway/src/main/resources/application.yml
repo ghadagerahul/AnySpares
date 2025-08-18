@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: ServiceGateway
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/spare
+    username: root
+    password: root123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: FOURWHEELERSERVICE
+              uri: lb://FOURWHEELERSERVICE
+              predicates:
+                - Path=/fourwheelers/**
+            - id: HEAVYWHEELERSERVICE
+              uri: lb://HEAVYWHEELERSERVICE
+              predicates:
+                - Path=/heavywheelers/**
+            - id: THREEWHEELERSERVICE
+              uri: lb://THREEWHEELERSERVICE
+              predicates:
+                - Path=/threewheelers/**
+            - id: TWOWHEELERSERVICE
+              uri: lb://TWOWHEELERSERVICE
+              predicates:
+                - Path=/twowheelers/**
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+  instance:
+    hostname: localhost
+    prefer-ip-address: true

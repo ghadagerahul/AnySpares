@@ -1,4 +1,4 @@
-package com.anyspares.app.entity;
+package com.auth.app.entiry;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.anyspares.app.entity;
+package com.auth.app.entiry;
 
 public class LoginEntity {
 

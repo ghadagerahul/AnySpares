@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,15 +33,20 @@ public class AppLoginController {
 
 			Long mobileNo = details.getMobileNo();
 
-			if (null != appUserRepo.findByMobileNo(mobileNo) || !appUserRepo.findByMobileNo(mobileNo).isEmpty()
-					|| appUserRepo.findByMobileNo(mobileNo).size() > 0) {
+			if (null != appUserRepo.findByMobileNo(mobileNo) && !appUserRepo.findByMobileNo(mobileNo).isEmpty()
+					&& appUserRepo.findByMobileNo(mobileNo).size() > 0) {
 				return new ResponseEntity<>("User Already Exist.", HttpStatus.OK);
 			}
 
-			UserDetails save = appUserRepo.save(details);
-			if (details.equals(save)) {
-				return new ResponseEntity<>("User Created SuccessFully.", HttpStatus.OK);
+			if (details.getPassword().equals(details.getConfirmPassword())) {
+				UserDetails save = appUserRepo.save(details);
+				if (details.equals(save)) {
+					return new ResponseEntity<>("User Created SuccessFully.", HttpStatus.OK);
+				}
+			} else {
+				return new ResponseEntity<>("Password and Confirm password did not match.", HttpStatus.OK);
 			}
+
 		}
 
 		return new ResponseEntity<>("Invalid Data In Request.", HttpStatus.BAD_REQUEST);
@@ -63,7 +67,7 @@ public class AppLoginController {
 						.anyMatch(x -> x.getPassword().equals(details.getPassword()));
 
 				if (isMatch)
-					new ResponseEntity<>("User Vlidated Succesfully", HttpStatus.OK);
+					return new ResponseEntity<>("User Vlidated Succesfully.", HttpStatus.OK);
 
 			}
 		}
