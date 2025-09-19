@@ -1,6 +1,8 @@
 package com.anyspares.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -8,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,7 @@ import com.anyspares.app.controller.model.LoginDetails;
 import com.anyspares.app.entity.UserDetails;
 import com.anyspares.app.repo.AppUserRepo;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/auth")
 public class AppLoginController {
@@ -53,12 +58,12 @@ public class AppLoginController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String> loginWithExistingUser(@RequestBody LoginDetails details) {
+	public ResponseEntity<Map<String, Object>> loginWithExistingUser(@RequestBody LoginDetails details) {
 		logger.debug("loginWithExistingUser- details: " + details);
+		Map<String, Object> response = new HashMap<>();
 		if (null != details) {
 
 			long mobileNo = details.getMobileNo();
-
 			List<UserDetails> userDetailsbyMobileNo = appUserRepo.findByMobileNo(mobileNo);
 
 			if (null != userDetailsbyMobileNo && !userDetailsbyMobileNo.isEmpty() && userDetailsbyMobileNo.size() > 0) {
@@ -67,11 +72,16 @@ public class AppLoginController {
 						.anyMatch(x -> x.getPassword().equals(details.getPassword()));
 
 				if (isMatch)
-					return new ResponseEntity<>("User Vlidated Succesfully.", HttpStatus.OK);
+					response.put("success", true);
+				response.put("message", "Login successful");
+				return ResponseEntity.ok(response);
 
 			}
 		}
-		return new ResponseEntity<>("Invalid Login Data.", HttpStatus.BAD_REQUEST);
+
+		response.put("success", false);
+		response.put("message", "Invalid login");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	}
 
 }

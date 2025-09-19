@@ -19,4 +19,10 @@ public class Appcontroller {
 		return "Four wheller service called.";
 	}
 
+	@GetMapping("")
+	public String getcarCompanies() {
+
+		return "";
+	}
+
 }
