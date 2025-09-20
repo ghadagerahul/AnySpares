@@ -1,1 +1,49 @@
 /.metadata/
+
+
+# ----------------------
+# Angular app ignores
+# ----------------------
+/anyspares-app/dist
+/anyspares-app/tmp
+/anyspares-app/out-tsc
+/anyspares-app/bazel-out
+/anyspares-app/.angular/cache
+/anyspares-app/node_modules
+/anyspares-app/npm-debug.log*
+/anyspares-app/yarn-error.log*
+
+# ----------------------
+# IDEs and editors
+# ----------------------
+/anyspares-app/.idea/
+/anyspares-app/.project
+/anyspares-app/.classpath
+/anyspares-app/.c9/
+/anyspares-app/*.launch
+/anyspares-app/.settings/
+/anyspares-app/*.sublime-workspace
+
+# Visual Studio Code
+/anyspares-app/.vscode/*
+!/anyspares-app/.vscode/settings.json
+!/anyspares-app/.vscode/tasks.json
+!/anyspares-app/.vscode/launch.json
+!/anyspares-app/.vscode/extensions.json
+/anyspares-app/.history/*
+
+# ----------------------
+# Miscellaneous
+# ----------------------
+/anyspares-app/.sass-cache/
+/anyspares-app/connect.lock
+/anyspares-app/coverage
+/anyspares-app/libpeerconnection.log
+/anyspares-app/testem.log
+/anyspares-app/typings
+
+# ----------------------
+# System files
+# ----------------------
+/anyspares-app/.DS_Store
+/anyspares-app/Thumbs.db
