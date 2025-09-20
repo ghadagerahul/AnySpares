@@ -1,0 +1,35 @@
+<div class="container-reg">
+    <div class="inner-container">
+        <h3 class="text-center mb-2 mt-1">Registration</h3>
+    <form action="" class="form">
+        <div class="form-inputs">
+            <label for="">First Name <span class="red">*</span> :</label><br><input type="text" placeholder="Enter First Name here"
+                name="firstName" [(ngModel)]="registrationForm1.firstName" #fname="ngModel" required minlength="3"><br>
+            <div class="text-danger">
+                <span *ngIf="fname.errors?.['minlength'] && fname.touched ">lenght minimum 3.</span>
+                <span *ngIf="fname.touched && fname.errors?.['required'] ">First Name is Required.</span>
+            </div>
+        </div>
+
+        <div class="form-inputs"><label for="">Last Name:</label><br><input type="text"
+                placeholder="Enter Last Name here" name="lastName" [(ngModel)]="registrationForm1.lastName"><br></div>
+
+        <div class="form-inputs"><label for="">Email:</label><br><input type="email" placeholder="Enter Email Id here"
+                name="email" [(ngModel)]="registrationForm1.email"><br></div>
+
+        <div class="form-inputs"><label for="">Mobile Number</label><br><input type="number"
+                placeholder="Enter mobile number here" name="mobileNo" [(ngModel)]="registrationForm1.mobileNo"><br>
+        </div>
+
+        <div class="form-inputs"><label for="">UserName:</label><br><input type="text" placeholder="Enter username"
+                name="userName" [(ngModel)]="registrationForm1.userName"><br></div>
+
+        <div class="form-inputs"><label for="">Password:</label><br><input type="password" placeholder="Enter password"
+                name="password" [(ngModel)]="registrationForm1.password"><br></div>
+
+       
+    </form>
+    <button type="submit" class="btn btn-primary btn-reg" (click)="onSubmitData()">Register</button>
+    <p class="mt-3 login-a">Already Registered. Please Login here <a href="javascript:void(0)" (click)="goToLoginPage()">&nbsp;LOGIN</a></p>
+</div>
+</div>

@@ -1,0 +1,42 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-color: orange;">
+    <h3 class="text-center mb-4">Login</h3>
+
+    <form>
+      <!-- Username Field -->
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="email" class="form-control" id="username" placeholder="Enter username" name="username"
+          [(ngModel)]="loginData.userName" #fusername="ngModel" required minlength="3">
+        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['required'] ">User Name is
+          Required.</span>
+        <span class="text-danger small" *ngIf="fusername.errors?.['minlength'] && fusername.touched ">Required minimum
+          lenght 3.</span>
+      </div>
+
+       <!-- Mobile No Field -->
+      <div class="mb-3">
+        <label for="mobileno" class="form-label">Mobile No:</label>
+        <input type="mobileno" class="form-control" id="mobileno" placeholder="Enter Mobile No" name="mobileno"
+          [(ngModel)]="loginData.mobileNumber" #fmobileno="ngModel" required minlength="3">
+        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['required'] ">Mobile Number is
+          Required.</span>
+        <span class="text-danger small" *ngIf="fusername.errors?.['minlength'] && fusername.touched ">Required minimum
+          lenght 3.</span>
+      </div>
+
+      <!-- Password Field -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password" name="password"
+          [(ngModel)]="loginData.password" #fpwd="ngModel" required minlength="4">
+        <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['required'] ">Password Required.</span>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" (click)="LoginUserToPortal()" class="btn btn-primary w-100">Login</button>
+      <p>New User ? <button style="border-color: rgb(254, 254, 254); margin: 10px;" (click)="goToRegisterationPage()">Click here To Register.</button> </p>
+    </form>
+
+  </div>
+</div>
