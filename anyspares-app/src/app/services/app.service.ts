@@ -13,25 +13,35 @@ export class AppService {
 
   private appUrl = "http://localhost:8181/auth";
 
-  registerUser(form: any): Observable<any> {
 
+
+
+  /**
+  * Sends registration request to the backend.
+  *
+  * @param regForm - User details for registration.
+  * @returns Observable with API response or a fallback error object.
+  */
+  registerUser(regForm: any): Observable<any> {
     const url = this.appUrl + '/register';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
-
-    return this.http.post<any>(url, form.value, { headers })
-      .pipe(
-        catchError(error => {
-          console.error("Error during registration:", error);
-          return of({ success: false, message: 'Registration failed' });
-        })
-      );
+    return this.http.post<any>(url, regForm.value, { headers }).pipe(
+      catchError(error => {
+        console.error("Error during registration:", error);
+        return of({ success: false, message: 'Registration failed' });
+      })
+    );
   }
 
 
 
+  /**
+    * Sends login request to the backend.
+    *
+    * @param form - User credentials (e.g., username, password).
+    * @returns Observable with API response or a fallback error object.
+    */
   LoginUserToPortal(form: any): Observable<any> {
     console.log("INSIDE LoginUser: " + form);
     const url = this.appUrl + '/login';

@@ -12,11 +12,11 @@ import { Router } from '@angular/router';
 })
 export class RegisterationPage {
 
- registrationForm!: FormGroup;
+  registrationForm!: FormGroup;
 
   constructor(private appservice: AppService,
     private fb: FormBuilder,
-    private router:Router
+    private router: Router
   ) {
 
   }
@@ -56,19 +56,23 @@ export class RegisterationPage {
     this.registrationForm.value.password = this.registrationForm1.password;
 
     console.log(this.registrationForm.value)
-    //if (this.registrationForm.valid) {
-      this.appservice.registerUser(this.registrationForm).subscribe(data => {
-        console.log("#### Final op: " + data);
-        console.log("String input:: "+JSON.stringify(data.value));
-        this.registrationForm.reset();
-      })
-   // }
-   this.registrationForm.reset();
+    if (this.registrationForm.value.mobileNo != '') {
+    this.appservice.registerUser(this.registrationForm).subscribe(data => {
+      console.log("#### Final_data.success: " + data.success);
+      console.log("String input:: " + data.message);
+      if (data.success) {
+        // show user registration successfull..!!!
+      }
+
+      this.registrationForm.reset();
+    })
+     }
+    this.registrationForm.reset();
   }
 
 
   goToLoginPage() {
     this.router.navigate(['/login'])
-    }
+  }
 
 }
