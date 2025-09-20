@@ -5,21 +5,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.anyspares.app.controller.model.LoginDetails;
+import com.anyspares.app.controller.model.UserDetailsModel;
 import com.anyspares.app.entity.UserDetails;
 import com.anyspares.app.repo.AppUserRepo;
+import com.anyspares.app.service.AppUserService;
 
+/**
+ * REST controller that manages user authentication actions like registration
+ * and login.
+ *
+ * <p>
+ * Exposes endpoints under {@code /auth}./p>
+ *
+ * @author Rahul
+ * @since 21-09-2025
+ */
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/auth")
@@ -28,35 +40,54 @@ public class AppLoginController {
 	@Autowired
 	private AppUserRepo appUserRepo;
 
+	@Autowired
+	private AppUserService appService;
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * Registers a new user.
+	 *
+	 * @param user registration details
+	 * @return success or failure response
+	 */
 	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@RequestBody UserDetails details) {
+	public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserDetailsModel user) {
+		logger.debug("registerUser- user: " + user);
 
-		logger.debug("registerUser- details: " + details);
-		if (null != details) {
+		Map<String, Object> response = new HashMap<>();
 
-			Long mobileNo = details.getMobileNo();
+		if (null != user) {
 
-			if (null != appUserRepo.findByMobileNo(mobileNo) && !appUserRepo.findByMobileNo(mobileNo).isEmpty()
-					&& appUserRepo.findByMobileNo(mobileNo).size() > 0) {
-				return new ResponseEntity<>("User Already Exist.", HttpStatus.OK);
+			Long mobileNo = user.getMobileNo();
+
+			if (appService.isUserPresent(mobileNo)) {
+				response.put("success", true);
+				response.put("message", "User Already Present");
+				return ResponseEntity.ok(response);
 			}
 
-			if (details.getPassword().equals(details.getConfirmPassword())) {
-				UserDetails save = appUserRepo.save(details);
-				if (details.equals(save)) {
-					return new ResponseEntity<>("User Created SuccessFully.", HttpStatus.OK);
+			if (StringUtils.isNotBlank(user.getUserName()) && StringUtils.isNotBlank(user.getPassword())) {
+				UserDetails save = appService.registerNewUser(user);
+				if (null != save) {
+					response.put("success", true);
+					response.put("message", "Registration successful");
+					return ResponseEntity.ok(response);
 				}
-			} else {
-				return new ResponseEntity<>("Password and Confirm password did not match.", HttpStatus.OK);
 			}
-
 		}
 
-		return new ResponseEntity<>("Invalid Data In Request.", HttpStatus.BAD_REQUEST);
+		response.put("success", false);
+		response.put("message", "Registration Failed");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	}
 
+	/**
+	 * Logs in an existing user.
+	 *
+	 * @param details login credentials
+	 * @return success or failure response
+	 */
 	@PostMapping("/login")
 	public ResponseEntity<Map<String, Object>> loginWithExistingUser(@RequestBody LoginDetails details) {
 		logger.debug("loginWithExistingUser- details: " + details);
