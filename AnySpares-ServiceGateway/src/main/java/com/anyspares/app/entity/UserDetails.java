@@ -16,9 +16,11 @@ public class UserDetails {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+	private String userName;
 	private String emailId;
 
+	private String firstName;
+	private String lastName;
 	@Column(unique = true)
 	private Long mobileNo;
 	private String address;
