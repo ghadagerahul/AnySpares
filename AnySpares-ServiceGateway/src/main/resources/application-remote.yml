@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:mysql://mysql6598-rahulghadage1310.h.aivencloud.com:13103/spare
+    username: avnadmin
+    password: AVNS_MxdvJ6Ps7QCBedUaS7v
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

@@ -7,7 +7,7 @@ import com.auth.app.entiry.UserDetails;
 import java.util.List;
 
 @Repository
-public interface AuthenticationService extends JpaRepository<UserDetails, Long> {
+public interface AuthenticationRepo extends JpaRepository<UserDetails, Long> {
 
 	List<UserDetails> findByMobileNo(Long mobileNo);
 }

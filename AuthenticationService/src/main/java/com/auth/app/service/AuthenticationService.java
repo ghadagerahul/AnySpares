@@ -2,7 +2,6 @@ package com.auth.app.service;
 
 import java.util.Date;
 
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
@@ -17,8 +16,6 @@ public class AuthenticationService {
 
 	public String generateJwtToken(String username, String password) {
 
-		
-		
 		String token = generateToken(username);
 
 		return "";
