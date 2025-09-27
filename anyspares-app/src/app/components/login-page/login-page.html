@@ -2,41 +2,63 @@
   <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-color: orange;">
     <h3 class="text-center mb-4">Login</h3>
 
-    <form>
+    <!-- Template-driven Form -->
+    <form #loginForm="ngForm" (ngSubmit)="LoginUserToPortal(loginForm)" novalidate>
+      
       <!-- Username Field -->
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
-        <input type="email" class="form-control" id="username" placeholder="Enter username" name="username"
-          [(ngModel)]="loginData.userName" #fusername="ngModel" required minlength="3">
-        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['required'] ">User Name is
-          Required.</span>
-        <span class="text-danger small" *ngIf="fusername.errors?.['minlength'] && fusername.touched ">Required minimum
-          lenght 3.</span>
+        <input type="email" class="form-control" id="username" placeholder="Enter username"
+          name="username" [(ngModel)]="loginData.userName" #fusername="ngModel" required minlength="3">
+        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['required']">
+          User Name is Required.
+        </span>
+        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['minlength']">
+          Minimum length is 3.
+        </span>
       </div>
 
-       <!-- Mobile No Field -->
+      <!-- Mobile No Field -->
       <div class="mb-3">
         <label for="mobileno" class="form-label">Mobile No:</label>
-        <input type="mobileno" class="form-control" id="mobileno" placeholder="Enter Mobile No" name="mobileno"
-          [(ngModel)]="loginData.mobileNumber" #fmobileno="ngModel" required minlength="3">
-        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['required'] ">Mobile Number is
-          Required.</span>
-        <span class="text-danger small" *ngIf="fusername.errors?.['minlength'] && fusername.touched ">Required minimum
-          lenght 3.</span>
+        <input type="text" class="form-control" id="mobileno" placeholder="Enter Mobile No"
+          name="mobileno" [(ngModel)]="loginData.mobileNumber" #fmobileno="ngModel"
+          required minlength="10" maxlength="10" pattern="^[0-9]*$">
+        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['required']">
+          Mobile Number is Required.
+        </span>
+        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['minlength']">
+          Mobile Number must be 10 digits.
+        </span>
+        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['pattern']">
+          Only digits are allowed.
+        </span>
       </div>
 
       <!-- Password Field -->
       <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter password" name="password"
-          [(ngModel)]="loginData.password" #fpwd="ngModel" required minlength="4">
-        <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['required'] ">Password Required.</span>
+        <input type="password" class="form-control" id="password" placeholder="Enter password"
+          name="password" [(ngModel)]="loginData.password" #fpwd="ngModel" required minlength="4">
+        <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['required']">
+          Password is Required.
+        </span>
+        <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['minlength']">
+          Minimum length is 4.
+        </span>
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" (click)="LoginUserToPortal()" class="btn btn-primary w-100">Login</button>
-      <p>New User ? <button style="border-color: rgb(254, 254, 254); margin: 10px;" (click)="goToRegisterationPage()">Click here To Register.</button> </p>
-    </form>
+      <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
+        Login
+      </button>
 
+      <p class="text-center mt-3">
+        New User? 
+        <button type="button" class="btn btn-link p-0" (click)="goToRegisterationPage()">
+          Click here to Register
+        </button>
+      </p>
+    </form>
   </div>
 </div>
