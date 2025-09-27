@@ -1,78 +1,88 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppService } from '../../services/app.service';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn
+} from '@angular/forms';
 import { Router } from '@angular/router';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-registeration-page',
+  standalone: true,
   imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './registeration-page.html',
-  styleUrl: './registeration-page.css'
+  styleUrls: ['./registeration-page.css']
 })
-export class RegisterationPage {
-
+export class RegisterationPage implements OnInit {
   registrationForm!: FormGroup;
 
-  constructor(private appservice: AppService,
+  constructor(
+    private appservice: AppService,
     private fb: FormBuilder,
     private router: Router
-  ) {
-
-  }
-
-
-
+  ) { }
 
   ngOnInit(): void {
+    this.registrationForm = this.fb.group(
+      {
+        firstName: ['', [Validators.required, Validators.minLength(3)]],
+        lastName: [''],
+        email: ['', [Validators.required, Validators.email]],
+        mobileNo: ['', [Validators.required, Validators.minLength(10)]],
+        userName: ['', [Validators.required, Validators.minLength(5)]],
+        password: ['', [Validators.required, Validators.minLength(5)]],
+        confPassword: ['', [Validators.required, Validators.minLength(5)]]
+      },
+      { validators: this.passwordMatchValidator }
+    );
 
-    this.registrationForm = this.fb.group({
-
-      firstName: ['', Validators.required],
-      lastName: [''],
-      email: ['', Validators.required],
-      mobileNo: ['', Validators.min(10)],
-      userName: ['', Validators.required],
-      password: ['', Validators.required]
-    })
-
+    // Live validation trigger
+    this.registrationForm.get('confPassword')?.valueChanges.subscribe(() => {
+      this.registrationForm.updateValueAndValidity({ onlySelf: true });
+    });
   }
 
-  registrationForm1: any = ({
-    firstName: [''],
-    lastName: [''],
-    email: [''],
-    mobileNo: [''],
-    userName: [''],
-    password: ['']
-  })
+  // Custom validator to check password match
+  passwordMatchValidator: ValidatorFn = (form: AbstractControl): ValidationErrors | null => {
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confPassword')?.value;
+    return password && confirmPassword && password !== confirmPassword
+      ? { passwordMismatch: true }
+      : null;
+  };
+
+  // Getter for template access
+  get f() {
+    return this.registrationForm.controls;
+  }
 
   onSubmitData() {
-    this.registrationForm.value.firstName = this.registrationForm1.firstName;
-    this.registrationForm.value.lastName = this.registrationForm1.lastName;
-    this.registrationForm.value.email = this.registrationForm1.email;
-    this.registrationForm.value.mobileNo = this.registrationForm1.mobileNo;
-    this.registrationForm.value.userName = this.registrationForm1.userName;
-    this.registrationForm.value.password = this.registrationForm1.password;
-
-    console.log(this.registrationForm.value)
-    if (this.registrationForm.value.mobileNo != '') {
-    this.appservice.registerUser(this.registrationForm).subscribe(data => {
-      console.log("#### Final_data.success: " + data.success);
-      console.log("String input:: " + data.message);
-      if (data.success) {
-        // show user registration successfull..!!!
-      }
-
-      this.registrationForm.reset();
-    })
-     }
-    this.registrationForm.reset();
+    if (this.registrationForm.valid) {
+      this.appservice.registerUser(this.registrationForm.value).subscribe({
+        next: (data: any) => {
+          console.log('Success:', data);
+          if (data.success) {
+            // Show user registration successful message
+          }
+          this.registrationForm.reset();
+        },
+        error: (err: any) => {
+          console.error('Error:', err);
+        }
+      });
+    } else {
+      this.registrationForm.markAllAsTouched();
+    }
   }
-
 
   goToLoginPage() {
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login']);
   }
-
 }
