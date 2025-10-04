@@ -11,5 +11,6 @@ public class UserDetailsModel {
 	private Long mobileNo;
 	private String userName;
 	private String password;
+	private String confPassword;
 
 }

@@ -26,7 +26,7 @@ export class AppService {
     const url = this.appUrl + '/register';
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    return this.http.post<any>(url, regForm.value, { headers }).pipe(
+    return this.http.post<any>(url, regForm, { headers }).pipe(
       catchError(error => {
         console.error("Error during registration:", error);
         return of({ success: false, message: 'Registration failed' });
@@ -54,7 +54,7 @@ export class AppService {
       .pipe(
         catchError(error => {
           console.error("Error during Login:", error);
-          return of({ success: false, message: 'Login failed' });
+          return of({ success: false, message: 'Login failed..!!! Invalid Credientials.' });
         })
       );
   }

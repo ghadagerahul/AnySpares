@@ -27,7 +27,7 @@ export class LoginPage {
   loginData: LoginData = { userName: '', mobileNumber: '', password: '' };
   loginDataNew: LoginRequest = { emailId: '', mobileNo: '', password: '' };
 
-  constructor(private appservice: AppService, private router: Router) {}
+  constructor(private appservice: AppService, private router: Router) { }
 
   LoginUserToPortal(form: NgForm) {
     if (form.invalid) {
@@ -47,8 +47,7 @@ export class LoginPage {
       next: (res: any) => {
         if (res.success) {
           console.log('✅ Login successful');
-          // Navigate or store token
-          this.router.navigate(['/dashboard']);
+          this.redirectToDashboard()
         } else {
           console.error('❌ Login failed:', res.message);
           alert(res.message || 'Login failed, please try again.');
@@ -61,9 +60,13 @@ export class LoginPage {
     });
   }
 
-  
+
 
   goToRegisterationPage() {
     this.router.navigate(['/register']);
+  }
+
+  redirectToDashboard() {
+    this.router.navigate(['/dashboard']);
   }
 }

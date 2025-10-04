@@ -102,10 +102,11 @@ public class AppLoginController {
 				boolean isMatch = userDetailsbyMobileNo.stream().filter(Objects::nonNull)
 						.anyMatch(x -> x.getPassword().equals(details.getPassword()));
 
-				if (isMatch)
+				if (isMatch) {
 					response.put("success", true);
-				response.put("message", "Login successful");
-				return ResponseEntity.ok(response);
+					response.put("message", "Login successful");
+					return ResponseEntity.ok(response);
+				}
 
 			}
 		}
