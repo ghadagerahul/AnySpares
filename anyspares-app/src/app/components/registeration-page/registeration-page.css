@@ -1,80 +1,135 @@
-/* div{
-    margin-bottom: 5px;
-   width: 220px;
-    border-radius: 10px;
-    align-items: center;
-    background: #f6eee3;
-    padding: 10px;
+/* Tightened form spacing + reserved error area so errors don't resize the form */
 
-    
+/* overall container tweaks (keeps previous responsive rules) */
+.container-reg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 10px;
+  box-sizing: border-box;
 }
 
-
-input{
-   border: hidden;
-   border-radius: 5px;
-}
-p{
-    font-size:smaller;
-}
-
-.input-error{
-color: red;
-}
-.container{
-   
-} */
-
-
-.container-reg{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    vertical-align: center;
-
-    .red{
-        color: red;
-    }
-    .inner-container{
-        background: white;
-        padding: 20px;
-        box-shadow: 0px 1px 10px 0px gray;
-        border-radius: 5px;
-    .btn-reg{
-        margin: 30px 0 10px;
-        width: 100%;
-        padding-top: 9px;    
-    }
-
-    .login-a{
-        justify-content: center;
-        display: flex;
-        font-size: 13px;
-    }
-
-    form{
-        display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-            width: 39rem;
-
- input{
-    width: 100% !important;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding:5px 10px;
- }
-}
-.form-inputs{
-position: relative;
+/* inner card */
+.inner-container {
+  background: #ffffff;
+  padding: 14px;
+  box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.12);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 760px;
+  box-sizing: border-box;
 }
 
+/* tighter grid vertical spacing */
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;   /* vertical gap 10px, horizontal gap 14px */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* each input wrapper: reduced vertical spacing */
+.form-inputs {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 0px;          /* small gap between label, error-wrap, and input */
+  margin-bottom: 8px;  /* remove large margins; grid gap handles spacing */
+}
+
+/* label smaller bottom margin */
+.form-inputs label {
+  font-weight: 600;
+  margin: 0;
+  color: #111827;
+  font-size: 0.95rem;
+}
+
+/* reserve a fixed area for errors so showing/hiding doesn't change layout */
+.error-wrap {
+  height: 18px;          /* reserve line-height space for single-line errors */
+  min-height: 18px;
+  display: block;
+  overflow: hidden;      /* prevents growth if long message; it will be clipped */
+  line-height: 18px;
+  margin-bottom: 2px;    /* small gap between error and input */
+  box-sizing: border-box;
+}
+
+/* error text itself */
 .text-danger{
     position: absolute;
     bottom: -19px;
     font-size: 13px;
 
 }
-        }
 
+/* allow multiline errors but still limit height (optional)
+   If you prefer multiline wrap, change .error-wrap height to 36px */
+.error-wrap.multiline {
+  height: 36px;
+  min-height: 36px;
+  line-height: 18px;
+}
+
+/* inputs with tighter padding */
+.form-inputs input[type="text"],
+.form-inputs input[type="email"],
+.form-inputs input[type="password"] {
+  width: 100%;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 0.95rem;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* focus style */
+.form-inputs input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+}
+
+/* button (keeps original sizing but uses grid stretch) */
+.btn-reg {
+  margin: 14px 0 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  justify-self: stretch;
+}
+
+/* responsive: single column on narrower screens */
+@media (max-width: 900px) {
+  .form {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .inner-container { padding: 12px; max-width: 560px; }
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .container-reg { padding: 10px; }
+  .inner-container { padding: 10px; border-radius: 6px; max-width: 100%; }
+  .form-inputs label { font-size: 0.92rem; }
+  .form-inputs input { padding: 9px 10px; font-size: 0.93rem; }
+  .btn-reg { padding: 10px; margin: 12px 0 6px; border-radius: 6px; }
+  .error-wrap { height: 18px; min-height: 18px; margin-bottom: 2px; }
+  .text-danger { font-size: 12px; }
+}
+
+/* Invalid input hint (optional) */
+.form-inputs.ng-invalid input.ng-touched {
+  border-color: rgba(220, 38, 38, 0.85);
+  box-shadow: 0 4px 12px rgba(220,38,38,0.06);
 }

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+
 import {
   FormBuilder,
   FormGroup,
@@ -12,7 +13,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppService } from '../../services/app.service';
-
+import { Modal } from 'bootstrap';
+declare var bootstrap: any;
 @Component({
   selector: 'app-registeration-page',
   standalone: true,
@@ -22,6 +24,7 @@ import { AppService } from '../../services/app.service';
 })
 export class RegisterationPage implements OnInit {
   registrationForm!: FormGroup;
+
 
   constructor(
     private appservice: AppService,
@@ -69,7 +72,7 @@ export class RegisterationPage implements OnInit {
         next: (data: any) => {
           console.log('Success:', data);
           if (data.success) {
-            // Show user registration successful message
+            this.openSuccessModal();
           }
           this.registrationForm.reset();
         },
@@ -82,7 +85,17 @@ export class RegisterationPage implements OnInit {
     }
   }
 
+
+  openSuccessModal() {
+    const modalEl = document.getElementById('regSuccessModal');
+    const modal = Modal.getOrCreateInstance(modalEl!);
+    modal.show();
+  }
+
   goToLoginPage() {
+    const modalEl = document.getElementById('regSuccessModal');
+    const modal = Modal.getOrCreateInstance(modalEl!);
+    modal?.hide();
     this.router.navigate(['/login']);
   }
 }

@@ -85,3 +85,26 @@
     </p>
   </div>
 </div>
+
+
+
+
+
+<!-- Registration Success Modal -->
+<div class="modal fade" id="regSuccessModal" tabindex="-1" aria-labelledby="regSuccessLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="regSuccessLabel">Registration Successful</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Registration successful! You can now login with your credentials.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="goToLoginPage()">Go to Login</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
