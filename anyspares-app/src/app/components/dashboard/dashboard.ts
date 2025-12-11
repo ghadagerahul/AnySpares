@@ -9,10 +9,27 @@ import { Route, Router } from '@angular/router';
 })
 export class Dashboard {
 
+
   constructor(private router: Router) { }
 
   onSamePage() {
     this.router.navigate(['/dashboard']);
+  }
+
+
+  goToTwoWheelers() {
+    console.log("two whller is printing..!!!!")
+    this.router.navigate(['/twowheelersdashboard']);
+  }
+
+  goToHeavyVehicles() {
+    throw new Error('Method not implemented.');
+  }
+  goToFourWheelers() {
+    throw new Error('Method not implemented.');
+  }
+  goToThreeWheelers() {
+    throw new Error('Method not implemented.');
   }
 
 }

@@ -1,64 +1,65 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-color: orange;">
-    <h3 class="text-center mb-4">Login</h3>
-
-    <!-- Template-driven Form -->
-    <form #loginForm="ngForm" (ngSubmit)="LoginUserToPortal(loginForm)" novalidate>
-      
-      <!-- Username Field -->
-      <div class="mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input type="email" class="form-control" id="username" placeholder="Enter username"
-          name="username" [(ngModel)]="loginData.userName" #fusername="ngModel" required minlength="3">
-        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['required']">
-          User Name is Required.
-        </span>
-        <span class="text-danger small" *ngIf="fusername.touched && fusername.errors?.['minlength']">
-          Minimum length is 3.
-        </span>
+<div class="login-container m-1">
+  <div class="promo-section">
+    <div class="promo-content" style="font-family: 'Orbitron', sans-serif">
+      <div class="logo">
+        <img src="assets/login-logo.png" alt="Vehicle Spare Parts Logo" />
       </div>
+      <h1>Vehicle Spare Parts</h1>
+      <p>Your trusted partner for quality automotive parts and accessories</p>
+      <ul>
+        <li>5000+ Parts Available</li>
+        <li>24/7 Support</li>
+        <li>100% Genuine</li>
+      </ul>
+      <!-- <div class="promo-buttons">
+        <button routerLink="login">Login</button>
+        <button routerLink="/register">Register</button>
+      </div> -->
+    </div>
+  </div>
 
-      <!-- Mobile No Field -->
-      <div class="mb-3">
-        <label for="mobileno" class="form-label">Mobile No:</label>
-        <input type="text" class="form-control" id="mobileno" placeholder="Enter Mobile No"
-          name="mobileno" [(ngModel)]="loginData.mobileNumber" #fmobileno="ngModel"
-          required minlength="10" maxlength="10" pattern="^[0-9]*$">
+  <div class="form-section">
+    <div class="form-box">
+      <h2>Welcome Back</h2>
+      <p>Sign in to continue to your account</p>
+
+      <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+        <label for="mobile">Mobile Number *</label>
+        <input id="mobile" name="mobile" [(ngModel)]="mobile" #fmobileno="ngModel" required minlength="10"
+          maxlength="10" pattern="^[0-9]{10}$" placeholder="Enter mobile number here" />
         <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['required']">
           Mobile Number is Required.
         </span>
         <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['minlength']">
           Mobile Number must be 10 digits.
         </span>
-        <span class="text-danger small" *ngIf="fmobileno.touched && fmobileno.errors?.['pattern']">
+        <span class="text-danger small"
+          *ngIf="fmobileno.touched && fmobileno.errors?.['pattern'] && mobile.length ==10">
           Only digits are allowed.
         </span>
-      </div>
 
-      <!-- Password Field -->
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter password"
-          name="password" [(ngModel)]="loginData.password" #fpwd="ngModel" required minlength="4">
+
+
+        <label for="password">Password *</label>
+        <input id="password" name="password" type="password" [(ngModel)]="password" #fpwd="ngModel" required
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$" minlength="6" placeholder="Enter password" />
         <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['required']">
           Password is Required.
         </span>
         <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['minlength']">
-          Minimum length is 4.
+          Minimum length is 6.
         </span>
-      </div>
+        <span class="text-danger small" *ngIf="fpwd.touched && fpwd.errors?.['pattern'] && password.length >=6">
+          Password must contain uppercase, lowercase, and a number.
+        </span>
 
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary w-100" [disabled]="loginForm.invalid">
-        Login
-      </button>
+        <a class="forgot-link" routerLink="/forgot-password">Forgot Password?</a>
 
-      <p class="text-center mt-3">
-        New User? 
-        <button type="button" class="btn btn-link p-0" (click)="goToRegisterationPage()">
-          Click here to Register
-        </button>
-      </p>
-    </form>
+        <button type="submit">Sign In</button>
+      </form>
+
+      <p class="register-link">New User? <a routerLink="/register">Click here to Register</a></p>
+    </div>
+    <footer>© 2025 Vehicle Spare Parts. All rights reserved.</footer>
   </div>
 </div>
