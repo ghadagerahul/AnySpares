@@ -18,7 +18,7 @@ export class Dashboard {
 
 
   goToTwoWheelers() {
-    console.log("two whller is printing..!!!!")
+    console.log("two wheeler is printing..!!!!")
     this.router.navigate(['/twowheelersdashboard']);
   }
 

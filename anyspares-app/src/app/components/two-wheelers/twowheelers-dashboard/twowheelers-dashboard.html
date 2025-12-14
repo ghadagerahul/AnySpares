@@ -1,9 +1,25 @@
-<p>twowheelers-dashboard works!</p>
-
 <div class="container">
+  <h2 class="title">Select Your Brand</h2>
+  <p class="subtitle">Choose from popular two-wheeler brands</p>
 
- <div class="card-fluid">Buy New Dream Bike <a href="">click here</a></div>
- <div class="card-fluid">Find Spare  <a href="">click here</a></div>
- <div class="card-fluid">Add Inquired Spare  <a href="">click here</a></div>
+  <!-- Search bar -->
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Search for brands..."
+    class="search-bar"
+  />
 
+  <!-- Brand tiles -->
+  <div class="brand-grid">
+    <div
+      class="brand-card"
+      *ngFor="let brand of filteredBrands()"
+      (click)="onBrandSelect(brand)"
+    >
+      <div class="tag">Popular</div>
+      <img [src]="brand.image" alt="{{ brand.name }}" />
+      <div class="brand-name">{{ brand.name }}</div>
+    </div>
+  </div>
 </div>

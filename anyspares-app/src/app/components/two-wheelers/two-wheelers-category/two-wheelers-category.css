@@ -1,0 +1,91 @@
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    /* light gradient */
+    min-height: 100vh;
+}
+
+/* Back button */
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #007bff;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+/* Page title */
+.title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+    text-align: center;
+}
+
+/* Subtitle */
+.subtitle {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #555;
+    text-align: center;
+}
+
+/* Search bar */
+.search-bar {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 30px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+/* Grid layout */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Category card */
+.category-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Icon styling */
+.category-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 15px;
+}
+
+/* Title and description */
+.category-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    margin: 0;
+}
+
+.category-desc {
+    font-size: 14px;
+    color: #666;
+    margin-top: 6px;
+}
