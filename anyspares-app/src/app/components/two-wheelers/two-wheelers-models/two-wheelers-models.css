@@ -15,54 +15,52 @@
   margin-bottom: 20px;
 }
 
-.search-bar {
-  width: 100%;
-  padding: 10px;
+.year-filter {
+  padding: 8px;
   font-size: 16px;
   margin-bottom: 30px;
-  border: 1px solid #ccc;
   border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
-.brand-grid {
+.model-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
 }
 
-.brand-card {
-  position: relative;
+.model-card {
   border: 1px solid #eee;
   border-radius: 8px;
   overflow: hidden;
+  background: #fff;
   cursor: pointer;
   transition: transform 0.2s ease;
-  background: #fff;
 }
 
-.brand-card:hover {
+.model-card:hover {
   transform: scale(1.03);
 }
 
-.brand-card img {
+.model-card img {
   width: 100%;
   height: 160px;
   object-fit: cover;
 }
 
-.brand-name {
+.model-info {
   padding: 10px;
-  font-weight: 600;
   text-align: center;
 }
 
-.tag {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: orange;
-  color: white;
-  font-size: 12px;
-  padding: 4px 8px;
-  border-radius: 4px;
+.model-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.model-info p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #666;
 }

@@ -4,13 +4,37 @@ import { RegisterationPage } from './components/registeration-page/registeration
 import { Dashboard } from './components/dashboard/dashboard';
 import { TwowheelersDashboard } from './components/two-wheelers/twowheelers-dashboard/twowheelers-dashboard';
 import { ForgotPasswordComponent } from './components/forgot-password.component/forgot-password.component';
+import { TwoWheelersModels } from './components/two-wheelers/two-wheelers-models/two-wheelers-models';
+import { TwoWheelersCategory } from './components/two-wheelers/two-wheelers-category/two-wheelers-category';
+import { TwoWheelersProduct } from './components/two-wheelers/two-wheelers-product/two-wheelers-product';
+import { TwoWheelerProductDetails } from './components/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
+import { SellerLoginComponent } from './components/Seller/seller-login/seller-login';
+import { SellerRegisterComponent } from './components/Seller/seller-register/seller-register';
+import { SellerDashboard } from './components/Seller/seller-dashboard/seller-dashboard';
+import { SellerTwoWheelerCategories } from './components/Seller/two-wheeler-categories/two-wheeler-categories';
+import { SellerEngineParts } from './components/Seller/seller-engine-parts/seller-engine-parts';
+import { AddProduct } from './components/Seller/add-product/add-product';
+import { EditProduct } from './components/Seller/edit-product/edit-product';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'login', component: LoginPage },
-    { path: 'register', component: RegisterationPage },
-    { path: 'dashboard', component: Dashboard },
-     { path: 'twowheelersdashboard', component: TwowheelersDashboard },
-       { path: 'forgot-password', component: ForgotPasswordComponent },
-    { path: '**', redirectTo: 'login' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginPage },
+  { path: 'register', component: RegisterationPage },
+  { path: 'dashboard', component: Dashboard },
+  { path: 'twowheelersdashboard', component: TwowheelersDashboard },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'twowheelers-models', component: TwoWheelersModels },
+  { path: 'twowheelers-category', component: TwoWheelersCategory },
+  {path: 'twowheelers-product', component:TwoWheelersProduct},
+  {path:'twowheelers-productDetails', component:TwoWheelerProductDetails},
+
+//Seller Routes
+  {path:'seller-login', component:SellerLoginComponent},
+  {path:'seller-register', component:SellerRegisterComponent},
+  {path:'seller-dashboard',component:SellerDashboard},
+  {path:'seller-twowheller-category', component:SellerTwoWheelerCategories},
+  {path:'seller-engine-parts', component:SellerEngineParts},
+  {path:'seller-addproduct',component:AddProduct},
+  {path: 'seller-editproduct', component:EditProduct},
+  { path: '**', redirectTo: 'login' }
 ];
