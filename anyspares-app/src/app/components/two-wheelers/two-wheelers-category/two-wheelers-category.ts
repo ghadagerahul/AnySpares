@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-two-wheelers-category',
   imports: [CommonModule, FormsModule],
@@ -8,7 +9,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './two-wheelers-category.css'
 })
 export class TwoWheelersCategory {
-  constructor(private location: Location) { }
+
+  constructor(private location: Location, private router:Router) { }
 
   searchTerm: string = '';
 
@@ -59,4 +61,8 @@ export class TwoWheelersCategory {
   goBack() {
     this.location.back();
   }
+
+  goToProduct() {
+this.router.navigate(['/twowheelers-product']);
+}
 }

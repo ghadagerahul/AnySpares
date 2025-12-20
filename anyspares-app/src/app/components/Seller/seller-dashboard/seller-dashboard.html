@@ -1,0 +1,111 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">AS</div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a class="active">🏠 <span>Dashboard</span></a>
+            <a>📦 <span>Products</span></a>
+            <a>🛒 <span>Orders</span></a>
+            <a>💳 <span>Payments</span></a>
+            <a>⚠️ <span>Inventory Alerts</span></a>
+            <a>👤 <span>Profile & KYC</span></a>
+            <a>🎧 <span>Support</span></a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div>
+                <h3>📊 Welcome to Your Dashboard</h3>
+                <p class="subtitle">
+                    Manage your inventory and track your business performance
+                </p>
+            </div>
+
+            <div class="header-right">
+                <span class="bell" title="Notifications" (click)="openNotifications()">🔔</span>
+
+                <div class="profile">
+                    <div class="avatar">{{ sellerName[0] }}</div>
+                    <div>
+                        <strong>{{ sellerName }}</strong>
+                        <small>🏪 {{ storeName }}</small>
+                    </div>
+                </div>
+
+                <span class="moon" title="Toggle Theme" (click)="toggleTheme()">🌙</span>
+            </div>
+        </header>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat-card" *ngFor="let stat of stats" [ngClass]="stat.color">
+                <p>
+                    <span class="icon">
+                        {{ stat.title === 'Total Products' ? '📦' :
+                        stat.title === 'Active Orders' ? '🛒' :
+                        stat.title === 'Pending Payments' ? '💳' : '⚠️' }}
+                    </span>
+                    {{ stat.title }}
+                </p>
+                <h2>{{ stat.value }}</h2>
+            </div>
+        </div>
+
+        <!-- INVENTORY -->
+        <h4 class="section-title">🚗 Manage Inventory by Vehicle Type</h4>
+
+        <div class="inventory">
+            <div class="inv-card" *ngFor="let item of inventory" [ngClass]="item.color">
+                <h4>
+                    <span class="icon">
+                        {{ item.vehicleType === 'Two Wheelers' ? '🏍️' :
+                        item.vehicleType === 'Three Wheelers' ? '🛺' :
+                        item.vehicleType === 'Four Wheelers' ? '🚗' : '🚛' }}
+                    </span>
+                    {{ item.vehicleType }}
+                </h4>
+
+                <p>Total Products</p>
+                <h2>{{ item.totalProducts }}</h2>
+
+                <button (click)="addProduct(item.vehicleType)">
+                    ➕ Add Product
+                </button>
+            </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <h4 class="section-title">🕒 Recent Activity</h4>
+
+        <div class="activity">
+            <div class="activity-item" *ngFor="let act of recentActivities">
+                <span class="dot" [ngClass]="act.color"></span>
+
+                <div class="activity-content">
+                    <strong>
+                        {{ act.type === 'order' ? '🛒' :
+                        act.type === 'update' ? '✏️' :
+                        act.type === 'alert' ? '⚠️' : '💰' }}
+                        {{ act.title }}
+                    </strong>
+                    <p>{{ act.description }}</p>
+                </div>
+
+                <small>⏱ {{ act.time }}</small>
+            </div>
+        </div>
+
+    </main>
+</div>

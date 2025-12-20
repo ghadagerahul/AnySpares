@@ -1,0 +1,94 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">AS</div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a>📊 Dashboard</a>
+            <a class="active">📦 Products</a>
+            <a>🛒 Orders</a>
+            <a>💳 Payments</a>
+            <a>⚠️ Inventory Alerts</a>
+            <a>👤 Profile & KYC</a>
+            <a>🎧 Support</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="top-header">
+
+
+            <div class="breadcrumb">
+                <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+                <span class="separator">›</span>
+                <strong>Two Wheelers</strong>
+            </div>
+
+
+            <div class="header-right">
+                🔔
+                <div class="profile">
+                    <div class="avatar">J</div>
+                    <div>
+                        <strong>{{ sellerName }}</strong>
+                        <small>{{ storeName }}</small>
+                    </div>
+                </div>
+                🌙
+            </div>
+        </header>
+
+        <h3 class="page-title">Two Wheeler Categories</h3>
+        <p class="page-subtitle">Select a category to manage products</p>
+
+        <!-- CATEGORY CARDS -->
+        <div class="category-grid">
+            <div class="category-card" *ngFor="let cat of categories">
+                <div class="icon-box" [ngClass]="cat.color">
+                    {{ cat.icon }}
+                </div>
+
+                <h4>{{ cat.name }}</h4>
+
+                <p class="count">
+                    📦 {{ cat.totalProducts }} Products
+                </p>
+
+                <div class="card-footer">
+                    <a class="view-link" (click)="viewProducts(cat)">
+                        View Products →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary">
+            <div class="summary-card">
+                <p>Total Products</p>
+                <h2>{{ summary.total }}</h2>
+            </div>
+
+            <div class="summary-card">
+                <p>Active Listings</p>
+                <h2 class="green">{{ summary.active }}</h2>
+            </div>
+
+            <div class="summary-card">
+                <p>Out of Stock</p>
+                <h2 class="red">{{ summary.outOfStock }}</h2>
+            </div>
+        </div>
+
+    </main>
+</div>

@@ -1,0 +1,274 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f6f9f8;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  width: 250px;
+  background: #ffffff;
+  padding: 18px;
+  border-right: 1px solid #eaeaea;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.logo {
+  background: #13b87c;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.brand h4 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.brand span {
+  font-size: 11px;
+  color: #777;
+}
+
+nav a {
+  display: block;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: 9px;
+  cursor: pointer;
+  color: #333;
+  font-size: 13px;
+}
+
+nav a.active,
+nav a:hover {
+  background: #13b87c;
+  color: white;
+}
+
+/* ================= MAIN ================= */
+.main {
+  flex: 1;
+  padding: 22px 26px;
+}
+
+/* ================= HEADER ================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+
+.bell,
+.moon {
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  background: #13b87c;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.profile strong {
+  font-size: 13px;
+}
+
+.profile small {
+  font-size: 11px;
+  color: #666;
+}
+
+/* ================= STATS ================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.stat-card {
+  background: white;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card p {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.stat-card h2 {
+  font-size: 20px;
+  margin: 0;
+}
+
+/* COLORS */
+.green h2 { color: #13b87c; }
+.blue h2 { color: #3b82f6; }
+.orange h2 { color: #f59e0b; }
+.red h2 { color: #ef4444; }
+
+/* ================= INVENTORY ================= */
+.section-title {
+  margin: 22px 0 12px;
+  font-size: 14px;
+}
+
+.inventory {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.inv-card {
+  background: white;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.inv-card h4 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.inv-card p {
+  font-size: 12px;
+  color: #666;
+}
+
+.inv-card h2 {
+  font-size: 20px;
+  margin: 6px 0;
+}
+
+.inv-card button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.inv-card.green button { background: #13b87c; }
+.inv-card.orange button { background: #f59e0b; }
+.inv-card.blue button { background: #3b82f6; }
+.inv-card.purple button { background: #8b5cf6; }
+
+/* ================= ACTIVITY ================= */
+.activity {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 14px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-content {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.activity-content strong {
+  font-size: 13px;
+}
+
+.activity-content p {
+  font-size: 12px;
+  color: #666;
+}
+
+.activity-item small {
+  font-size: 11px;
+  color: #888;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .stats,
+  .inventory {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .stats,
+  .inventory {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

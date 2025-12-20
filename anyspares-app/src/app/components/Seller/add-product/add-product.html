@@ -1,0 +1,183 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">AS</div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a>📊 Dashboard</a>
+            <a class="active">📦 Products</a>
+            <a>🛒 Orders</a>
+            <a>💳 Payments</a>
+            <a>⚠️ Inventory Alerts</a>
+            <a>👤 Profile & KYC</a>
+            <a>🎧 Support</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <div class="top-header">
+
+
+            <div class="breadcrumb"> <button class="back-btn" (click)="goBack()">← Back to Products</button> <span
+                    class="separator" &nbsp;>› &nbsp;</span> <strong>Add Product</strong> </div>
+
+            <div class="header-right">
+                🔔
+                <div class="profile">
+                    <div class="avatar">{{ sellerName[0] }}</div>
+                    <div>
+                        <strong>{{ sellerName }}</strong>
+                        <small>{{ storeName }}</small>
+                    </div>
+                </div>
+                🌙
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="page-title">Add New Product</h3>
+        <p class="page-subtitle">Fill in the product details below</p>
+
+        <form [formGroup]="productForm" class="form-layout">
+
+            <!-- LEFT FORM -->
+            <div class="form-left">
+
+                <!-- BASIC INFO -->
+                <div class="card">
+                    <h4 class="card-title">Basic Information</h4>
+
+                    <label>Product Name *</label>
+                    <input formControlName="name" placeholder="e.g. Brake Pad Set - Honda Activa" />
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Vehicle Brand *</label>
+                            <select formControlName="brand">
+                                <option value="">Select brand</option>
+                                <option *ngFor="let b of brands" [value]="b">{{ b }}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Model *</label>
+                            <select formControlName="model">
+                                <option value="">Select model</option>
+                                <option *ngFor="let m of models" [value]="m">{{ m }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Category *</label>
+                            <select formControlName="category">
+                                <option value="">Select category</option>
+                                <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Product Type *</label>
+                            <div class="radio-group">
+                                <label><input type="radio" value="OEM" formControlName="type" /> OEM</label>
+                                <label><input type="radio" value="Aftermarket" formControlName="type" />
+                                    Aftermarket</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRICING -->
+                <div class="card">
+                    <h4 class="card-title">Pricing & Inventory</h4>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>MRP *</label>
+                            <input type="number" formControlName="mrp" />
+                        </div>
+
+                        <div>
+                            <label>Selling Price *</label>
+                            <input type="number" formControlName="price" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div>
+                            <label>Available Stock *</label>
+                            <input type="number" formControlName="stock" />
+                        </div>
+
+                        <div>
+                            <label>Min. Order Quantity *</label>
+                            <input type="number" formControlName="minQty" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DETAILS -->
+                <div class="card">
+                    <h4 class="card-title">Product Details</h4>
+
+                    <label>Description *</label>
+                    <textarea rows="4" formControlName="description"
+                        placeholder="Enter detailed product description, features, and specifications..."></textarea>
+
+                    <label>Compatible Models (Multi-select)</label>
+                    <select multiple formControlName="compatibleModels">
+                        <option *ngFor="let m of models" [value]="m">{{ m }}</option>
+                    </select>
+
+                    <label class="checkbox">
+                        <input style="width: auto;" type="checkbox" formControlName="warranty" />
+                        This product has warranty
+                    </label>
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="form-right">
+
+                <div class="card">
+                    <h4 class="card-title">Product Images</h4>
+
+                    <div class="upload-box" (click)="fileInput.click()">
+                        ⬆️
+                        <p>Click to upload images</p>
+                        <small>PNG, JPG up to 5MB</small>
+                    </div>
+
+                    <input type="file" #fileInput hidden multiple (change)="onFilesSelected($event)" />
+
+                    <button type="button" class="publish-btn" (click)="publish()">
+                        💾 Publish Product
+                    </button>
+
+                    <button type="button" class="draft-btn" (click)="saveDraft()">
+                        👁️ Save as Draft
+                    </button>
+
+                    <button type="button" class="cancel-btn" (click)="cancel()">
+                        Cancel
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
+</div>
