@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface Category {
   name: string;
@@ -19,7 +20,7 @@ export class SellerTwoWheelerCategories {
   sellerName = 'John Doe';
   storeName = 'Auto Parts Store';
 
-  constructor(private location: Location) { }
+  constructor(private location: Location, private router: Router) { }
 
   categories: Category[] = [
     { name: 'Engine Parts', totalProducts: 42, icon: '⚙️', color: 'green' },
@@ -39,6 +40,13 @@ export class SellerTwoWheelerCategories {
   viewProducts(category: Category): void {
     console.log('View products for:', category.name);
     // later: route to product list page
+    const categoryName = category.name;
+
+    //ex
+    if (categoryName != null && categoryName != undefined && categoryName == 'Engine Parts') {
+      this.router.navigate(['/seller-engine-parts']);
+    }
+
   }
 
   goBack() { this.location.back(); }

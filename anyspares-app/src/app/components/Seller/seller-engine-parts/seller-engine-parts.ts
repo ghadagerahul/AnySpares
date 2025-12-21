@@ -1,5 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component } from '@angular/core';
+import { Route, Router } from '@angular/router';
 
 interface Product {
   name: string;
@@ -32,12 +33,17 @@ export class SellerEngineParts {
     { name: 'Connecting Rod - TVS Apache', category: 'Engine Parts', stock: 0, price: 1899, status: 'Draft', statusLabel: 'Draft' }
   ];
 
-  constructor(private location: Location) { }
+  constructor(private location: Location, private router:Router) { }
 
   addProduct(): void {
     console.log('Add Product clicked');
+    this.router.navigate(['/seller-addproduct']);
   }
 
+  goToEditProduct(){
+        this.router.navigate(['/seller-editproduct']);
+
+  }
   goBack() { this.location.back(); }
 
 

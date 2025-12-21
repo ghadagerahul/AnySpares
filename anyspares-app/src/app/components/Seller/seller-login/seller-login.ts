@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-seller-login',
@@ -12,12 +12,15 @@ export class SellerLoginComponent {
 
 
 
-  constructor() { }
+
+  constructor(private router: Router) { }
 
   // Later you can add:
   // login() {}
   // forgotPassword() {}
 
-
+  loginAsSeller() {
+    this.router.navigate(['/seller-dashboard']);
+  }
 
 }
