@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Route, Router } from '@angular/router';
 
 
 interface StatCard {
@@ -82,9 +83,22 @@ export class SellerDashboard {
     }
   ];
 
-  constructor() { }
+  constructor(private router: Router) { }
+
+  loadStatData() {
+  }
+
+  loadInventoryData() {
+  }
+
+  loadRecentActivities() {
+
+  }
 
   ngOnInit(): void {
+    this.loadStatData();
+    this.loadInventoryData();
+    this.loadRecentActivities();
     // Later you can load data here from API
     // this.loadDashboardData();
   }
@@ -93,8 +107,11 @@ export class SellerDashboard {
 
   addProduct(vehicleType: string): void {
     console.log(`Add product clicked for ${vehicleType}`);
+
+
+
     // Navigate to add product page
-    // this.router.navigate(['/seller/products/add'], { queryParams: { type: vehicleType } });
+    this.router.navigate(['/seller-twowheller-category'], { queryParams: { type: vehicleType } });
   }
 
   openNotifications(): void {
