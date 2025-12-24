@@ -43,15 +43,15 @@
                 Sign in to manage your products and orders
             </p>
 
-            <form>
+            <form [formGroup]="loginForm" (ngSubmit)="loginAsSeller()">
                 <label>Mobile Number *</label>
-                <input type="text" placeholder="Enter mobile number" />
+                <input type="number" placeholder="Enter mobile number" formControlName="mobileNumber" required minlength="10" maxlength="12" />
 
                 <div class="password-row">
                     <label>Password *</label>
-                    <a href="#">Forgot Password?</a>
+                    <a (click)="forgotPassword()">Forgot Password?</a>
                 </div>
-                <input type="password" placeholder="Enter password" />
+                <input type="password" placeholder="Enter password"  formControlName="password"/>
 
                 <button class="login-btn" (click)="loginAsSeller()">
                     Sign In as Seller →
