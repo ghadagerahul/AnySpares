@@ -15,6 +15,7 @@ export class SellerRegisterComponent implements OnInit {
   registrationForm!: FormGroup;
   showSuccessModal: any;
   passwordMatchValidator: any;
+  successMsg: String | undefined;
 
   constructor(private router: Router, private fb: FormBuilder, private sellerService: SellerService) { }
 
@@ -75,9 +76,14 @@ export class SellerRegisterComponent implements OnInit {
         next: (data: any) => {
           console.log('Success:', data);
           if (data.success) {
+            if (data.message === "Registration successful") {
+              this.successMsg = "Your seller account has been created successfully.Please log in to continue.";
+            } else {
+              this.successMsg = "User Already Present. Please log in to continue.";
+            }
             this.showSuccessModal = true;
           }
-          this.registrationForm.reset();
+          //  this.registrationForm.reset();
         },
         error: (err: any) => {
           console.error('Error:', err);

@@ -3,7 +3,53 @@ spring:
     name: ServiceGateway
 
   profiles:
-    active: remote
+    active: local
+
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+      routes:
+        - id: FOURWHEELERSERVICE
+          uri: lb://FOURWHEELERSERVICE
+          predicates:
+            - Path=/fourwheelers/**
+          filters:
+            - StripPrefix=1
+
+        - id: HEAVYWHEELERSERVICE
+          uri: lb://HEAVYWHEELERSERVICE
+          predicates:
+            - Path=/heavywheelers/**
+          filters:
+            - StripPrefix=1
+
+        - id: THREEWHEELERSERVICE
+          uri: lb://THREEWHEELERSERVICE
+          predicates:
+            - Path=/threewheelers/**
+          filters:
+            - StripPrefix=1
+
+        - id: TWOWHEELERSERVICE
+          uri: lb://TWOWHEELERSERVICE
+          predicates:
+            - Path=/twowheelers/**
+          filters:
+            - StripPrefix=1
 
 server:
   port: 8181
@@ -18,22 +64,6 @@ eureka:
     hostname: localhost
     prefer-ip-address: true
 
-cloud:
-  gateway:
-    routes:
-      - id: FOURWHEELERSERVICE
-        uri: lb://FOURWHEELERSERVICE
-        predicates:
-          - Path=/fourwheelers/**
-      - id: HEAVYWHEELERSERVICE
-        uri: lb://HEAVYWHEELERSERVICE
-        predicates:
-          - Path=/heavywheelers/**
-      - id: THREEWHEELERSERVICE
-        uri: lb://THREEWHEELERSERVICE
-        predicates:
-          - Path=/threewheelers/**
-      - id: TWOWHEELERSERVICE
-        uri: lb://TWOWHEELERSERVICE
-        predicates:
-          - Path=/twowheelers/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

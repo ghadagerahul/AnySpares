@@ -42,6 +42,7 @@
             <p class="subtitle">
                 Sign in to manage your products and orders
             </p>
+            <p class="text-danger small" *ngIf="invalidCred">Invalid Credientials</p>
 
             <form [formGroup]="loginForm" (ngSubmit)="loginAsSeller()">
                 <label>Mobile Number *</label>

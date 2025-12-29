@@ -19,9 +19,9 @@ import com.anyspares.app.controller.model.SellerUserDetailsModel;
 import com.anyspares.app.entity.SellerUserDetails;
 import com.anyspares.app.service.AppUserService;
 
-@CrossOrigin(origins = "http://localhost:4200")
+//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/sellerAuth")
+@RequestMapping("/spares/sellerAuth")
 public class SellerLoginController {
 
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -45,7 +45,7 @@ public class SellerLoginController {
 
 			Long mobileNo = user.getMobileNo();
 
-			if (appUserService.isUserPresent(mobileNo)) {
+			if (appUserService.isUSellerserPresent(mobileNo, user.getPassword())) {
 				response.put("success", true);
 				response.put("message", "User Already Present");
 				return ResponseEntity.ok(response);
@@ -88,7 +88,6 @@ public class SellerLoginController {
 
 			}
 		}
-
 		response.put("success", false);
 		response.put("message", "Invalid login");
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
