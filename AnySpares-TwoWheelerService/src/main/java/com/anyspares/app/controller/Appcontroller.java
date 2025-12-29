@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/twowheelers/V1")
+@RequestMapping("/twowheelers")
 public class Appcontroller {
 
-	@GetMapping("/get")
+	@GetMapping("/V1/get")
 	public String getRequest() {
 		return "Two wheller service called.";
 	}
