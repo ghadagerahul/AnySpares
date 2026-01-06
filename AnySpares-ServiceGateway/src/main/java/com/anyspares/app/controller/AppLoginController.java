@@ -32,7 +32,6 @@ import com.anyspares.app.service.AppUserService;
  * @author Rahul
  * @since 21-09-2025
  */
-//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/auth")
 public class AppLoginController {

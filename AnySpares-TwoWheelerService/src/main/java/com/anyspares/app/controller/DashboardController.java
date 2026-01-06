@@ -16,7 +16,6 @@ import com.anyspares.app.controller.entity.DashboardRecentActivitiesEntity;
 import com.anyspares.app.controller.entity.DashboardStatsEntity;
 import com.anyspares.app.controller.service.DashboardService;
 
-//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {

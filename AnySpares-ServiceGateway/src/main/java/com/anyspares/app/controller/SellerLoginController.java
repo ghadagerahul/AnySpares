@@ -19,7 +19,6 @@ import com.anyspares.app.controller.model.SellerUserDetailsModel;
 import com.anyspares.app.entity.SellerUserDetails;
 import com.anyspares.app.service.AppUserService;
 
-//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/spares/sellerAuth")
 public class SellerLoginController {
