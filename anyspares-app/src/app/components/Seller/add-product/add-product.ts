@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
 
 @Component({
@@ -10,8 +10,7 @@ import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-pr
   styleUrl: './add-product.css'
 })
 export class AddProduct implements OnDestroy {
-
-
+  
   sellerName = 'John Doe';
   storeName = 'Auto Parts Store';
 
@@ -23,23 +22,35 @@ export class AddProduct implements OnDestroy {
   submittedData: any = null;
   selectedFiles: File[] = [];
   filePreviewUrls: string[] = [];
+  submitted = false;
+
+  // convenience getter for template access
+  get f() { return this.productForm.controls; }
+
+  // cross-field validator to ensure price <= mrp
+  priceLtOrEqMrpValidator = (group: FormGroup) => {
+    const mrp = group.get('mrp')?.value;
+    const price = group.get('price')?.value;
+    if (mrp == null || price == null) return null;
+    return (price > mrp) ? { priceGtMrp: true } : null;
+  };
 
   constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService) {
     this.productForm = this.fb.group({
-      name: [''],
-      brand: [''],
-      model: [''],
-      category: [''],
-      type: ['OEM'],
-      mrp: [0],
-      price: [0],
-      stock: [0],
-      minQty: [1],
-      description: [''],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      brand: ['', Validators.required],
+      model: ['', Validators.required],
+      category: ['', Validators.required],
+      type: ['OEM', Validators.required],
+      mrp: [null, [Validators.required, Validators.min(1)]],
+      price: [null, [Validators.required, Validators.min(1)]],
+      stock: [0, [Validators.required, Validators.min(0)]],
+      minQty: [1, [Validators.required, Validators.min(1)]],
+      description: ['', Validators.required],
       compatibleModels: [[]],
       warranty: [false],
       images: [[]]
-    });
+    }, { validators: this.priceLtOrEqMrpValidator });
   }
 
   onFilesSelected(event: any) {
@@ -63,7 +74,11 @@ export class AddProduct implements OnDestroy {
   }
 
   publish() {
+    this.submitted = true;
+
     if (this.productForm.invalid) {
+      // show validation messages
+      this.productForm.markAllAsTouched();
       console.warn('Form invalid', this.productForm.errors);
       return;
     }
@@ -100,6 +115,7 @@ export class AddProduct implements OnDestroy {
     });
 
     this.productForm.reset();
+    this.submitted = false;
 
 
   }
@@ -110,6 +126,7 @@ export class AddProduct implements OnDestroy {
 
   cancel() {
     console.log('Cancel');
+    this.productForm.reset();
   }
 
   ngOnDestroy(): void {

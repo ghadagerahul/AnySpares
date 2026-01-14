@@ -58,8 +58,10 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 			// S3 / uploaded image URL
 			MultipartFile imageFile = productDto.getImages();
-			String uploadedFileName = awsS3Service.uploadFile(imageFile);
-			entity.setProductimage(uploadedFileName);
+			if (null != imageFile) {
+				String uploadedFileName = awsS3Service.uploadFile(imageFile);
+				entity.setProductimage(uploadedFileName);
+			}
 			save = productRepository.save(entity);
 
 			if (null != save)

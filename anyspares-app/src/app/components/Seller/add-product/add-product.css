@@ -211,6 +211,20 @@ textarea {
     background: white;
 }
 
+/* Validation styles */
+.field-error {
+    color: #b00020;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+    border-color: #b00020;
+    box-shadow: none;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .sidebar {
