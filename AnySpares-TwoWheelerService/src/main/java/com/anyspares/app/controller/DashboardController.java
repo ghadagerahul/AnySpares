@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anyspares.app.controller.entity.DashboardInventoryEntity;
-import com.anyspares.app.controller.entity.DashboardRecentActivitiesEntity;
-import com.anyspares.app.controller.entity.DashboardStatsEntity;
-import com.anyspares.app.controller.service.DashboardService;
+import com.anyspares.app.entity.DashboardInventoryEntity;
+import com.anyspares.app.entity.DashboardRecentActivitiesEntity;
+import com.anyspares.app.entity.DashboardStatsEntity;
+import com.anyspares.app.service.DashboardService;
 
-//@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {

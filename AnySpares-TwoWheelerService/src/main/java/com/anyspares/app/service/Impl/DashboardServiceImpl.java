@@ -1,17 +1,17 @@
-package com.anyspares.app.controller.service.Impl;
+package com.anyspares.app.service.Impl;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.anyspares.app.controller.entity.DashboardInventoryEntity;
-import com.anyspares.app.controller.entity.DashboardRecentActivitiesEntity;
-import com.anyspares.app.controller.entity.DashboardStatsEntity;
-import com.anyspares.app.controller.service.DashboardService;
+import com.anyspares.app.entity.DashboardInventoryEntity;
+import com.anyspares.app.entity.DashboardRecentActivitiesEntity;
+import com.anyspares.app.entity.DashboardStatsEntity;
 import com.anyspares.app.repo.DashboardInventoryRepo;
 import com.anyspares.app.repo.DashboardRecentActivitiesRepo;
 import com.anyspares.app.repo.DashboardStatsRepo;
+import com.anyspares.app.service.DashboardService;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
