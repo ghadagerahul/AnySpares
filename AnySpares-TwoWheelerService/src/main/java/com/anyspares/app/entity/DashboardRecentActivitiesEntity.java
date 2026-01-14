@@ -1,4 +1,4 @@
-package com.anyspares.app.controller.entity;
+package com.anyspares.app.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,17 +9,17 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "dashboard_inventory")
-public class DashboardInventoryEntity {
+@Table(name = "dashboard_rec_activities")
+public class DashboardRecentActivitiesEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long invId;
+	private Long recActId;
 
-	private String vehicleType;
-
-	private Long totalProducts;
-
+	private String type;
+	private String title;
+	private String description;
+	private String time;
 	private String color;
 
 }

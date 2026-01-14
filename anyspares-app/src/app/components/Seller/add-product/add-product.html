@@ -48,7 +48,7 @@
         <h3 class="page-title">Add New Product</h3>
         <p class="page-subtitle">Fill in the product details below</p>
 
-        <form [formGroup]="productForm" class="form-layout">
+        <form [formGroup]="productForm" (ngSubmit)="publish()" class="form-layout">
 
             <!-- LEFT FORM -->
             <div class="form-left">
@@ -160,9 +160,11 @@
                         <small>PNG, JPG up to 5MB</small>
                     </div>
 
-                    <input type="file" #fileInput hidden multiple (change)="onFilesSelected($event)" />
+                    <input type="file" #fileInput hidden accept="image/*" multiple (change)="onFilesSelected($event)" />
 
-                    <button type="button" class="publish-btn" (click)="publish()">
+
+
+                    <button type="submit" class="publish-btn">
                         💾 Publish Product
                     </button>
 
@@ -173,6 +175,8 @@
                     <button type="button" class="cancel-btn" (click)="cancel()">
                         Cancel
                     </button>
+
+
                 </div>
 
             </div>

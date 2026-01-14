@@ -1,0 +1,72 @@
+package com.anyspares.app.service.Impl;
+
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.anyspares.app.entity.ProductEntity;
+import com.anyspares.app.model.ProductDto;
+import com.anyspares.app.repo.ProductRepository;
+import com.anyspares.app.service.AwsS3Service;
+import com.anyspares.app.service.TwoWheelerProductService;
+
+@Service
+public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
+
+	@Autowired
+	private ProductRepository productRepository;
+
+	@Autowired
+	private AwsS3Service awsS3Service;
+
+	Logger prodServiceLogger = LoggerFactory.getLogger(getClass());
+
+	@Override
+	public boolean addProduct(ProductDto productDto) {
+		prodServiceLogger.info("Called TwoWheelerProductServiceImpl-addProduct");
+		ProductEntity save = null;
+		if (null != productDto) {
+
+			ProductEntity entity = new ProductEntity();
+
+			entity.setName(productDto.getName());
+			entity.setBrand(productDto.getBrand());
+			entity.setModel(productDto.getModel());
+			entity.setCategory(productDto.getCategory());
+			entity.setType(productDto.getType());
+
+			entity.setMrp(productDto.getMrp());
+			entity.setPrice(productDto.getPrice());
+
+			entity.setStock(productDto.getStock());
+			entity.setMinQty(productDto.getMinQty());
+
+			entity.setDescription(productDto.getDescription());
+
+			String compatibleModelString = "";
+			if (null != productDto.getCompatibleModels() && productDto.getCompatibleModels().size() > 0) {
+				compatibleModelString = productDto.getCompatibleModels().stream().filter(Objects::nonNull)
+						.collect(Collectors.joining("|"));
+			}
+			entity.setCompatibleModels(compatibleModelString);
+			entity.setWarranty(productDto.isWarranty());
+
+			// S3 / uploaded image URL
+			MultipartFile imageFile = productDto.getImages();
+			String uploadedFileName = awsS3Service.uploadFile(imageFile);
+			entity.setProductimage(uploadedFileName);
+			save = productRepository.save(entity);
+
+			if (null != save)
+				return true;
+
+		}
+		return false;
+	}
+
+}

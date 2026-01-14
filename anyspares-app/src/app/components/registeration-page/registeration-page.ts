@@ -68,7 +68,7 @@ export class RegisterationPage implements OnInit {
 
   onSubmitData() {
     if (this.registrationForm.valid) {
-        console.log("registrationForm-firstName: "+this.registrationForm.value.firstName);
+      console.log("registrationForm-firstName: " + this.registrationForm.value.firstName);
       this.appservice.registerUser(this.registrationForm.value).subscribe({
         next: (data: any) => {
           console.log('Success:', data);

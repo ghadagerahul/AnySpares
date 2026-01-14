@@ -1,4 +1,4 @@
-package com.anyspares.app.controller.entity;
+package com.anyspares.app.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
