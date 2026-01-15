@@ -17,8 +17,8 @@ import com.anyspares.app.entity.DashboardStatsEntity;
 import com.anyspares.app.service.DashboardService;
 
 @RestController
-@RequestMapping("/dashboard")
-public class DashboardController {
+@RequestMapping("/seller/dashboard")
+public class SellerDashboardController {
 
 	@Autowired
 	private DashboardService dashboardService;

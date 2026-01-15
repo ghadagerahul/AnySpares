@@ -90,5 +90,113 @@
             </div>
         </div>
 
+        <!-- ADD CATEGORY FORM -->
+        <div class="form-section">
+            <!-- COLLAPSED HEADER -->
+            <div class="form-header-collapsed" (click)="toggleFormExpanded()" [class.expanded]="isFormExpanded">
+                <div class="header-content">
+                    <span class="toggle-icon">{{ isFormExpanded ? '▼' : '▶' }}</span>
+                    <h3>➕ Add New Category</h3>
+                </div>
+                <span class="hint-text" *ngIf="!isFormExpanded">Click to expand form</span>
+            </div>
+
+            <!-- EXPANDED FORM -->
+            <div class="form-content" *ngIf="isFormExpanded" [@expandCollapse]>
+                <div class="form-header">
+                    <p>Create a new product category for two wheelers</p>
+                </div>
+
+                <form class="add-category-form" (ngSubmit)="onAddCategory()">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name *</label>
+                        <input 
+                            type="text" 
+                            id="categoryName"
+                            [(ngModel)]="newCategory.name"
+                            name="categoryName"
+                            placeholder="e.g., Engine Parts, Brakes, Electrical"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryDescription">Description *</label>
+                        <textarea 
+                            id="categoryDescription"
+                            [(ngModel)]="newCategory.description"
+                            name="categoryDescription"
+                            placeholder="e.g., Pistons, rings, gaskets, valves"
+                            rows="3"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoryIcon">Icon *</label>
+                            <input 
+                                type="text" 
+                                id="categoryIcon"
+                                [(ngModel)]="newCategory.icon"
+                                name="categoryIcon"
+                                placeholder="e.g., ⚙️, 🛑, ⚡"
+                                required
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoryColor">Color Theme *</label>
+                            <select 
+                                id="categoryColor"
+                                [(ngModel)]="newCategory.color"
+                                name="categoryColor"
+                                required
+                            >
+                                <option value="">Select Color</option>
+                                <option value="green">Green</option>
+                                <option value="red">Red</option>
+                                <option value="orange">Orange</option>
+                                <option value="purple">Purple</option>
+                                <option value="blue">Blue</option>
+                                <option value="cyan">Cyan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryImage">Image URL</label>
+                        <input 
+                            type="text" 
+                            id="categoryImage"
+                            [(ngModel)]="newCategory.image"
+                            name="categoryImage"
+                            placeholder="e.g., assets/two-wheelers/category/engine.jpg"
+                        />
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+                            {{ isSubmitting ? '⏳ Adding...' : '✅ Submit' }}
+                        </button>
+                        <button type="reset" class="btn-reset" (click)="resetForm()">
+                            🔄 Clear
+                        </button>
+                        <button type="button" class="btn-cancel" (click)="toggleFormExpanded()">
+                            ✕ Collapse
+                        </button>
+                    </div>
+
+                    <div *ngIf="successMessage" class="alert alert-success">
+                        ✅ {{ successMessage }}
+                    </div>
+
+                    <div *ngIf="errorMessage" class="alert alert-error">
+                        ❌ {{ errorMessage }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </main>
 </div>
