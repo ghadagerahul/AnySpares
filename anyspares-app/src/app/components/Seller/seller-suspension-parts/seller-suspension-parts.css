@@ -1,0 +1,300 @@
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f6f9f8;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 16px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    /* blue link-like color */
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    /* space between arrow and text */
+    padding: 0;
+}
+
+
+.header-right {
+    display: flex;
+    /* enables flexbox */
+    justify-content: flex-end;
+    /* pushes content to the right */
+    align-items: center;
+    /* vertically centers items */
+    gap: 1rem;
+    /* spacing between child elements */
+    padding-right: 20px;
+    /* some right padding */
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+.separator {
+    margin: 0 8px;
+    color: #999;
+}
+
+
+/* SIDEBAR */
+.sidebar {
+    width: 235px;
+    background: white;
+    padding: 15px;
+    border-right: 1px solid #eee;
+}
+
+.brand {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.logo {
+    background: #13b87c;
+    color: white;
+    padding: 7px;
+    border-radius: 7px;
+    font-size: 11px;
+}
+
+nav a {
+    display: block;
+    padding: 8px 11px;
+    margin-bottom: 5px;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+nav a.active {
+    background: #13b87c;
+    color: white;
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 18px 22px;
+}
+
+/* HEADER */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.profile {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.avatar {
+    background: #13b87c;
+    color: white;
+    padding: 6px;
+    border-radius: 50%;
+    font-size: 10px;
+}
+
+/* PAGE HEAD */
+.page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0;
+}
+
+.page-head h3 {
+    font-size: 15px;
+}
+
+.page-head p {
+    font-size: 12px;
+    color: #666;
+}
+
+.add-btn {
+    background: #13b87c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* TOOLBAR */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    font-size: 12px;
+    width: 100%;
+}
+
+.filter-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+/* TABLE */
+.table-wrapper {
+    background: white;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    text-align: left;
+    color: #555;
+}
+
+.product-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.img-box {
+    width: 34px;
+    height: 34px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.center {
+    text-align: center;
+}
+
+/* STOCK */
+.stock-ok {
+    color: #059669;
+}
+
+.stock-low {
+    color: #d97706;
+}
+
+.stock-out {
+    color: #dc2626;
+}
+
+/* STATUS */
+.status {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+}
+
+.Active {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.OutOfStock {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.Draft {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* ACTIONS */
+.actions {
+    cursor: pointer;
+}
+
+/* FOOTER */
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .toolbar {
+        flex-direction: column;
+    }
+}

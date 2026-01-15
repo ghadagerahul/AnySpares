@@ -15,8 +15,8 @@ import com.anyspares.app.model.ProductDto;
 import com.anyspares.app.service.TwoWheelerProductService;
 
 @RestController
-@RequestMapping("/products")
-public class ProductController {
+@RequestMapping("/seller/products")
+public class SellerProductController {
 
 	Logger productLogger = LoggerFactory.getLogger(getClass());
 

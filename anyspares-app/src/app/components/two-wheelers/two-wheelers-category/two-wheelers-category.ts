@@ -63,6 +63,7 @@ export class TwoWheelersCategory {
   }
 
   goToProduct() {
+    console.log('Navigating to products');
 this.router.navigate(['/twowheelers-product']);
 }
 }
