@@ -40,14 +40,14 @@ export class SellerTwoWheelerCategories implements OnInit {
 
   constructor(private location: Location, private router: Router, private sellerCategoryService: SellerCategoryService) { }
 
-  // categories: Category[] = [
-  //   { name: 'Engine Parts', totalProducts: 42, icon: '⚙️', color: 'green' },
-  //   { name: 'Brakes', totalProducts: 28, icon: '🛑', color: 'red' },
-  //   { name: 'Electrical', totalProducts: 35, icon: '⚡', color: 'orange' },
-  //   { name: 'Suspension', totalProducts: 18, icon: '🌬️', color: 'purple' },
-  //   { name: 'Body Parts', totalProducts: 15, icon: '🚗', color: 'blue' },
-  //   { name: 'Hydraulic / Fluids', totalProducts: 7, icon: '💧', color: 'cyan' }
-  // ];
+  categories1: Category[] = [
+    { name: 'Engine Parts', totalProducts: 42, icon: '⚙️', color: 'green' },
+    { name: 'Brakes', totalProducts: 28, icon: '🛑', color: 'red' },
+    { name: 'Electrical', totalProducts: 35, icon: '⚡', color: 'orange' },
+    { name: 'Suspension', totalProducts: 18, icon: '🌬️', color: 'purple' },
+    { name: 'Body Parts', totalProducts: 15, icon: '🚗', color: 'blue' },
+    { name: 'Hydraulic / Fluids', totalProducts: 7, icon: '💧', color: 'cyan' }
+  ];
 
   summary = {
     total: 145,
@@ -64,7 +64,7 @@ export class SellerTwoWheelerCategories implements OnInit {
    */
   loadCategories(): void {
     this.sellerCategoryService.getCategories().subscribe((response) => {
-      console.log('Fetched categories response:', response);
+      console.log('Fetched categories response:', response.data);
 
       // Handle different response formats
       if (Array.isArray(response)) {
@@ -89,20 +89,36 @@ export class SellerTwoWheelerCategories implements OnInit {
     // later: route to product list page
     const categoryName = category.name;
 
-    //ex
-    if (categoryName != null && categoryName != undefined && categoryName == 'Engine Parts') {
-      this.router.navigate(['/seller-engine-parts']);
-    } else if (categoryName != null && categoryName != undefined && categoryName == 'Brakes') {
-      this.router.navigate(['/seller-brakes-parts']);
-    } else if (categoryName != null && categoryName != undefined && categoryName == 'Electrical') {
-      this.router.navigate(['/seller-electrical-parts']);
-    } else if (categoryName != null && categoryName != undefined && categoryName == 'Suspension') {
-      this.router.navigate(['/seller-suspension-parts']);
-    } else if (categoryName != null && categoryName != undefined && categoryName == 'Body Parts') {
-      this.router.navigate(['/seller-bodyshow-parts']);
-    } else if (categoryName != null && categoryName != undefined && categoryName == 'Hydraulic / Fluids') {
-      this.router.navigate(['/seller-hydrolic-parts']);
-    }
+    this.router.navigate(['/seller-category-parts'], {
+      queryParams: { category: categoryName }
+    });
+
+    //   //ex
+    //   if (categoryName != null && categoryName != undefined && categoryName == 'Engine Parts') {
+    //     this.router.navigate(['/seller-engine-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   } else if (categoryName != null && categoryName != undefined && categoryName == 'Brakes') {
+    //     this.router.navigate(['/seller-brakes-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   } else if (categoryName != null && categoryName != undefined && categoryName == 'Electrical') {
+    //     this.router.navigate(['/seller-electrical-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   } else if (categoryName != null && categoryName != undefined && categoryName == 'Suspension') {
+    //     this.router.navigate(['/seller-suspension-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   } else if (categoryName != null && categoryName != undefined && categoryName == 'Body Parts') {
+    //     this.router.navigate(['/seller-bodyshow-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   } else if (categoryName != null && categoryName != undefined && categoryName == 'Hydraulic / Fluids') {
+    //     this.router.navigate(['/seller-hydrolic-parts'], { 
+    //   queryParams: { category: categoryName } 
+    // });
+    //   }
 
   }
 
@@ -112,6 +128,7 @@ export class SellerTwoWheelerCategories implements OnInit {
    * Adds a new category by calling the service
    */
   onAddCategory(): void {
+    console.log("onAddCategory() called...!!!");
     if (!this.validateForm()) {
       return;
     }
@@ -128,6 +145,8 @@ export class SellerTwoWheelerCategories implements OnInit {
       image: this.newCategory.image,
       totalProducts: 0
     };
+
+    console.log('Submitting new category:', JSON.stringify(categoryData));
 
     this.sellerCategoryService.addCategory(categoryData).subscribe(
       (response) => {

@@ -1,7 +1,8 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
+import { AppConstants } from '../../../services/appconstants';
 
 @Component({
   selector: 'app-add-product',
@@ -9,14 +10,19 @@ import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-pr
   templateUrl: './add-product.html',
   styleUrl: './add-product.css'
 })
-export class AddProduct implements OnDestroy {
-  
+export class AddProduct implements OnInit, OnDestroy {
+
   sellerName = 'John Doe';
   storeName = 'Auto Parts Store';
 
-  brands = ['Honda', 'Yamaha', 'Bajaj', 'TVS'];
-  models = ['Activa', 'Shine', 'R15', 'Pulsar', 'Apache'];
-  categories = ['Engine Parts', 'Brakes', 'Electrical', 'Suspension'];
+  // brands = ['Honda', 'Yamaha', 'Bajaj', 'TVS'];
+  // models = ['Activa', 'Shine', 'R15', 'Pulsar', 'Apache'];
+  // categories = ['Engine Parts', 'Brakes', 'Electrical', 'Suspension'];
+
+  brands: string[] = [];
+  models: string[] = []
+  categories: string[] = [];
+
 
   productForm: FormGroup;
   submittedData: any = null;
@@ -35,12 +41,13 @@ export class AddProduct implements OnDestroy {
     return (price > mrp) ? { priceGtMrp: true } : null;
   };
 
-  constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService) {
+  constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService, private appConstants: AppConstants) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       brand: ['', Validators.required],
       model: ['', Validators.required],
       category: ['', Validators.required],
+      status: [''],
       type: ['OEM', Validators.required],
       mrp: [null, [Validators.required, Validators.min(1)]],
       price: [null, [Validators.required, Validators.min(1)]],
@@ -51,6 +58,19 @@ export class AddProduct implements OnDestroy {
       warranty: [false],
       images: [[]]
     }, { validators: this.priceLtOrEqMrpValidator });
+  }
+
+
+  ngOnInit(): void {
+    console.log('AddProduct component initialized');
+    this.appConstants.isLoaded().subscribe(isLoaded => {
+      if (isLoaded) {
+        this.brands = this.appConstants.brands;
+        this.models = this.appConstants.models;
+        this.categories = this.appConstants.categories;
+        console.log('Loaded options:', { brands: this.brands, models: this.models, categories: this.categories });
+      }
+    });
   }
 
   onFilesSelected(event: any) {
@@ -82,7 +102,9 @@ export class AddProduct implements OnDestroy {
       console.warn('Form invalid', this.productForm.errors);
       return;
     }
+    this.productForm.value.status = 'Active';
 
+    console.log('Publishing product', this.productForm.value);
     const fv = this.productForm.value;
     const formData = new FormData();
 

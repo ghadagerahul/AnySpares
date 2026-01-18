@@ -23,6 +23,7 @@ public class ProductEntity {
 	private String brand;
 	private String model;
 	private String category;
+	private String status;
 	private String type;
 
 	private Double mrp;

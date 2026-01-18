@@ -9,7 +9,7 @@ export class TwoWheelerDashboardService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/twowheelers/dashboard';
+    private appUrl = 'http://localhost:8181/twowheelers/seller/dashboard';
 
     /**
      * Loads dashboard stats data
