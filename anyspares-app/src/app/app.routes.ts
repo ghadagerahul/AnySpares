@@ -20,6 +20,7 @@ import { SellerElectricalParts } from './components/Seller/seller-electrical-par
 import { SellerSuspensionParts } from './components/Seller/seller-suspension-parts/seller-suspension-parts';
 import { SellerBodyParts } from './components/Seller/seller-body-parts/seller-body-parts';
 import { SellerHydraulicFluids } from './components/Seller/seller-hydraulic-fluids/seller-hydraulic-fluids';
+import { SellerCategoryParts } from './components/Seller/seller-category-parts/seller-category-parts';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -39,6 +40,7 @@ export const routes: Routes = [
   { path: 'seller-dashboard', component: SellerDashboard },
   { path: 'seller-twowheller-category', component: SellerTwoWheelerCategories },
   //  seller category routes
+  { path: 'seller-category-parts', component: SellerCategoryParts },
   { path: 'seller-engine-parts', component: SellerEngineParts },
   { path: 'seller-brakes-parts', component: SellerBrakes },
   { path: 'seller-electrical-parts', component: SellerElectricalParts },

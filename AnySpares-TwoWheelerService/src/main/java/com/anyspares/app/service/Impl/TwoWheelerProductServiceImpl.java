@@ -1,5 +1,6 @@
 package com.anyspares.app.service.Impl;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 			entity.setBrand(productDto.getBrand());
 			entity.setModel(productDto.getModel());
 			entity.setCategory(productDto.getCategory());
+			entity.setStatus(productDto.getStatus());
 			entity.setType(productDto.getType());
 
 			entity.setMrp(productDto.getMrp());
@@ -69,6 +71,24 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 		}
 		return false;
+	}
+
+	@Override
+	public List<ProductEntity> getProductsByCategoryType(String categoryType) {
+		// TODO Auto-generated method stub
+		List<ProductEntity> productCategoryList = null;
+		try {
+			productCategoryList = productRepository.getByCategory(categoryType);
+
+			if (null != productCategoryList)
+				return productCategoryList;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return productCategoryList;
+
 	}
 
 }

@@ -65,11 +65,18 @@
         <div class="toolbar">
             <div class="search-box">
                 🔍
-                <input type="text" placeholder="Search products..." />
+                <input type="text" placeholder="Search products..." [(ngModel)]="searchQuery"
+                    (input)="onSearchChange()" />
             </div>
 
-            <button class="filter-btn">
-                ⚙️ Filter
+            <select class="filter-btn" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+                <option *ngFor="let status of statusOptions" [value]="status">
+                    {{ status }}
+                </option>
+            </select>
+
+            <button class="reset-btn" (click)="resetFilters()">
+                🔄 Reset
             </button>
         </div>
 
@@ -88,7 +95,7 @@
                 </thead>
 
                 <tbody>
-                    <tr *ngFor="let product of products">
+                    <tr *ngFor="let product of paginatedProducts">
                         <td class="product-cell">
                             <div class="img-box">🖼️</div>
                             <span>{{ product.name }}</span>
@@ -124,11 +131,14 @@
 
         <!-- FOOTER -->
         <div class="table-footer">
-            <span>Showing 1 to 5 of {{ totalProducts }} products</span>
+            <span>Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ (currentPage * pageSize) > totalProducts ?
+                totalProducts : (currentPage * pageSize) }} of {{ totalProducts }} products</span>
 
+            <!-- Pagination Controls -->
             <div class="pagination">
-                <button disabled>Previous</button>
-                <button>Next</button>
+                <button (click)="previousPage()" [disabled]="currentPage === 1">← Previous</button>
+                <span>Page {{ currentPage }} of {{ totalPages }}</span>
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next →</button>
             </div>
         </div>
 

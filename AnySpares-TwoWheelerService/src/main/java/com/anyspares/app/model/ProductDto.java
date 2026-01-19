@@ -13,6 +13,7 @@ public class ProductDto {
 	private String brand;
 	private String model;
 	private String category;
+	private String status;
 	private String type;
 	private double mrp;
 	private double price;

@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 
 interface Product {
   name: string;
@@ -17,7 +17,7 @@ interface Product {
   templateUrl: './seller-engine-parts.html',
   styleUrl: './seller-engine-parts.css'
 })
-export class SellerEngineParts {
+export class SellerEngineParts implements OnInit{
 
 
   sellerName = 'John Doe';
@@ -33,7 +33,21 @@ export class SellerEngineParts {
     { name: 'Connecting Rod - TVS Apache', category: 'Engine Parts', stock: 0, price: 1899, status: 'Draft', statusLabel: 'Draft' }
   ];
 
-  constructor(private location: Location, private router:Router) { }
+  constructor(private location: Location, private router:Router, private route:ActivatedRoute) { }
+  
+
+  @Input() categoryName: string = '';
+
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['category']) {
+        this.categoryName = params['category'];
+      }
+    });
+
+    console.log('###Category:', this.categoryName);
+  }
 
   addProduct(): void {
     console.log('Add Product clicked');
