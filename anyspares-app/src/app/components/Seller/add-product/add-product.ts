@@ -45,7 +45,9 @@ export class AddProduct implements OnInit, OnDestroy {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       brand: ['', Validators.required],
+      brandOther: [''],
       model: ['', Validators.required],
+      modelOther: [''],
       category: ['', Validators.required],
       status: [''],
       type: ['OEM', Validators.required],
@@ -58,18 +60,61 @@ export class AddProduct implements OnInit, OnDestroy {
       warranty: [false],
       images: [[]]
     }, { validators: this.priceLtOrEqMrpValidator });
+
+    // Add validators for brandOther and modelOther when their respective selects have 'other' value
+    const brandControl = this.productForm.get('brand');
+    const brandOtherControl = this.productForm.get('brandOther');
+    if (brandControl && brandOtherControl) {
+      brandControl.valueChanges.subscribe(value => {
+        if (value === 'other') {
+          brandOtherControl.setValidators([Validators.required]);
+        } else {
+          brandOtherControl.clearValidators();
+          brandOtherControl.reset();
+        }
+        brandOtherControl.updateValueAndValidity();
+      });
+    }
+
+    const modelControl = this.productForm.get('model');
+    const modelOtherControl = this.productForm.get('modelOther');
+    if (modelControl && modelOtherControl) {
+      modelControl.valueChanges.subscribe(value => {
+        if (value === 'other') {
+          modelOtherControl.setValidators([Validators.required]);
+        } else {
+          modelOtherControl.clearValidators();
+          modelOtherControl.reset();
+        }
+        modelOtherControl.updateValueAndValidity();
+      });
+    }
   }
 
 
   ngOnInit(): void {
     console.log('AddProduct component initialized');
-    this.appConstants.isLoaded().subscribe(isLoaded => {
-      if (isLoaded) {
-        this.brands = this.appConstants.brands;
-        this.models = this.appConstants.models;
-        this.categories = this.appConstants.categories;
-        console.log('Loaded options:', { brands: this.brands, models: this.models, categories: this.categories });
-      }
+
+    // this.appConstants.isLoaded().subscribe(isLoaded => {
+    //   if (isLoaded) {
+    //     this.brands = this.appConstants.brands;
+    //     this.models = this.appConstants.models;
+    //     //this.categories = this.appConstants.categories;
+    //     this.sellerProductService.fetchFormLoadDataList().subscribe(res => {
+    //       console.log('Fetched categories from service:', res);
+    //       this.categories = res.data?.category || this.categories;
+    //       this.brands = res.data?.brands || this.brands;
+    //       this.models = res.data?.models || this.models;
+    //     });
+    //     console.log('Loaded options:', { brands: this.brands, models: this.models, categories: this.categories });
+    //   }
+    // });
+
+    this.sellerProductService.fetchFormLoadDataList().subscribe(res => {
+      console.log('Fetched categories from service:', res);
+      this.categories = res.data?.category || this.categories;
+      this.brands = res.data?.brands || this.brands;
+      this.models = res.data?.models || this.models;
     });
   }
 
@@ -102,14 +147,28 @@ export class AddProduct implements OnInit, OnDestroy {
       console.warn('Form invalid', this.productForm.errors);
       return;
     }
-    this.productForm.value.status = 'Active';
 
-    console.log('Publishing product', this.productForm.value);
-    const fv = this.productForm.value;
+    // Replace 'other' with actual values from the "Other" input fields
+    let formValue = this.productForm.value;
+    if (formValue.brand === 'other' && formValue.brandOther) {
+      formValue.brand = formValue.brandOther;
+    }
+    if (formValue.model === 'other' && formValue.modelOther) {
+      formValue.model = formValue.modelOther;
+    }
+
+    formValue.status = 'Active';
+
+    console.log('Publishing product', formValue);
+    const fv = formValue;
     const formData = new FormData();
 
     // append form fields
     Object.keys(fv).forEach(key => {
+      // Skip the 'Other' input fields as they've been merged into brand/model
+      if (key === 'brandOther' || key === 'modelOther') {
+        return;
+      }
       const val = fv[key];
       if (Array.isArray(val)) {
         val.forEach((v: any) => formData.append(key, typeof v === 'object' ? JSON.stringify(v) : v));
@@ -161,3 +220,7 @@ export class AddProduct implements OnInit, OnDestroy {
   }
 
 }
+function next(value: any): void {
+  throw new Error('Function not implemented.');
+}
+

@@ -1,7 +1,11 @@
 package com.anyspares.app.service.Impl;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -12,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.anyspares.app.entity.ProductEntity;
 import com.anyspares.app.model.ProductDto;
+import com.anyspares.app.repo.CategoryRepository;
 import com.anyspares.app.repo.ProductRepository;
 import com.anyspares.app.service.AwsS3Service;
 import com.anyspares.app.service.TwoWheelerProductService;
@@ -24,6 +29,9 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 	@Autowired
 	private AwsS3Service awsS3Service;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	Logger prodServiceLogger = LoggerFactory.getLogger(getClass());
 
@@ -89,6 +97,21 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 		return productCategoryList;
 
+	}
+
+	@Override
+	public Map<String, List<String>> getProductCategoriesList() {
+
+		Map<String, List<String>> formReloadDatamap = new HashMap<>();
+		formReloadDatamap.put("category", safeSortedList(categoryRepository.findDistinctCategories()));
+		formReloadDatamap.put("brands", safeSortedList(productRepository.findDistinctBrands()));
+		formReloadDatamap.put("models", safeSortedList(productRepository.findDistinctModels()));
+		return formReloadDatamap;
+	}
+
+	private List<String> safeSortedList(List<String> source) {
+		return Optional.ofNullable(source).orElse(Collections.emptyList()).stream().filter(Objects::nonNull).sorted()
+				.toList();
 	}
 
 }

@@ -32,4 +32,15 @@ export class TwoWheelerProductService {
         );
     }
 
+
+    fetchFormLoadDataList(): Observable<any> {
+        const url = this.appUrl + `/fetchFormLoadData`;
+        return this.http.get<any>(url).pipe(
+            catchError(error => {
+                console.log("Error fetching form load data:", error);
+                return of({ success: false, message: 'Failed to fetch form load data' });
+            })
+        );
+    }
+
 }

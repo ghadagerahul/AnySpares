@@ -71,10 +71,19 @@
                             <select formControlName="brand">
                                 <option value="">Select brand</option>
                                 <option *ngFor="let b of brands" [value]="b">{{ b }}</option>
+                                <option value="other">Other</option>
                             </select>
                             <div class="field-error"
                                 *ngIf="(f['brand'].touched || submitted) && f['brand'].errors?.['required']">Please
                                 select a brand.</div>
+                            
+                            <input *ngIf="f['brand'].value === 'other'" 
+                                formControlName="brandOther" 
+                                placeholder="Enter brand name"
+                                class="mt-2" />
+                            <div class="field-error"
+                                *ngIf="f['brand'].value === 'other' && (f['brandOther'].touched || submitted) && f['brandOther'].errors?.['required']">Please
+                                enter a brand name.</div>
                         </div>
 
                         <div>
@@ -82,10 +91,19 @@
                             <select formControlName="model">
                                 <option value="">Select model</option>
                                 <option *ngFor="let m of models" [value]="m">{{ m }}</option>
+                                <option value="other">Other</option>
                             </select>
                             <div class="field-error"
                                 *ngIf="(f['model'].touched || submitted) && f['model'].errors?.['required']">Please
                                 select a model.</div>
+                            
+                            <input *ngIf="f['model'].value === 'other'" 
+                                formControlName="modelOther" 
+                                placeholder="Enter model name"
+                                class="mt-2" />
+                            <div class="field-error"
+                                *ngIf="f['model'].value === 'other' && (f['modelOther'].touched || submitted) && f['modelOther'].errors?.['required']">Please
+                                enter a model name.</div>
                         </div>
                     </div>
 
