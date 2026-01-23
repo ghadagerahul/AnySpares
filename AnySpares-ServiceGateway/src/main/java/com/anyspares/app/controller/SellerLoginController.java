@@ -84,6 +84,7 @@ public class SellerLoginController {
 			if (sellerserPresent) {
 				response.put("success", true);
 				response.put("message", "Login successful");
+				response.put("user", appUserService.finduserByMobileNumber(mobileNo));
 				return ResponseEntity.ok(response);
 
 			}

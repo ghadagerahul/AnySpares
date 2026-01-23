@@ -118,4 +118,14 @@ public class AppUserServiceImpl implements AppUserService {
 		return false;
 	}
 
+	@Override
+	public SellerUserDetails finduserByMobileNumber(Long mobileno) {
+
+		List<SellerUserDetails> sellerUserDetails = sellerUserRepo.findByMobileNo(mobileno);
+		
+		return sellerUserDetails.stream().filter(Objects::nonNull).findFirst().get();
+	}
+	
+	
+
 }

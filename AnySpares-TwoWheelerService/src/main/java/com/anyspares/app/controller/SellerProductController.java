@@ -3,6 +3,7 @@ package com.anyspares.app.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,20 +12,32 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.anyspares.app.entity.ProductEntity;
 import com.anyspares.app.model.ProductDto;
+import com.anyspares.app.repo.ProductRepository;
 import com.anyspares.app.service.TwoWheelerProductService;
 
 @RestController
 @RequestMapping("/seller/products")
 public class SellerProductController {
 
+	private final ProductRepository productRepository;
+
 	Logger productLogger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private TwoWheelerProductService twoWheelerProductService;
+
+	SellerProductController(ProductRepository productRepository) {
+		this.productRepository = productRepository;
+	}
 
 	@PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> addNewProduct(@ModelAttribute ProductDto productDto) {
@@ -61,6 +74,35 @@ public class SellerProductController {
 		}
 
 		return ResponseEntity.ok(responsehMap);
+	}
+
+	@GetMapping("/productFromProductId/{productId}")
+	public ResponseEntity<HashMap<String, Object>> fetchProductFromProductId(@PathVariable String productId) {
+		ProductEntity productByProductId = twoWheelerProductService.getProductByProductId(productId);
+
+		HashMap<String, Object> respMap = new HashMap<>();
+		if (null != productByProductId) {
+			respMap.put("sucess", true);
+			respMap.put("message", "ProductEntity Fetched successfully");
+			respMap.put("data", productByProductId);
+		} else {
+			respMap.put("sucess", true);
+			respMap.put("message", "ProductEntity Fetch Failed");
+			respMap.put("data", Optional.empty().get());
+		}
+		return ResponseEntity.ok(respMap);
+	}
+
+	@PutMapping("/updateProduct/{productId}")
+	public ResponseEntity<HashMap<String, Object>> updateProductEntry(@ModelAttribute ProductDto dto,
+			@PathVariable String productId) {
+
+		boolean updateProductFlag = twoWheelerProductService.updateProduct(dto, productId);
+
+		HashMap<String, Object> hashMap = new HashMap<>();
+		hashMap.put("sucess", updateProductFlag);
+
+		return ResponseEntity.ok(hashMap);
 	}
 
 }

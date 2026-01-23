@@ -27,10 +27,16 @@
 .logo {
   background: #13b87c;
   color: white;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   font-weight: 600;
   font-size: 13px;
+}
+
+.img-small {
+  width: 50px;
+  height: auto;
+  border-radius: 10px;
 }
 
 .brand h4 {

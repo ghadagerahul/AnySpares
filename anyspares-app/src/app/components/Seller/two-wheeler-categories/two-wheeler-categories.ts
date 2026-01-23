@@ -19,8 +19,9 @@ interface Category {
 })
 export class SellerTwoWheelerCategories implements OnInit {
 
-  sellerName = 'John Doe';
-  storeName = 'Auto Parts Store';
+  sellerName = '';
+  storeName = '';
+  avtarName = '';
 
   categories: Category[] = [];
 
@@ -56,9 +57,21 @@ export class SellerTwoWheelerCategories implements OnInit {
   };
 
   ngOnInit(): void {
+
+    this.sellerName = sessionStorage.getItem('sellerName') || '';
+    this.storeName = sessionStorage.getItem('businesstName') || '';
+    this.avtarName = this.getAvatarName(this.sellerName);
+
     this.loadCategories();
   }
 
+  getAvatarName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+    }
+    return parts.length === 1 ? parts[0][0].toUpperCase() : '';
+  }
   /**
    * Loads categories from the service
    */

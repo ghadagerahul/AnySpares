@@ -45,14 +45,15 @@ invalidCred: boolean=false;
       next: (res: any) => {
 
         if (res.success) {
-
+          sessionStorage.setItem('sellerName', res.user.ownerName);
+           sessionStorage.setItem('businesstName', res.user.businesstName);
           this.router.navigate(['/seller-dashboard']);
 
           this.loginForm.reset();
 
-        }else if(!res.success && res.message === "Seller Login failed"){
+        } else if (!res.success && res.message === "Seller Login failed") {
 
-        this.invalidCred = true;
+          this.invalidCred = true;
 
         }
 

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TwoWheelerDashboardService } from '../../../services/Seller/twowheeler-dashboard.service';
 
 
@@ -33,8 +33,9 @@ interface Activity {
 })
 export class SellerDashboard {
 
-  sellerName = 'John Doe';
-  storeName = 'Auto Parts Store';
+  sellerName = '';
+  storeName = '';
+  avtarName = '';
 
   /* ---------- Dashboard Stats ---------- */
   stats: StatCard[] | undefined;
@@ -94,9 +95,21 @@ export class SellerDashboard {
   constructor(private router: Router, private dashboardService: TwoWheelerDashboardService) { }
 
   ngOnInit(): void {
+    this.sellerName = sessionStorage.getItem('sellerName') || '';
+    this.storeName = sessionStorage.getItem('businesstName') || '';
+    this.avtarName = this.getAvatarName(this.sellerName);
+
     this.loadStatData();
     this.loadInventoryData();
     this.loadRecentActivities();
+  }
+
+  getAvatarName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+    }
+    return parts.length === 1 ? parts[0][0].toUpperCase() : '';
   }
 
   loadStatData() {
@@ -131,8 +144,8 @@ export class SellerDashboard {
 
 
   /* ---------- Actions ---------- */
-  addProduct(vehicleType: string): void { 
-    console.log(`Add product clicked for ${vehicleType}`); 
+  addProduct(vehicleType: string): void {
+    console.log(`Add product clicked for ${vehicleType}`);
 
     // Navigate to add product page
     this.router.navigate(['/seller-twowheller-category'], { queryParams: { type: vehicleType } });

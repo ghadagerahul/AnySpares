@@ -7,6 +7,7 @@ import { SellerCategoryPartsService } from '../../../services/Seller/seller-cate
 
 
 interface Product {
+  product_id: any;
   name: string;
   category: string;
   stock: number;
@@ -24,8 +25,9 @@ interface Product {
 export class SellerCategoryParts implements OnInit {
 
 
-  sellerName = 'John Doe';
-  storeName = 'Auto Parts Store';
+  sellerName = '';
+  storeName = '';
+  avtarName = '';
 
   totalProducts = 0;
   products: Product[] = [];
@@ -58,6 +60,12 @@ export class SellerCategoryParts implements OnInit {
 
 
   ngOnInit(): void {
+
+    this.sellerName = sessionStorage.getItem('sellerName') || '';
+    this.storeName = sessionStorage.getItem('businesstName') || '';
+    this.avtarName = this.getAvatarName(this.sellerName);
+
+
     this.route.queryParams.subscribe(params => {
       if (params['category']) {
         this.categoryName = params['category'];
@@ -99,6 +107,15 @@ export class SellerCategoryParts implements OnInit {
     );
   }
 
+
+
+  getAvatarName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+    }
+    return parts.length === 1 ? parts[0][0].toUpperCase() : '';
+  }
   /**
    * Filters and searches products based on search query and selected status
    */
@@ -145,9 +162,9 @@ export class SellerCategoryParts implements OnInit {
     this.router.navigate(['/seller-addproduct']);
   }
 
-  goToEditProduct() {
-    this.router.navigate(['/seller-editproduct']);
-
+  goToEditProduct(productId: any): void {
+    console.log('Edit Product clicked for ID:', productId);
+    this.router.navigate(['/seller-editproduct'], { queryParams: { productId: productId } });
   }
   goBack() { this.location.back(); }
 

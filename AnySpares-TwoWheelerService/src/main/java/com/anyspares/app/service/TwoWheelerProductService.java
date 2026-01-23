@@ -14,4 +14,8 @@ public interface TwoWheelerProductService {
 
 	public Map<String, List<String>> getProductCategoriesList();
 
+	public boolean updateProduct(ProductDto dto, String productId);
+
+	public ProductEntity getProductByProductId(String productId);
+
 }

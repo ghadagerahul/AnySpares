@@ -8,12 +8,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.anyspares.app.controller.SellerProductController;
 import com.anyspares.app.entity.ProductEntity;
 import com.anyspares.app.model.ProductDto;
 import com.anyspares.app.repo.CategoryRepository;
@@ -112,6 +113,47 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 	private List<String> safeSortedList(List<String> source) {
 		return Optional.ofNullable(source).orElse(Collections.emptyList()).stream().filter(Objects::nonNull).sorted()
 				.toList();
+	}
+
+	@Override
+	public ProductEntity getProductByProductId(String productId) {
+
+		ProductEntity existing = productRepository.findById(Long.parseLong(productId)).get();
+
+		return existing;
+	}
+
+	@Override
+	public boolean updateProduct(ProductDto dto, String productId) {
+
+		return productRepository.findById(Long.parseLong(productId))
+				.filter(existing -> StringUtils.equalsIgnoreCase(existing.getCategory(), dto.getCategory()))
+				.map(existing -> {
+					existing.setName(dto.getName());
+					existing.setBrand(dto.getBrand());
+					existing.setCategory(dto.getCategory());
+					existing.setModel(dto.getModel());
+					existing.setType(dto.getType());
+					existing.setMrp(dto.getMrp());
+					existing.setPrice(dto.getPrice());
+					existing.setStock(dto.getStock());
+					existing.setMinQty(dto.getMinQty());
+					existing.setDescription(dto.getDescription());
+
+					// Simplify compatible models handling
+					if (dto.getCompatibleModels() != null && !dto.getCompatibleModels().isEmpty()) {
+						existing.setCompatibleModels(dto.getCompatibleModels().stream().filter(Objects::nonNull)
+								.collect(Collectors.joining("|")));
+					} else {
+						existing.setCompatibleModels("");
+					}
+
+					existing.setWarranty(dto.isWarranty());
+					existing.setStatus(dto.getStatus());
+
+					productRepository.save(existing);
+					return true;
+				}).orElse(false);
 	}
 
 }

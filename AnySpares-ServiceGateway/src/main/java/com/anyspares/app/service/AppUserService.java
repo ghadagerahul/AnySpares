@@ -48,4 +48,6 @@ public interface AppUserService {
 
 	public boolean isUSellerserPresent(Long mobileno, String pwd);
 
+	public SellerUserDetails finduserByMobileNumber(Long mobileno);
+
 }
