@@ -26,18 +26,18 @@
 
         <!-- HEADER -->
         <div class="top-header">
-            
-              <div class="breadcrumb"> <button class="back-btn" (click)="goBack()">← Back to Products</button> <span
+
+            <div class="breadcrumb"> <button class="back-btn" (click)="goBack()">← Back to Products</button> <span
                     class="separator" &nbsp;>› &nbsp;</span> <strong>Edit Product</strong> </div>
 
 
             <div class="header-right">
                 🔔
                 <div class="profile">
-                    <div class="avatar">{{ sellerName[0] }}</div>
+                    <div class="avatar">{{ avtarName }}</div>
                     <div>
                         <strong>{{ sellerName }}</strong>
-                        <small>{{ storeName }}</small>
+                        <small>&nbsp;🏪{{ storeName }}</small>
                     </div>
                 </div>
                 🌙
@@ -64,15 +64,25 @@
                         <div>
                             <label>Vehicle Brand *</label>
                             <select formControlName="brand">
+                                <option value="">Select brand</option>
                                 <option *ngFor="let b of brands" [value]="b">{{ b }}</option>
+                                <option value="other">Other</option>
                             </select>
+
+                            <input *ngIf="f['brand'].value === 'other'" formControlName="brandOther"
+                                placeholder="Enter brand name" class="mt-2" />
                         </div>
 
                         <div>
                             <label>Model *</label>
                             <select formControlName="model">
+                                <option value="">Select model</option>
                                 <option *ngFor="let m of models" [value]="m">{{ m }}</option>
+                                <option value="other">Other</option>
                             </select>
+
+                            <input *ngIf="f['model'].value === 'other'" formControlName="modelOther"
+                                placeholder="Enter model name" class="mt-2" />
                         </div>
                     </div>
 

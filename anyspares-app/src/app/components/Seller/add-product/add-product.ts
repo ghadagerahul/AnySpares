@@ -12,8 +12,9 @@ import { AppConstants } from '../../../services/appconstants';
 })
 export class AddProduct implements OnInit, OnDestroy {
 
-  sellerName = 'John Doe';
-  storeName = 'Auto Parts Store';
+  sellerName = '';
+  storeName = '';
+  avtarName = '';
 
   // brands = ['Honda', 'Yamaha', 'Bajaj', 'TVS'];
   // models = ['Activa', 'Shine', 'R15', 'Pulsar', 'Apache'];
@@ -45,7 +46,9 @@ export class AddProduct implements OnInit, OnDestroy {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       brand: ['', Validators.required],
+      brandOther: [''],
       model: ['', Validators.required],
+      modelOther: [''],
       category: ['', Validators.required],
       status: [''],
       type: ['OEM', Validators.required],
@@ -58,21 +61,77 @@ export class AddProduct implements OnInit, OnDestroy {
       warranty: [false],
       images: [[]]
     }, { validators: this.priceLtOrEqMrpValidator });
+
+    // Add validators for brandOther and modelOther when their respective selects have 'other' value
+    const brandControl = this.productForm.get('brand');
+    const brandOtherControl = this.productForm.get('brandOther');
+    if (brandControl && brandOtherControl) {
+      brandControl.valueChanges.subscribe(value => {
+        if (value === 'other') {
+          brandOtherControl.setValidators([Validators.required]);
+        } else {
+          brandOtherControl.clearValidators();
+          brandOtherControl.reset();
+        }
+        brandOtherControl.updateValueAndValidity();
+      });
+    }
+
+    const modelControl = this.productForm.get('model');
+    const modelOtherControl = this.productForm.get('modelOther');
+    if (modelControl && modelOtherControl) {
+      modelControl.valueChanges.subscribe(value => {
+        if (value === 'other') {
+          modelOtherControl.setValidators([Validators.required]);
+        } else {
+          modelOtherControl.clearValidators();
+          modelOtherControl.reset();
+        }
+        modelOtherControl.updateValueAndValidity();
+      });
+    }
   }
 
 
   ngOnInit(): void {
     console.log('AddProduct component initialized');
-    this.appConstants.isLoaded().subscribe(isLoaded => {
-      if (isLoaded) {
-        this.brands = this.appConstants.brands;
-        this.models = this.appConstants.models;
-        this.categories = this.appConstants.categories;
-        console.log('Loaded options:', { brands: this.brands, models: this.models, categories: this.categories });
-      }
+
+
+    this.sellerName = sessionStorage.getItem('sellerName') || '';
+    this.storeName = sessionStorage.getItem('businesstName') || '';
+    this.avtarName = this.getAvatarName(this.sellerName);
+
+    // this.appConstants.isLoaded().subscribe(isLoaded => {
+    //   if (isLoaded) {
+    //     this.brands = this.appConstants.brands;
+    //     this.models = this.appConstants.models;
+    //     //this.categories = this.appConstants.categories;
+    //     this.sellerProductService.fetchFormLoadDataList().subscribe(res => {
+    //       console.log('Fetched categories from service:', res);
+    //       this.categories = res.data?.category || this.categories;
+    //       this.brands = res.data?.brands || this.brands;
+    //       this.models = res.data?.models || this.models;
+    //     });
+    //     console.log('Loaded options:', { brands: this.brands, models: this.models, categories: this.categories });
+    //   }
+    // });
+
+    this.sellerProductService.fetchFormLoadDataList().subscribe(res => {
+      console.log('Fetched categories from service:', res);
+      this.categories = res.data?.category || this.categories;
+      this.brands = res.data?.brands || this.brands;
+      this.models = res.data?.models || this.models;
     });
   }
 
+
+  getAvatarName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+    }
+    return parts.length === 1 ? parts[0][0].toUpperCase() : '';
+  }
   onFilesSelected(event: any) {
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
@@ -102,14 +161,28 @@ export class AddProduct implements OnInit, OnDestroy {
       console.warn('Form invalid', this.productForm.errors);
       return;
     }
-    this.productForm.value.status = 'Active';
 
-    console.log('Publishing product', this.productForm.value);
-    const fv = this.productForm.value;
+    // Replace 'other' with actual values from the "Other" input fields
+    let formValue = this.productForm.value;
+    if (formValue.brand === 'other' && formValue.brandOther) {
+      formValue.brand = formValue.brandOther;
+    }
+    if (formValue.model === 'other' && formValue.modelOther) {
+      formValue.model = formValue.modelOther;
+    }
+
+    formValue.status = 'Active';
+
+    console.log('Publishing product', formValue);
+    const fv = formValue;
     const formData = new FormData();
 
     // append form fields
     Object.keys(fv).forEach(key => {
+      // Skip the 'Other' input fields as they've been merged into brand/model
+      if (key === 'brandOther' || key === 'modelOther') {
+        return;
+      }
       const val = fv[key];
       if (Array.isArray(val)) {
         val.forEach((v: any) => formData.append(key, typeof v === 'object' ? JSON.stringify(v) : v));
@@ -130,20 +203,71 @@ export class AddProduct implements OnInit, OnDestroy {
       next: (res) => {
         console.log('Product added', res);
         this.submittedData = res;
+        alert('Product published successfully!');
+        this.productForm.reset();
+        this.submitted = false;
+        this.goBack();
       },
       error: (err) => {
         console.error('Add product failed', err);
+        alert('Failed to publish product. Please try again.');
+        this.submitted = false;
       }
     });
-
-    this.productForm.reset();
-    this.submitted = false;
-
-
   }
 
   saveDraft() {
-    console.log('Save Draft', this.productForm.value);
+    // No strict validation for drafts - allow partial forms
+    let formValue = this.productForm.value;
+
+    // Replace 'other' with actual values from the "Other" input fields
+    if (formValue.brand === 'other' && formValue.brandOther) {
+      formValue.brand = formValue.brandOther;
+    }
+    if (formValue.model === 'other' && formValue.modelOther) {
+      formValue.model = formValue.modelOther;
+    }
+
+    formValue.status = 'Draft';
+
+    console.log('Saving draft product', formValue);
+    const fv = formValue;
+    const formData = new FormData();
+
+    // append form fields
+    Object.keys(fv).forEach(key => {
+      // Skip the 'Other' input fields as they've been merged into brand/model
+      if (key === 'brandOther' || key === 'modelOther') {
+        return;
+      }
+      const val = fv[key];
+      if (Array.isArray(val)) {
+        val.forEach((v: any) => formData.append(key, typeof v === 'object' ? JSON.stringify(v) : v));
+      } else if (val === null || val === undefined) {
+        // skip null/undefined
+      } else if (typeof val === 'object') {
+        formData.append(key, JSON.stringify(val));
+      } else {
+        formData.append(key, String(val));
+      }
+    });
+
+    // append selected image files
+    this.selectedFiles.forEach(f => formData.append('images', f, f.name));
+
+    // send to backend - same endpoint as publish but with Draft status
+    this.sellerProductService.addProduct(formData).subscribe({
+      next: (res) => {
+        console.log('Product draft saved', res);
+        this.submittedData = res;
+        alert('Product saved as Draft successfully!');
+        this.goBack();
+      },
+      error: (err) => {
+        console.error('Draft save failed', err);
+        alert('Failed to save draft. Please try again.');
+      }
+    });
   }
 
   cancel() {
@@ -161,3 +285,8 @@ export class AddProduct implements OnInit, OnDestroy {
   }
 
 }
+
+function next(value: any): void {
+  throw new Error('Function not implemented.');
+}
+

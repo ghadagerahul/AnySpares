@@ -20,8 +20,9 @@ interface Product {
 export class SellerEngineParts implements OnInit{
 
 
-  sellerName = 'John Doe';
-  storeName = 'Auto Parts Store';
+  sellerName = '';
+  storeName = '';
+  avtarName = '';
 
   totalProducts = 42;
 
@@ -40,6 +41,11 @@ export class SellerEngineParts implements OnInit{
 
 
   ngOnInit(): void {
+    
+     this.sellerName = sessionStorage.getItem('sellerName') || '';
+    this.storeName = sessionStorage.getItem('businesstName') || '';
+    this.avtarName = this.getAvatarName(this.sellerName);
+
     this.route.queryParams.subscribe(params => {
       if (params['category']) {
         this.categoryName = params['category'];
@@ -47,6 +53,14 @@ export class SellerEngineParts implements OnInit{
     });
 
     console.log('###Category:', this.categoryName);
+  }
+
+   getAvatarName(fullName: string): string {
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
+    }
+    return parts.length === 1 ? parts[0][0].toUpperCase() : '';
   }
 
   addProduct(): void {
