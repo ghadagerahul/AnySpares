@@ -39,47 +39,64 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 	@Override
 	public boolean addProduct(ProductDto productDto) {
 		prodServiceLogger.info("Called TwoWheelerProductServiceImpl-addProduct");
-		ProductEntity save = null;
-		if (null != productDto) {
 
-			ProductEntity entity = new ProductEntity();
-
-			entity.setName(productDto.getName());
-			entity.setBrand(productDto.getBrand());
-			entity.setModel(productDto.getModel());
-			entity.setCategory(productDto.getCategory());
-			entity.setStatus(productDto.getStatus());
-			entity.setType(productDto.getType());
-
-			entity.setMrp(productDto.getMrp());
-			entity.setPrice(productDto.getPrice());
-
-			entity.setStock(productDto.getStock());
-			entity.setMinQty(productDto.getMinQty());
-
-			entity.setDescription(productDto.getDescription());
-
-			String compatibleModelString = "";
-			if (null != productDto.getCompatibleModels() && productDto.getCompatibleModels().size() > 0) {
-				compatibleModelString = productDto.getCompatibleModels().stream().filter(Objects::nonNull)
-						.collect(Collectors.joining("|"));
-			}
-			entity.setCompatibleModels(compatibleModelString);
-			entity.setWarranty(productDto.isWarranty());
-
-			// S3 / uploaded image URL
-			MultipartFile imageFile = productDto.getImages();
-			if (null != imageFile) {
-				String uploadedFileName = awsS3Service.uploadFile(imageFile);
-				entity.setProductimage(uploadedFileName);
-			}
-			save = productRepository.save(entity);
-
-			if (null != save)
-				return true;
-
+		if (productDto == null) {
+			return false;
 		}
-		return false;
+
+		// Build compatible models string
+		String compatibleModelString = (productDto.getCompatibleModels() == null) ? ""
+				: productDto.getCompatibleModels().stream().filter(Objects::nonNull).collect(Collectors.joining("|"));
+
+		// Upload image if present
+		String uploadedFileName = null;
+		MultipartFile imageFile = productDto.getImages();
+		if (imageFile != null) {
+			uploadedFileName = awsS3Service.uploadFile(imageFile);
+		}
+
+		// Check for existing product
+		Optional<ProductEntity> existingOpt = productRepository.findByNameAndBrandAndModelAndMrp(productDto.getName(),
+				productDto.getBrand(), productDto.getModel(), productDto.getMrp());
+
+		ProductEntity entity = existingOpt.orElse(new ProductEntity());
+
+		// Map fields common for both new and update
+		entity.setName(productDto.getName());
+		entity.setBrand(productDto.getBrand());
+		entity.setModel(productDto.getModel());
+		entity.setCategory(productDto.getCategory());
+		entity.setStatus(productDto.getStatus());
+		entity.setType(productDto.getType());
+		entity.setMrp(productDto.getMrp());
+		entity.setPrice(productDto.getPrice());
+
+		entity.setStock((entity.getStock() != null ? entity.getStock() : 0) + productDto.getStock());
+		entity.setMinQty(productDto.getMinQty());
+		entity.setDescription(productDto.getDescription());
+		entity.setCompatibleModels(compatibleModelString);
+		entity.setWarranty(productDto.isWarranty());
+
+		if (uploadedFileName != null) {
+			entity.setProductimage(uploadedFileName);
+		}
+
+		ProductEntity saved = productRepository.save(entity);
+
+		if (StringUtils.isNotBlank(saved.getCategory())) {
+			updateTotalProductsToCategoryDetails(saved);
+		}
+
+		return true;
+	}
+
+	private void updateTotalProductsToCategoryDetails(ProductEntity save) {
+		String category = save.getCategory().trim();
+		try {
+			categoryRepository.updateTotalProducts(category);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -126,34 +143,36 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 	@Override
 	public boolean updateProduct(ProductDto dto, String productId) {
 
-		return productRepository.findById(Long.parseLong(productId))
-				.filter(existing -> StringUtils.equalsIgnoreCase(existing.getCategory(), dto.getCategory()))
-				.map(existing -> {
-					existing.setName(dto.getName());
-					existing.setBrand(dto.getBrand());
-					existing.setCategory(dto.getCategory());
-					existing.setModel(dto.getModel());
-					existing.setType(dto.getType());
-					existing.setMrp(dto.getMrp());
-					existing.setPrice(dto.getPrice());
-					existing.setStock(dto.getStock());
-					existing.setMinQty(dto.getMinQty());
-					existing.setDescription(dto.getDescription());
+		prodServiceLogger.info("TwoWheelerProductServiceImpl-updateProduct:productId: " + productId);
 
-					// Simplify compatible models handling
-					if (dto.getCompatibleModels() != null && !dto.getCompatibleModels().isEmpty()) {
-						existing.setCompatibleModels(dto.getCompatibleModels().stream().filter(Objects::nonNull)
-								.collect(Collectors.joining("|")));
-					} else {
-						existing.setCompatibleModels("");
-					}
+		return productRepository.findById(Long.parseLong(productId)).map(existing -> {
 
-					existing.setWarranty(dto.isWarranty());
-					existing.setStatus(dto.getStatus());
+			existing.setName(dto.getName());
+			existing.setBrand(dto.getBrand());
+			existing.setCategory(dto.getCategory());
+			existing.setModel(dto.getModel());
+			existing.setType(dto.getType());
+			existing.setMrp(dto.getMrp());
+			existing.setPrice(dto.getPrice());
+			Integer updatedStock = dto.getStock() + existing.getStock();
+			existing.setStock(updatedStock);
+			existing.setMinQty(dto.getMinQty());
+			existing.setDescription(dto.getDescription());
+			existing.setWarranty(dto.isWarranty());
+			existing.setStatus(dto.getStatus());
 
-					productRepository.save(existing);
-					return true;
-				}).orElse(false);
+			// Compatible models simplified
+			String compatibleModels = (dto.getCompatibleModels() == null || dto.getCompatibleModels().isEmpty()) ? ""
+					: dto.getCompatibleModels().stream().filter(Objects::nonNull).collect(Collectors.joining("|"));
+			existing.setCompatibleModels(compatibleModels);
+
+			ProductEntity saved = productRepository.save(existing);
+
+			if (StringUtils.isNotBlank(saved.getCategory())) {
+				updateTotalProductsToCategoryDetails(saved);
+			}
+			return true;
+		}).orElse(false);
 	}
 
 }

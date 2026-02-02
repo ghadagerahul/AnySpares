@@ -7,16 +7,29 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anyspares.app.constants.AppConstants;
+import com.anyspares.app.controller.Appcontroller;
 import com.anyspares.app.entity.CategoryEntity;
 import com.anyspares.app.model.CategoryDto;
+import com.anyspares.app.model.ProductSummaryDto;
 import com.anyspares.app.repo.CategoryRepository;
+import com.anyspares.app.repo.ProductRepository;
 import com.anyspares.app.service.CategoryService;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
+	private final Appcontroller appcontroller;
+
+	private final ProductRepository productRepository;
+
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	CategoryServiceImpl(ProductRepository productRepository, Appcontroller appcontroller) {
+		this.productRepository = productRepository;
+		this.appcontroller = appcontroller;
+	}
 
 	@Override
 	public boolean addCategory(CategoryDto categoryDto) {
@@ -109,6 +122,22 @@ public class CategoryServiceImpl implements CategoryService {
 
 		categoryRepository.deleteById(categoryId);
 		return true;
+	}
+
+	@Override
+	public ProductSummaryDto getProductSummary() {
+
+		ProductSummaryDto dto = new ProductSummaryDto();
+
+		Integer total = productRepository.getProductSummary();
+		Integer active = productRepository.getProductSummaryByStatus(AppConstants.STATUS_ACTIVE);
+		Integer outOfStock = productRepository.getProductSummaryByStatus(AppConstants.STATUS_OUTOFSTOCK);
+
+		dto.setTotal(total != null ? total : 0);
+		dto.setActive(active != null ? active : 0);
+		dto.setOutOfStock(outOfStock != null ? outOfStock : 0);
+
+		return dto;
 	}
 
 }

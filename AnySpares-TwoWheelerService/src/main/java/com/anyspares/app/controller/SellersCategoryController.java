@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyspares.app.entity.CategoryEntity;
 import com.anyspares.app.model.CategoryDto;
+import com.anyspares.app.model.ProductSummaryDto;
 import com.anyspares.app.service.CategoryService;
 
 @RestController
@@ -50,6 +51,33 @@ public class SellersCategoryController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
+	
+	
+
+	@GetMapping("/getSummary")
+	public ResponseEntity<Map<String, Object>> getProductSummary() {
+
+		Map<String, Object> response = new HashMap<>();
+
+		try {
+			ProductSummaryDto summary = categoryService.getProductSummary();
+
+			response.put("success", true);
+			response.put("message", "Categories fetched successfully");
+			response.put("data", summary);
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "Error fetching categories");
+			response.put("data", List.of());
+
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
+	
+	
 
 	/**
 	 * Add new category

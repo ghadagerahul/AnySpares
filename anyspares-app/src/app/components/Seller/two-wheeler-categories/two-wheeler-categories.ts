@@ -51,9 +51,9 @@ export class SellerTwoWheelerCategories implements OnInit {
   ];
 
   summary = {
-    total: 145,
-    active: 128,
-    outOfStock: 17
+    total: 0,
+    active: 0,
+    outOfStock: 0
   };
 
   ngOnInit(): void {
@@ -63,6 +63,7 @@ export class SellerTwoWheelerCategories implements OnInit {
     this.avtarName = this.getAvatarName(this.sellerName);
 
     this.loadCategories();
+    this.loadSummary();
   }
 
   getAvatarName(fullName: string): string {
@@ -97,6 +98,16 @@ export class SellerTwoWheelerCategories implements OnInit {
       this.categories = [];
     });
   }
+
+  loadSummary(): void {
+    this.sellerCategoryService.getProductSummary().subscribe((response) => {
+      if (response.success) {
+        console.log('Fetched summary response:', response);
+        this.summary = response.data;
+      }
+    });
+  }
+
   viewProducts(category: Category): void {
     console.log('View products for:', category.name);
     // later: route to product list page
@@ -156,7 +167,7 @@ export class SellerTwoWheelerCategories implements OnInit {
       icon: this.newCategory.icon,
       color: this.newCategory.color,
       image: this.newCategory.image,
-      totalProducts: 0
+      totalProducts: this.newCategory.totalProducts
     };
 
     console.log('Submitting new category:', JSON.stringify(categoryData));

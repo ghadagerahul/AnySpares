@@ -27,7 +27,7 @@ interface Activity {
 
 @Component({
   selector: 'app-seller-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './seller-dashboard.html',
   styleUrl: './seller-dashboard.css'
 })

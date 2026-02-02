@@ -31,6 +31,26 @@ export class SellerCategoryService {
         );
     }
 
+     /**
+     * Fetches all product categories from the backend.
+     * 
+     * @returns Observable<any> - Returns an array of categories from the backend
+     */
+    getProductSummary(): Observable<any> {
+        const url = this.appUrl + '/getSummary';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        return this.http.get<any>(url, { headers }).pipe(
+            tap(response => {
+                console.log("Summary fetched successfully:", response);
+            }),
+            catchError(error => {
+                console.error("Error fetching categories:", error);
+                return of({ success: false, message: 'Failed to fetch categories', data: [] });
+            })
+        );
+    }
+
     /**
      * Fetches a single category by ID from the backend.
      * 

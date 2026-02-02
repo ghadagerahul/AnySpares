@@ -1,9 +1,11 @@
 package com.anyspares.app.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.anyspares.app.entity.ProductEntity;
@@ -18,5 +20,13 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
 	@Query(value = "SELECT DISTINCT model FROM spare.hm_twowheeler_products WHERE model IS NOT NULL", nativeQuery = true)
 	List<String> findDistinctModels();
+
+	@Query(value = "SELECT COUNT(*) FROM  spare.hm_twowheeler_products", nativeQuery = true)
+	Integer getProductSummary();
+
+	@Query(value = "SELECT COUNT(*) FROM  spare.hm_twowheeler_products where status = :prodStatus", nativeQuery = true)
+	Integer getProductSummaryByStatus(@Param("prodStatus") String prodStatus);
+
+	Optional<ProductEntity> findByNameAndBrandAndModelAndMrp(String name, String brand, String model, double mrp);
 
 }
