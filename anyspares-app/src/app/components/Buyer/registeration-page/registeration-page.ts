@@ -12,8 +12,8 @@ import {
   ValidatorFn
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AppService } from '../../services/app.service';
 import { Modal } from 'bootstrap';
+import { AppService } from '../../../services/app.service';
 declare var bootstrap: any;
 @Component({
   selector: 'app-registeration-page',

@@ -1,13 +1,4 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './components/login-page/login-page';
-import { RegisterationPage } from './components/registeration-page/registeration-page';
-import { Dashboard } from './components/dashboard/dashboard';
-import { TwowheelersDashboard } from './components/two-wheelers/twowheelers-dashboard/twowheelers-dashboard';
-import { ForgotPasswordComponent } from './components/forgot-password.component/forgot-password.component';
-import { TwoWheelersModels } from './components/two-wheelers/two-wheelers-models/two-wheelers-models';
-import { TwoWheelersCategory } from './components/two-wheelers/two-wheelers-category/two-wheelers-category';
-import { TwoWheelersProduct } from './components/two-wheelers/two-wheelers-product/two-wheelers-product';
-import { TwoWheelerProductDetails } from './components/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
 import { SellerLoginComponent } from './components/Seller/seller-login/seller-login';
 import { SellerRegisterComponent } from './components/Seller/seller-register/seller-register';
 import { SellerDashboard } from './components/Seller/seller-dashboard/seller-dashboard';
@@ -21,6 +12,16 @@ import { SellerSuspensionParts } from './components/Seller/seller-suspension-par
 import { SellerBodyParts } from './components/Seller/seller-body-parts/seller-body-parts';
 import { SellerHydraulicFluids } from './components/Seller/seller-hydraulic-fluids/seller-hydraulic-fluids';
 import { SellerCategoryParts } from './components/Seller/seller-category-parts/seller-category-parts';
+import { LoginPage } from './components/Buyer/login-page/login-page';
+import { RegisterationPage } from './components/Buyer/registeration-page/registeration-page';
+import { Dashboard } from './components/Buyer/dashboard/dashboard';
+import { TwowheelersDashboard } from './components/Buyer/two-wheelers/twowheelers-dashboard/twowheelers-dashboard';
+import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
+import { TwoWheelersModels } from './components/Buyer/two-wheelers/two-wheelers-models/two-wheelers-models';
+import { TwoWheelersCategory } from './components/Buyer/two-wheelers/two-wheelers-category/two-wheelers-category';
+import { TwoWheelersProduct } from './components/Buyer/two-wheelers/two-wheelers-product/two-wheelers-product';
+import { TwoWheelerProductDetails } from './components/Buyer/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

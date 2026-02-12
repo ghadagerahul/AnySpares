@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ServiceGateway
+    name: SERVICEGATEWAY
 
   profiles:
     active: local
@@ -44,10 +44,10 @@ spring:
           filters:
             - StripPrefix=1
 
-        - id: TWOWHEELERSERVICE
-          uri: lb://TWOWHEELERSERVICE
+        - id: SELLERSERVICE
+          uri: lb://SELLERSERVICE
           predicates:
-            - Path=/twowheelers/**
+            - Path=/sellers/**
           filters:
             - StripPrefix=1
 

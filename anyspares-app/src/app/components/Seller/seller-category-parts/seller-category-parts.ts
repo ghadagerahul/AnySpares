@@ -27,7 +27,7 @@ export class SellerCategoryParts implements OnInit {
 
   sellerName = '';
   storeName = '';
-  avtarName = '';
+  avtarName = 'kk kk';
 
   totalProducts = 0;
   products: Product[] = [];

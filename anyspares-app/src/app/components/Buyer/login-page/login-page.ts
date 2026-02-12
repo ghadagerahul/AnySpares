@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AppService } from '../../services/app.service';
+import { AppService } from '../../../services/app.service';
 
 
 interface LoginRequest {

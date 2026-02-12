@@ -9,7 +9,7 @@ export class SellerCategoryService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/twowheelers/seller/categories';
+    private appUrl = 'http://localhost:8181/sellers/seller/categories';
 
     /**
      * Fetches all product categories from the backend.

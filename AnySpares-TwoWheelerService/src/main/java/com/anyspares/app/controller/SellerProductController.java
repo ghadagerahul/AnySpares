@@ -28,16 +28,11 @@ import com.anyspares.app.service.TwoWheelerProductService;
 @RequestMapping("/seller/products")
 public class SellerProductController {
 
-	private final ProductRepository productRepository;
-
 	Logger productLogger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private TwoWheelerProductService twoWheelerProductService;
 
-	SellerProductController(ProductRepository productRepository) {
-		this.productRepository = productRepository;
-	}
 
 	@PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> addNewProduct(@ModelAttribute ProductDto productDto) {

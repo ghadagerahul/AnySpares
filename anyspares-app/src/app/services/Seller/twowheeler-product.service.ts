@@ -10,7 +10,7 @@ export class TwoWheelerProductService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/twowheelers/seller/products';
+    private appUrl = 'http://localhost:8181/sellers/seller/products';
 
 
 

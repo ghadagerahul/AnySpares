@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from "./components/header/header";
 import { AppConstants } from './services/appconstants';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
