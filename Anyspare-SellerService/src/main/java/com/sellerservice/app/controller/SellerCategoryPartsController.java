@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sellerservice.app.entity.ProductEntity;
 import com.sellerservice.app.service.TwoWheelerProductService;
 
-
 @RestController
 @RequestMapping("/sellercategoryparts")
 public class SellerCategoryPartsController {
@@ -30,11 +29,11 @@ public class SellerCategoryPartsController {
 
 	@GetMapping("/categories/{categoryType}")
 	public ResponseEntity<HashMap<String, Object>> getPartsUnderCategories(@PathVariable String categoryType) {
-	
+
 		logger.info("Inside SellerCategoryPartsController-getPartsUnderCategories()");
 		HashMap<String, Object> resonsehMap = null;
 		List<ProductEntity> productsByCategoryType = null;
-		
+
 		try {
 			productsByCategoryType = productService.getProductsByCategoryType(categoryType);
 

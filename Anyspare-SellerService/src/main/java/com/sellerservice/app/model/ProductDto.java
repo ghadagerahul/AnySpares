@@ -22,6 +22,6 @@ public class ProductDto {
 	private String description;
 	private List<String> compatibleModels;
 	private boolean warranty;
-	private MultipartFile images;
+	private List<MultipartFile> images;
 
 }

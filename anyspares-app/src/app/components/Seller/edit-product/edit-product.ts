@@ -1,7 +1,9 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-product',
@@ -9,7 +11,9 @@ import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-pr
   templateUrl: './edit-product.html',
   styleUrl: './edit-product.css'
 })
-export class EditProduct implements OnInit {
+export class EditProduct implements OnInit, OnDestroy {
+
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   sellerName = '';
   storeName = '';
@@ -21,247 +25,379 @@ export class EditProduct implements OnInit {
 
   productForm!: FormGroup;
   submitted = false;
+  isLoading = false;
   productId: any = null;
   selectedFiles: File[] = [];
   filePreviewUrls: string[] = [];
 
+  private destroy$ = new Subject<void>();
+
   // convenience getter for template access
   get f() { return this.productForm.controls; }
 
- 
-
-  constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService) { }
+  constructor(
+    private fb: FormBuilder,
+    private location: Location,
+    private sellerProductService: TwoWheelerProductService
+  ) { }
 
   ngOnInit(): void {
+    this.initializeSessionData();
+    this.initializeProductId();
+    this.initializeForm();
+    this.setupDynamicValidators();
+    this.loadFormData();
+    this.loadProductData();
+  }
 
-     this.sellerName = sessionStorage.getItem('sellerName') || '';
+  private initializeSessionData(): void {
+    this.sellerName = sessionStorage.getItem('sellerName') || '';
     this.storeName = sessionStorage.getItem('businesstName') || '';
     this.avtarName = this.getAvatarName(this.sellerName);
+  }
 
-    // Get productId from query params
+  private initializeProductId(): void {
     const urlParams = new URLSearchParams(window.location.search);
     this.productId = urlParams.get('productId');
-    console.log('Editing product with ID:', this.productId);
+    if (!this.productId) {
+      console.error('No product ID provided');
+      this.goBack();
+    }
+  }
 
-    this.productForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      brand: ['', Validators.required],
-      brandOther: [''],
-      model: ['', Validators.required],
-      modelOther: [''],
-      category: ['', Validators.required],
-      type: ['', Validators.required],
-      mrp: [0, [Validators.required, Validators.min(1)]],
-      price: [0, [Validators.required, Validators.min(1)]],
-      stock: [0, [Validators.required, Validators.min(0)]],
-      minQty: [0, [Validators.required, Validators.min(1)]],
-      description: ['', Validators.required],
-      compatibleModels: [['']],
-      warranty: [false],
-      status: [''],
-      images: [[]]
-    }, { validators: this.priceLtOrEqMrpValidator });
+  private initializeForm(): void {
+    this.productForm = this.fb.group(
+      {
+        name: ['', [Validators.required, Validators.minLength(3)]],
+        brand: ['', Validators.required],
+        brandOther: [''],
+        model: ['', Validators.required],
+        modelOther: [''],
+        category: ['', Validators.required],
+        type: ['', Validators.required],
+        mrp: ['', [Validators.required, Validators.min(1)]],
+        price: ['', [Validators.required, Validators.min(1)]],
+        stock: ['', [Validators.required, Validators.min(1)]],
+        minQty: ['', [Validators.required, Validators.min(1)]],
+        description: ['', Validators.required],
+        compatibleModels: [[]],
+        warranty: [false],
+        status: ['']
+      },
+      { validators: this.priceLtOrEqMrpValidator }
+    );
+  }
 
-     this.sellerProductService.fetchProductFromProductId(this.productId).subscribe(res => {
-      console.log('Fetched product data:', res);
-      this.productForm.patchValue(res.data);
-    });
-
-    // Add validators for brandOther and modelOther when their respective selects have 'other' value
+  private setupDynamicValidators(): void {
     const brandControl = this.productForm.get('brand');
     const brandOtherControl = this.productForm.get('brandOther');
+
     if (brandControl && brandOtherControl) {
-      brandControl.valueChanges.subscribe(value => {
-        if (value === 'other') {
-          brandOtherControl.setValidators([Validators.required]);
-        } else {
-          brandOtherControl.clearValidators();
-          brandOtherControl.reset();
-        }
-        brandOtherControl.updateValueAndValidity();
-      });
+      brandControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(value => {
+          if (value === 'other') {
+            brandOtherControl.setValidators([Validators.required]);
+          } else {
+            brandOtherControl.clearValidators();
+            brandOtherControl.reset();
+          }
+          brandOtherControl.updateValueAndValidity();
+        });
     }
 
     const modelControl = this.productForm.get('model');
     const modelOtherControl = this.productForm.get('modelOther');
-    if (modelControl && modelOtherControl) {
-      modelControl.valueChanges.subscribe(value => {
-        if (value === 'other') {
-          modelOtherControl.setValidators([Validators.required]);
-        } else {
-          modelOtherControl.clearValidators();
-          modelOtherControl.reset();
-        }
-        modelOtherControl.updateValueAndValidity();
-      });
-    }
 
-    // Load form data (brands, models, categories)
-    this.sellerProductService.fetchFormLoadDataList().subscribe(res => {
-      console.log('Fetched form data:', res);
-      this.categories = res.data?.category || this.categories;
-      this.brands = res.data?.brands || this.brands;
-      this.models = res.data?.models || this.models;
-    });
+    if (modelControl && modelOtherControl) {
+      modelControl.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(value => {
+          if (value === 'other') {
+            modelOtherControl.setValidators([Validators.required]);
+          } else {
+            modelOtherControl.clearValidators();
+            modelOtherControl.reset();
+          }
+          modelOtherControl.updateValueAndValidity();
+        });
+    }
   }
 
-  
-   getAvatarName(fullName: string): string {
+  private loadFormData(): void {
+    this.sellerProductService.fetchFormLoadDataList()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.categories = res.data?.category || [];
+          this.brands = res.data?.brands || [];
+          this.models = res.data?.models || [];
+        },
+        error: err => {
+          console.error('Error loading form data:', err);
+        }
+      });
+  }
+
+  private loadProductData(): void {
+    if (!this.productId) return;
+
+    this.isLoading = true;
+    this.sellerProductService.fetchProductFromProductId(this.productId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          if (res?.data) {
+            const prodData = { ...res.data };
+
+            // Ensure numeric fields are properly typed
+            if (prodData.mrp != null) prodData.mrp = Number(prodData.mrp) || '';
+            if (prodData.price != null) prodData.price = Number(prodData.price) || '';
+            if (prodData.stock != null) prodData.stock = Number(prodData.stock) || '';
+            if (prodData.minQty != null) prodData.minQty = Number(prodData.minQty) || '';
+
+            this.productForm.reset();
+            this.productForm.patchValue(prodData);
+            this.productForm.updateValueAndValidity();
+            this.isLoading = false;
+          }
+        },
+        error: err => {
+          console.error('Error loading product:', err);
+          alert('Failed to load product details');
+          this.isLoading = false;
+          this.goBack();
+        }
+      });
+  }
+
+  getAvatarName(fullName: string): string {
     const parts = fullName.trim().split(/\s+/);
     if (parts.length >= 2) {
       return parts[0][0].toUpperCase() + parts[parts.length - 1][0].toUpperCase();
     }
     return parts.length === 1 ? parts[0][0].toUpperCase() : '';
   }
-   // cross-field validator to ensure price <= mrp
+
+  private parseNumber(value: any): number | null {
+    if (value === null || value === undefined || value === '') return null;
+    const num = Number(value);
+    return isNaN(num) ? null : num;
+  }
+
+  // cross-field validator to ensure price <= mrp
   priceLtOrEqMrpValidator = (group: FormGroup) => {
-    const mrp = group.get('mrp')?.value;
-    const price = group.get('price')?.value;
-    if (mrp == null || price == null) return null;
-    return (price > mrp) ? { priceGtMrp: true } : null;
+    const mrpControl = group.get('mrp');
+    const priceControl = group.get('price');
+
+    if (!mrpControl || !priceControl) return null;
+
+    const mrp = this.parseNumber(mrpControl.value);
+    const price = this.parseNumber(priceControl.value);
+
+    if (mrp === null || price === null) return null;
+
+    return price > mrp ? { priceGtMrp: true } : null;
   };
 
-  onFilesSelected(event: any) {
+  onFilesSelected(event: any): void {
     const files: FileList = event.target.files;
+
     if (!files || files.length === 0) {
-      this.selectedFiles = [];
-      this.filePreviewUrls.forEach(u => URL.revokeObjectURL(u));
-      this.filePreviewUrls = [];
-      this.productForm.patchValue({ images: [] });
+      this.clearSelectedFiles();
       return;
     }
-    // convert FileList to Array and store
-    this.selectedFiles = Array.from(files);
-    // cleanup old previews and create new ones
-    this.filePreviewUrls.forEach(u => URL.revokeObjectURL(u));
+
+    // Validate file count (max 5 images)
+    if (files.length > 5) {
+      alert('Maximum 5 images allowed');
+      if (this.fileInput) {
+        this.fileInput.nativeElement.value = '';
+      }
+      return;
+    }
+
+    // Validate file types and sizes
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!this.isValidImage(file)) {
+        alert(`File ${file.name} is invalid. Only PNG, JPG up to 5MB allowed.`);
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    if (validFiles.length === 0) {
+      this.clearSelectedFiles();
+      return;
+    }
+
+    this.selectedFiles = validFiles;
+    this.revokeOldPreviews();
     this.filePreviewUrls = this.selectedFiles.map(f => URL.createObjectURL(f));
-    // keep files in the form value
-    this.productForm.patchValue({ images: this.selectedFiles });
-    // reset input value
-    event.target.value = '';
+
+    // Reset file input
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
   }
 
-  updateProduct() {
+  private isValidImage(file: File): boolean {
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    return validTypes.includes(file.type) && file.size <= maxSize;
+  }
+
+  private revokeOldPreviews(): void {
+    this.filePreviewUrls.forEach(url => URL.revokeObjectURL(url));
+  }
+
+  private clearSelectedFiles(): void {
+    this.selectedFiles = [];
+    this.revokeOldPreviews();
+    this.filePreviewUrls = [];
+  }
+
+  updateProduct(): void {
+    this.submitForm('Active');
+  }
+
+  saveDraft(): void {
+    this.submitForm('Draft');
+  }
+
+  private submitForm(status: string): void {
     this.submitted = true;
 
-    if (this.productForm.invalid) {
-      this.productForm.markAllAsTouched();
-      console.warn('Form invalid', this.productForm.errors);
-      return;
-    }
-
-    // Replace 'other' with actual values from the "Other" input fields
-    let formValue = this.productForm.value;
-    if (formValue.brand === 'other' && formValue.brandOther) {
-      formValue.brand = formValue.brandOther;
-    }
-    if (formValue.model === 'other' && formValue.modelOther) {
-      formValue.model = formValue.modelOther;
-    }
-
-    formValue.status = 'Active';
-
-    console.log('Updating product', formValue);
-    const fv = formValue;
-    const formData = new FormData();
-
-    // append form fields
-    Object.keys(fv).forEach(key => {
-      // Skip the 'Other' input fields as they've been merged into brand/model
-      if (key === 'brandOther' || key === 'modelOther') {
+    // For Active (publish), require full form validation
+    // For Draft, allow incomplete forms
+    if (status === 'Active') {
+      this.productForm.updateValueAndValidity();
+      if (this.productForm.invalid) {
+        this.productForm.markAllAsTouched();
+        console.warn('Form errors:', this.productForm.errors);
+        console.warn('Invalid controls:', this.getInvalidControls());
         return;
       }
-      const val = fv[key];
-      if (Array.isArray(val)) {
-        val.forEach((v: any) => formData.append(key, typeof v === 'object' ? JSON.stringify(v) : v));
-      } else if (val === null || val === undefined) {
-        // skip null/undefined
-      } else if (typeof val === 'object') {
-        formData.append(key, JSON.stringify(val));
-      } else {
-        formData.append(key, String(val));
-      }
-    });
+    }
 
-    // append selected image files
-    this.selectedFiles.forEach(f => formData.append('images', f, f.name));
+    this.isLoading = true;
 
-    // send to backend
-    this.sellerProductService.updateProduct(this.productId, formData).subscribe({
-      next: (res: any) => {
-        console.log('Product updated', res);
-        alert('Product updated successfully!');
-        this.productForm.reset();
-        this.submitted = false;
-        this.goBack();
-      },
-      error: (err: any) => {
-        console.error('Update product failed', err);
-        alert('Failed to update product. Please try again.');
-        this.submitted = false;
-      }
-    });
+    const formData = this.prepareFormData(status);
+
+    console.log('Submitting product with status:', status);
+    console.log('FormData entries:', Array.from(formData.entries()));
+
+    this.sellerProductService.updateProduct(this.productId, formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: res => {
+          this.isLoading = false;
+          console.log('Product submission response:', res);
+          if (res?.success) {
+            alert(`Product ${status === 'Draft' ? 'saved as draft' : 'updated'} successfully!`);
+            this.submitted = false;
+            this.goBack();
+          } else {
+            alert(res?.message || `Failed to ${status === 'Draft' ? 'save draft' : 'update'} product`);
+            this.submitted = false;
+          }
+        },
+        error: err => {
+          this.isLoading = false;
+          console.error('Submit failed:', err);
+          console.error('Error details:', err.error || err.message);
+          alert(`Failed to ${status === 'Draft' ? 'save draft' : 'update'} product. Please try again.`);
+          this.submitted = false;
+        }
+      });
   }
 
-  saveDraft() {
-    // No strict validation for drafts - allow partial forms
-    let formValue = this.productForm.value;
+  private prepareFormData(status: string): FormData {
+    const fv = { ...this.productForm.value };
 
-    // Replace 'other' with actual values from the "Other" input fields
-    if (formValue.brand === 'other' && formValue.brandOther) {
-      formValue.brand = formValue.brandOther;
+    // Convert numeric fields to numbers
+    fv.mrp = this.parseNumber(fv.mrp) || 0;
+    fv.price = this.parseNumber(fv.price) || 0;
+    fv.stock = this.parseNumber(fv.stock) || 0;
+    fv.minQty = this.parseNumber(fv.minQty) || 0;
+
+    // Normalize "other" fields
+    fv.brand = fv.brand === 'other' && fv.brandOther ? fv.brandOther : fv.brand;
+    fv.model = fv.model === 'other' && fv.modelOther ? fv.modelOther : fv.model;
+
+    // Remove temporary fields
+    delete fv.brandOther;
+    delete fv.modelOther;
+
+    // Set status
+    fv.status = status;
+
+    // Normalize compatibleModels if it's a string
+    if (typeof fv.compatibleModels === 'string') {
+      fv.compatibleModels = fv.compatibleModels
+        .split('|')
+        .map((s: string) => s.trim())
+        .filter((s: string) => s.length > 0);
     }
-    if (formValue.model === 'other' && formValue.modelOther) {
-      formValue.model = formValue.modelOther;
-    }
 
-    formValue.status = 'Draft';
-
-    console.log('Saving draft product', formValue);
-    const fv = formValue;
+    // Create FormData with proper structure matching backend
     const formData = new FormData();
+    
+    // Append product data as "product" part (JSON blob)
+    console.log('Product data to send:', fv);
+    formData.append(
+      'product',
+      new Blob([JSON.stringify(fv)], { type: 'application/json' })
+    );
 
-    // append form fields
-    Object.keys(fv).forEach(key => {
-      // Skip the 'Other' input fields as they've been merged into brand/model
-      if (key === 'brandOther' || key === 'modelOther') {
-        return;
-      }
-      const val = fv[key];
-      if (Array.isArray(val)) {
-        val.forEach((v: any) => formData.append(key, typeof v === 'object' ? JSON.stringify(v) : v));
-      } else if (val === null || val === undefined) {
-        // skip null/undefined
-      } else if (typeof val === 'object') {
-        formData.append(key, JSON.stringify(val));
-      } else {
-        formData.append(key, String(val));
-      }
-    });
+    // Append image files as "images" part (only if files selected)
+    if (this.selectedFiles && this.selectedFiles.length > 0) {
+      this.selectedFiles.forEach((file: File) => {
+        formData.append('images', file, file.name);
+      });
+    }
 
-    // append selected image files
-    this.selectedFiles.forEach(f => formData.append('images', f, f.name));
+    return formData;
+  }
 
-    // send to backend
-    this.sellerProductService.updateProduct(this.productId, formData).subscribe({
-      next: (res: any) => {
-        console.log('Product draft saved', res);
-        alert('Product saved as Draft successfully!');
+  cancel(): void {
+    if (this.productForm.dirty) {
+      if (confirm('Are you sure you want to discard changes?')) {
+        this.resetForm();
         this.goBack();
-      },
-      error: (err: any) => {
-        console.error('Draft save failed', err);
-        alert('Failed to save draft. Please try again.');
+      }
+    } else {
+      this.goBack();
+    }
+  }
+
+  private resetForm(): void {
+    this.productForm.reset();
+    this.submitted = false;
+    this.clearSelectedFiles();
+  }
+
+  private getInvalidControls(): string[] {
+    const invalid: string[] = [];
+    Object.keys(this.productForm.controls).forEach(key => {
+      const ctrl = this.productForm.get(key);
+      if (ctrl && ctrl.invalid) {
+        invalid.push(`${key}: ${JSON.stringify(ctrl.errors)}`);
       }
     });
+    return invalid;
   }
 
-  cancel() {
-    console.log('Cancel edit');
-  }
-
-  goBack() {
+  goBack(): void {
     this.location.back();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.revokeOldPreviews();
   }
 
 }

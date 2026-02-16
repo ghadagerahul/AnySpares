@@ -8,50 +8,54 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sellerservice.app.entity.ProductEntity;
 import com.sellerservice.app.model.ProductDto;
-import com.sellerservice.app.repo.ProductRepository;
 import com.sellerservice.app.service.TwoWheelerProductService;
 
 @RestController
 @RequestMapping("/seller/products")
 public class SellerProductController {
 
-	private final ProductRepository productRepository;
-
 	Logger productLogger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	private TwoWheelerProductService twoWheelerProductService;
 
-	SellerProductController(ProductRepository productRepository) {
-		this.productRepository = productRepository;
-	}
-
 	@PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> addNewProduct(@ModelAttribute ProductDto productDto) {
-		productLogger.info("Callled ProductController-addNewProduct");
-		productLogger.info("productDto: " + productDto);
+	public ResponseEntity<Map<String, Object>> addNewProduct(@RequestPart("product") ProductDto productDto,
+			@RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-		boolean uploadStatus = twoWheelerProductService.addProduct(productDto);
+		productLogger.info("Called ProductController-addNewProduct");
 
-		if (uploadStatus) {
-			return ResponseEntity.ok(Map.of("success", true, "message", "Product Added Successfully"));
+		try {
+			productDto.setImages(images);
 
+			boolean uploadStatus = twoWheelerProductService.addProduct(productDto);
+
+			if (uploadStatus) {
+				return ResponseEntity.ok(Map.of("success", true, "message", "Product Added Successfully"));
+			}
+
+			return ResponseEntity.internalServerError().body(Map.of("success", false, "message", "Add Product failed"));
+
+		} catch (Exception ex) {
+			productLogger.error("Error while adding product", ex);
+			return ResponseEntity.internalServerError()
+					.body(Map.of("success", false, "message", "Internal server error"));
 		}
-
-		return ResponseEntity.internalServerError().body(Map.of("success", false, "message", "Add Product failed"));
 	}
 
 	@GetMapping("/fetchFormLoadData")
@@ -93,16 +97,41 @@ public class SellerProductController {
 		return ResponseEntity.ok(respMap);
 	}
 
-	@PutMapping("/updateProduct/{productId}")
-	public ResponseEntity<HashMap<String, Object>> updateProductEntry(@ModelAttribute ProductDto dto,
-			@PathVariable String productId) {
+	@PutMapping(value = "/updateProduct/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, Object>> updateProductEntry(@PathVariable String productId,
+			@RequestPart("product") ProductDto dto,
+			@RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-		boolean updateProductFlag = twoWheelerProductService.updateProduct(dto, productId);
+		Map<String, Object> response = new HashMap<>();
 
-		HashMap<String, Object> hashMap = new HashMap<>();
-		hashMap.put("sucess", updateProductFlag);
+		if (productId == null || productId.isBlank()) {
+			response.put("success", false);
+			response.put("message", "ProductId is required");
+			return ResponseEntity.badRequest().body(response);
+		}
 
-		return ResponseEntity.ok(hashMap);
+		try {
+			// Attach images explicitly
+			dto.setImages(images);
+
+			boolean updated = twoWheelerProductService.updateProduct(dto, productId);
+
+			if (updated) {
+				response.put("success", true);
+				response.put("message", "Product updated successfully");
+				return ResponseEntity.ok(response);
+			}
+
+			response.put("success", false);
+			response.put("message", "Product not found or update failed");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+		} catch (Exception ex) {
+			productLogger.error("Error while updating product {}", productId, ex);
+			response.put("success", false);
+			response.put("message", "Internal server error");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
 	}
 
 }

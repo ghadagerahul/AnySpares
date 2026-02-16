@@ -50,8 +50,9 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 		// Upload image if present
 		String uploadedFileName = null;
-		MultipartFile imageFile = productDto.getImages();
-		if (imageFile != null) {
+
+		if (productDto.getImages() != null && productDto.getImages().size() > 0) {
+			MultipartFile imageFile = productDto.getImages().get(0);
 			uploadedFileName = awsS3Service.uploadFile(imageFile);
 		}
 

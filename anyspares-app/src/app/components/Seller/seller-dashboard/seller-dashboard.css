@@ -11,36 +11,36 @@
 
 /* ================= SIDEBAR ================= */
 .sidebar {
-  width: 250px;
+  width: 240px;
   background: #ffffff;
-  padding: 18px;
+  padding: 16px;
   border-right: 1px solid #eaeaea;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
 .logo {
   background: #13b87c;
   color: white;
-  padding: 5px;
-  border-radius: 10px;
+  padding: 6px;
+  border-radius: 8px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .img-small {
   width: 50px;
   height: auto;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .brand h4 {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
 }
 
@@ -51,9 +51,9 @@
 
 nav a {
   display: block;
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  border-radius: 9px;
+  padding: 9px 12px;
+  margin-bottom: 5px;
+  border-radius: 8px;
   cursor: pointer;
   color: #333;
   font-size: 13px;
@@ -68,7 +68,7 @@ nav a:hover {
 /* ================= MAIN ================= */
 .main {
   flex: 1;
-  padding: 22px 26px;
+  padding: 20px 24px;
 }
 
 /* ================= HEADER ================= */
@@ -132,13 +132,13 @@ nav a:hover {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 }
 
 .stat-card {
   background: white;
   padding: 16px;
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -161,7 +161,7 @@ nav a:hover {
 
 /* ================= INVENTORY ================= */
 .section-title {
-  margin: 22px 0 12px;
+  margin: 20px 0 12px;
   font-size: 14px;
 }
 
@@ -173,8 +173,8 @@ nav a:hover {
 
 .inv-card {
   background: white;
-  padding: 18px;
-  border-radius: 16px;
+  padding: 16px;
+  border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
@@ -212,9 +212,9 @@ nav a:hover {
 /* ================= ACTIVITY ================= */
 .activity {
   background: white;
-  border-radius: 14px;
-  padding: 18px;
-  margin-top: 14px;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
 }
 
 .activity-item {
