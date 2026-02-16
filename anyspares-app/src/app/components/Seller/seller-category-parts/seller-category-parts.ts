@@ -77,7 +77,7 @@ export class SellerCategoryParts implements OnInit {
     this.sellerCategoryPartsService.getPartsUnderCategories(this.categoryName).subscribe(
       response => {
         console.log('Parts under category fetched successfully:', response);
-        // Handle the response data as needed
+
         this.products = response.data || [];
 
         this.products.forEach(product => {
