@@ -1,0 +1,176 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">AS</div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a>📊 Dashboard</a>
+            <a class="active">📦 Products</a>
+            <a>🛒 Orders</a>
+            <a>💳 Payments</a>
+            <a>⚠️ Inventory Alerts</a>
+            <a>👤 Profile & KYC</a>
+            <a>🎧 Support</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <div class="top-header">
+            <div class="breadcrumb">
+                <button class="back-btn" (click)="cancel()">← Back</button>
+                <span class="separator">&nbsp;›&nbsp;</span>
+                <strong>Add Vehicle Model</strong>
+            </div>
+
+            <div class="header-right">
+                🔔
+                <div class="profile">
+                    <div class="avatar">AS</div>
+                    <div>
+                        <strong>Seller Name</strong>
+                        <small>&nbsp;🏪 Store Name</small>
+                    </div>
+                </div>
+                🌙
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="page-title">Add New Vehicle Model</h3>
+        <p class="page-subtitle">Add details for a new vehicle model</p>
+
+        <form [formGroup]="modelForm" (ngSubmit)="addModel()" class="form-layout">
+
+            <!-- LEFT FORM -->
+            <div class="form-left">
+
+                <!-- MODEL INFO CARD -->
+                <div class="card">
+                    <h4 class="card-title">Model Information</h4>
+
+                    <!-- Vehicle Category -->
+                    <label>Vehicle Category *</label>
+                    <select formControlName="vehicleCategory" class="form-input">
+                        <option value="">Select vehicle category</option>
+                        <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
+                    </select>
+                    <div class="field-error" *ngIf="(f['vehicleCategory'].touched || submitted) && f['vehicleCategory'].errors?.['required']">
+                        Please select a vehicle category.
+                    </div>
+
+                    <!-- Brand Name -->
+                    <label>Brand Name *</label>
+                    <select formControlName="brandName" class="form-input">
+                        <option value="">Select a brand</option>
+                        <option *ngFor="let brand of vehicleBrands" [value]="brand">{{ brand }}</option>
+                    </select>
+                    <div class="field-error" *ngIf="(f['brandName'].touched || submitted) && f['brandName'].errors?.['required']">
+                        Please select a brand.
+                    </div>
+
+                    <!-- Model Name -->
+                    <label>Vehicle Model Name *</label>
+                    <input 
+                        type="text" 
+                        formControlName="modelName" 
+                        placeholder="e.g. CB200F, Pulsar 150, Hero Splendor" 
+                        class="form-input"
+                    />
+                    <div class="field-error" *ngIf="(f['modelName'].touched || submitted) && f['modelName'].errors?.['required']">
+                        Please enter a model name.
+                    </div>
+                    <div class="field-error" *ngIf="(f['modelName'].touched || submitted) && f['modelName'].errors?.['minlength']">
+                        Model name must be at least 2 characters.
+                    </div>
+
+                    <!-- Model Year From -->
+                    <label>Model Year From *</label>
+                    <select formControlName="modelYearFrom" class="form-input">
+                        <option value="">Select start year</option>
+                        <option *ngFor="let year of modelYears" [value]="year">{{ year }}</option>
+                    </select>
+                    <div class="field-error" *ngIf="(f['modelYearFrom'].touched || submitted) && f['modelYearFrom'].errors?.['required']">
+                        Please select the start year.
+                    </div>
+
+                    <!-- Model Year To -->
+                    <label>Model Year To *</label>
+                    <select formControlName="modelYearTo" class="form-input">
+                        <option value="">Select end year</option>
+                        <option *ngFor="let year of modelYears" [value]="year">{{ year }}</option>
+                    </select>
+                    <div class="field-error" *ngIf="(f['modelYearTo'].touched || submitted) && f['modelYearTo'].errors?.['required']">
+                        Please select the end year.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="form-right">
+
+                <!-- IMAGE UPLOAD CARD -->
+                <div class="card">
+                    <h4 class="card-title">Model Image</h4>
+
+                    <!-- Image Preview -->
+                    <div class="image-preview-container" *ngIf="selectedImagePreview">
+                        <img [src]="selectedImagePreview" alt="Model Preview" class="image-preview" />
+                        <p class="file-name">{{ selectedFileName }}</p>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="upload-area" *ngIf="!selectedImagePreview">
+                        <input 
+                            type="file" 
+                            #fileInput 
+                            (change)="onImageSelected($event)" 
+                            accept="image/*" 
+                            class="file-input"
+                        />
+                        <label (click)="fileInput.click()" class="upload-label">
+                            📸 Click to select image
+                        </label>
+                        <p class="file-hint">PNG, JPG (Max 5MB)</p>
+                    </div>
+
+                    <!-- Change Image Button -->
+                    <button 
+                        type="button" 
+                        class="change-btn" 
+                        *ngIf="selectedImagePreview"
+                        (click)="fileInput.nativeElement.click()"
+                    >
+                        Change Image
+                    </button>
+
+                    <div class="field-error" *ngIf="(f['modelImage'].touched || submitted) && f['modelImage'].errors?.['required']">
+                        Please select a model image.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+        <!-- ACTION BUTTONS -->
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+            <button type="submit" class="btn-submit" (click)="addModel()">Add Model</button>
+        </div>
+
+    </main>
+
+</div>

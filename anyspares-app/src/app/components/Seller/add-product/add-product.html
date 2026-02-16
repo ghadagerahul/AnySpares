@@ -27,7 +27,6 @@
         <!-- HEADER -->
         <div class="top-header">
 
-
             <div class="breadcrumb"> <button class="back-btn" (click)="goBack()">← Back to Products</button> <span
                     class="separator" &nbsp;>› &nbsp;</span> <strong>Add Product</strong> </div>
 
@@ -77,8 +76,10 @@
                                 *ngIf="(f['brand'].touched || submitted) && f['brand'].errors?.['required']">Please
                                 select a brand.</div>
 
-                            <input *ngIf="f['brand'].value === 'other'" formControlName="brandOther"
-                                placeholder="Enter brand name" class="mt-2" />
+                            <div *ngIf="f['brand'].value === 'other'" class="mt-2 brand-add-row">
+                                <button type="button" class="btn-sm" (click)="addVehicleBrand()">Add Vehicle
+                                    Brand</button>
+                            </div>
                             <div class="field-error"
                                 *ngIf="f['brand'].value === 'other' && (f['brandOther'].touched || submitted) && f['brandOther'].errors?.['required']">
                                 Please
@@ -96,8 +97,11 @@
                                 *ngIf="(f['model'].touched || submitted) && f['model'].errors?.['required']">Please
                                 select a model.</div>
 
-                            <input *ngIf="f['model'].value === 'other'" formControlName="modelOther"
-                                placeholder="Enter model name" class="mt-2" />
+
+                            <div *ngIf="f['model'].value === 'other'" class="mt-2 model-add-row">
+                                <button type="button" class="btn-sm" (click)="addVehicleModel()">Add Vehicle
+                                    Model</button>
+                            </div>
                             <div class="field-error"
                                 *ngIf="f['model'].value === 'other' && (f['modelOther'].touched || submitted) && f['modelOther'].errors?.['required']">
                                 Please
@@ -251,6 +255,6 @@
             </div>
 
         </form>
-
+        
     </main>
 </div>

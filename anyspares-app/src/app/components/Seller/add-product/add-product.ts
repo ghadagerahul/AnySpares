@@ -3,6 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
 import { AppConstants } from '../../../services/appconstants';
+import { routes } from '../../../app.routes';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-product',
@@ -11,6 +13,7 @@ import { AppConstants } from '../../../services/appconstants';
   styleUrl: './add-product.css'
 })
 export class AddProduct implements OnInit, OnDestroy {
+
 
   sellerName = '';
   storeName = '';
@@ -31,6 +34,7 @@ export class AddProduct implements OnInit, OnDestroy {
   filePreviewUrls: string[] = [];
   submitted = false;
 
+
   // convenience getter for template access
   get f() { return this.productForm.controls; }
 
@@ -42,7 +46,7 @@ export class AddProduct implements OnInit, OnDestroy {
     return (price > mrp) ? { priceGtMrp: true } : null;
   };
 
-  constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService, private appConstants: AppConstants) {
+  constructor(private fb: FormBuilder, private location: Location, private sellerProductService: TwoWheelerProductService, private appConstants: AppConstants, private router: Router) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       brand: ['', Validators.required],
@@ -284,9 +288,15 @@ export class AddProduct implements OnInit, OnDestroy {
     this.location.back();
   }
 
+  addVehicleBrand() {
+    this.router.navigate(['/seller-vehicle-brands']);
+  }
+
+  addVehicleModel(){
+    this.router.navigate(['/seller-add-model']);
+  }
+
 }
 
-function next(value: any): void {
-  throw new Error('Function not implemented.');
-}
+
 

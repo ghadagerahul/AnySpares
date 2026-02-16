@@ -21,6 +21,8 @@ import { TwoWheelersModels } from './components/Buyer/two-wheelers/two-wheelers-
 import { TwoWheelersCategory } from './components/Buyer/two-wheelers/two-wheelers-category/two-wheelers-category';
 import { TwoWheelersProduct } from './components/Buyer/two-wheelers/two-wheelers-product/two-wheelers-product';
 import { TwoWheelerProductDetails } from './components/Buyer/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
+import { AddVehicleBrands } from './components/Seller/add-vehicle-brands/add-vehicle-brands';
+import { AddVehicleModels } from './components/Seller/add-vehicle-models/add-vehicle-models';
 
 
 export const routes: Routes = [
@@ -51,5 +53,8 @@ export const routes: Routes = [
   //  seller product management routes
   { path: 'seller-addproduct', component: AddProduct },
   { path: 'seller-editproduct', component: EditProduct },
+
+  { path: 'seller-vehicle-brands', component: AddVehicleBrands },
+  {path: 'seller-add-model', component: AddVehicleModels},
   { path: '**', redirectTo: 'login' }
 ];

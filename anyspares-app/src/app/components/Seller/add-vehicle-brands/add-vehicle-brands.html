@@ -1,0 +1,150 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo">AS</div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a>📊 Dashboard</a>
+            <a class="active">📦 Products</a>
+            <a>🛒 Orders</a>
+            <a>💳 Payments</a>
+            <a>⚠️ Inventory Alerts</a>
+            <a>👤 Profile & KYC</a>
+            <a>🎧 Support</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <div class="top-header">
+            <div class="breadcrumb">
+                <button class="back-btn" (click)="cancel()">← Back</button>
+                <span class="separator">&nbsp;›&nbsp;</span>
+                <strong>Add Vehicle Brand</strong>
+            </div>
+
+            <div class="header-right">
+                🔔
+                <div class="profile">
+                    <div class="avatar">AS</div>
+                    <div>
+                        <strong>Seller Name</strong>
+                        <small>&nbsp;🏪 Store Name</small>
+                    </div>
+                </div>
+                🌙
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="page-title">Add New Vehicle Brand</h3>
+        <p class="page-subtitle">Add details for a new vehicle brand</p>
+
+        <form [formGroup]="brandForm" (ngSubmit)="addBrand()" class="form-layout">
+
+            <!-- LEFT FORM -->
+            <div class="form-left">
+
+                <!-- BRAND INFO CARD -->
+                <div class="card">
+                    <h4 class="card-title">Brand Information</h4>
+
+                    <!-- Brand Name -->
+                    <label>Vehicle Brand Name *</label>
+                    <input 
+                        type="text" 
+                        formControlName="brandName" 
+                        placeholder="e.g. Honda, Bajaj, Hero, Maruti" 
+                        class="form-input"
+                    />
+                    <div class="field-error" *ngIf="(f['brandName'].touched || submitted) && f['brandName'].errors?.['required']">
+                        Please enter a brand name.
+                    </div>
+                    <div class="field-error" *ngIf="(f['brandName'].touched || submitted) && f['brandName'].errors?.['minlength']">
+                        Brand name must be at least 3 characters.
+                    </div>
+
+                    <!-- Vehicle Category -->
+                    <label>Vehicle Category *</label>
+                    <select formControlName="vehicleCategory" class="form-input">
+                        <option value="">Select vehicle category</option>
+                        <option *ngFor="let cat of vehicleCategories" [value]="cat">{{ cat }}</option>
+                    </select>
+                    <div class="field-error" *ngIf="(f['vehicleCategory'].touched || submitted) && f['vehicleCategory'].errors?.['required']">
+                        Please select a vehicle category.
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="form-right">
+
+                <!-- IMAGE UPLOAD CARD -->
+                <div class="card">
+                    <h4 class="card-title">Brand Image</h4>
+
+                    <!-- Image Preview -->
+                    <div class="image-preview-container" *ngIf="selectedImagePreview">
+                        <img [src]="selectedImagePreview" alt="Brand Preview" class="image-preview" />
+                        <p class="file-name">{{ selectedFileName }}</p>
+                    </div>
+
+                    <!-- Upload Box -->
+                    <div class="upload-box" (click)="fileInput.click()" *ngIf="!selectedImagePreview">
+                        ⬆️
+                        <p>Click to upload brand image</p>
+                        <small>PNG, JPG up to 5MB</small>
+                    </div>
+
+                    <input 
+                        type="file" 
+                        #fileInput 
+                        hidden 
+                        accept="image/*" 
+                        (change)="onImageSelected($event)" 
+                    />
+
+                    <div class="field-error" *ngIf="(f['brandImage'].touched || submitted) && f['brandImage'].errors?.['required']">
+                        Please upload a brand image.
+                    </div>
+
+                    <!-- Change Image Button -->
+                    <button 
+                        type="button" 
+                        class="change-img-btn" 
+                        *ngIf="selectedImagePreview"
+                        (click)="fileInput.click()"
+                    >
+                        📷 Change Image
+                    </button>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="publish-btn">
+                        ✔️ Add Brand
+                    </button>
+
+                    <!-- Cancel Button -->
+                    <button type="button" class="cancel-btn" (click)="cancel()">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>

@@ -225,6 +225,36 @@ textarea.ng-invalid.ng-touched {
     box-shadow: none;
 }
 
+/* Inline brand add row */
+.brand-add-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.brand-add-row input {
+    flex: 1;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.btn-sm {
+    background: #13b87c;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-sm:hover {
+    background: #0f9b6f;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1024px) {
     .sidebar {
