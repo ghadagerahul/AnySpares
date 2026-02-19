@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -15,18 +16,17 @@ interface Product {
 }
 
 @Component({
-  selector: 'app-two-wheelers-product',
-  imports: [CommonModule],
-  templateUrl: './two-wheelers-product.html',
-  styleUrl: './two-wheelers-product.css'
+  selector: 'app-vehicle-products',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './vehicle-products.html',
+  styleUrl: './vehicle-products.css',
 })
-export class TwoWheelersProduct implements OnInit{
-
+export class VehicleProducts {
 
   products: Product[] = [];
 
   ngOnInit(): void {
-   
+
     this.products = [
       {
         name: 'Air Filter Element',
@@ -61,14 +61,4 @@ export class TwoWheelersProduct implements OnInit{
     ];
   }
 
-
-
-  
 }
-
-
-
-
-
-
-

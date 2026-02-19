@@ -1,16 +1,17 @@
-import { Component } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-@Component({
-  selector: 'app-two-wheelers-category',
-  imports: [CommonModule, FormsModule],
-  templateUrl: './two-wheelers-category.html',
-  styleUrl: './two-wheelers-category.css'
-})
-export class TwoWheelersCategory {
 
-  constructor(private location: Location, private router:Router) { }
+@Component({
+  selector: 'app-vehiclecategory',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './vehiclecategory.html',
+  styleUrl: './vehiclecategory.css',
+})
+export class Vehiclecategory {
+
+  constructor(private location: Location, private router: Router) { }
 
   searchTerm: string = '';
 
@@ -64,6 +65,6 @@ export class TwoWheelersCategory {
 
   goToProduct() {
     console.log('Navigating to products');
-this.router.navigate(['/twowheelers-product']);
-}
+    this.router.navigate(['/vehicle-product']);
+  }
 }

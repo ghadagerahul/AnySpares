@@ -1,15 +1,16 @@
-import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { NavbarComponent } from "../../navbar-component/navbar-component";
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from "../navbar-component/navbar-component";
 
 @Component({
-  selector: "app-two-wheeler-product-details",
-  imports: [CommonModule, NavbarComponent],
-  templateUrl: "./two-wheeler-product-details.html",
-  styleUrl: "./two-wheeler-product-details.css",
+  selector: 'app-vehicle-product-details',
+  imports: [CommonModule, FormsModule, NavbarComponent],
+  templateUrl: './vehicle-product-details.html',
+  styleUrl: './vehicle-product-details.css',
 })
-export class TwoWheelerProductDetails {
-  quantity = 1;
+export class VehicleProductDetails {
+ quantity = 1;
   activeTab: "specs" | "features" | "compatibility" = "specs";
   Math = Math;
 

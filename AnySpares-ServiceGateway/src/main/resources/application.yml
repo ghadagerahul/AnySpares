@@ -23,17 +23,17 @@ spring:
             allowCredentials: true
 
       routes:
-        - id: FOURWHEELERSERVICE
-          uri: lb://FOURWHEELERSERVICE
+        - id: SELLERSERVICE
+          uri: lb://SELLERSERVICE
           predicates:
-            - Path=/fourwheelers/**
+            - Path=/sellers/**
           filters:
             - StripPrefix=1
 
-        - id: HEAVYWHEELERSERVICE
-          uri: lb://HEAVYWHEELERSERVICE
+        - id: BUYERSERVICE
+          uri: lb://BUYERSERVICE
           predicates:
-            - Path=/heavywheelers/**
+            - Path=/buyers/**
           filters:
             - StripPrefix=1
 

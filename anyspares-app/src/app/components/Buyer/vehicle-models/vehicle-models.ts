@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Route, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-two-wheelers-models',
+  selector: 'app-vehicle-models',
   imports: [CommonModule, FormsModule],
-  templateUrl: './two-wheelers-models.html',
-  styleUrl: './two-wheelers-models.css'
+  templateUrl: './vehicle-models.html',
+  styleUrl: './vehicle-models.css',
 })
-export class TwoWheelersModels {
-  selectedYear: string = '';
+export class VehicleModels {
+selectedYear: string = '';
 
   constructor(private router: Router){}
 
@@ -59,6 +59,6 @@ export class TwoWheelersModels {
 
 
 
-    this.router.navigate(['/twowheelers-category']);
+    this.router.navigate(['/vehicle-category']);
   }
 }

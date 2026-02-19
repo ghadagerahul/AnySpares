@@ -10,28 +10,34 @@ import { EditProduct } from './components/Seller/edit-product/edit-product';
 import { SellerCategoryParts } from './components/Seller/seller-category-parts/seller-category-parts';
 import { LoginPage } from './components/Buyer/login-page/login-page';
 import { RegisterationPage } from './components/Buyer/registeration-page/registeration-page';
-import { Dashboard } from './components/Buyer/dashboard/dashboard';
-import { TwowheelersDashboard } from './components/Buyer/two-wheelers/twowheelers-dashboard/twowheelers-dashboard';
-import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
-import { TwoWheelersModels } from './components/Buyer/two-wheelers/two-wheelers-models/two-wheelers-models';
-import { TwoWheelersCategory } from './components/Buyer/two-wheelers/two-wheelers-category/two-wheelers-category';
-import { TwoWheelersProduct } from './components/Buyer/two-wheelers/two-wheelers-product/two-wheelers-product';
-import { TwoWheelerProductDetails } from './components/Buyer/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
+import { Dashboard } from './components/Buyer/dashboard/dashboard'; import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
 import { AddVehicleBrands } from './components/Seller/add-vehicle-brands/add-vehicle-brands';
 import { AddVehicleModels } from './components/Seller/add-vehicle-models/add-vehicle-models';
+import { RazorpayPaymentComponent } from './components/Payment/razorpay-payment-component/razorpay-payment-component';
+import { VehicleBrands } from './components/Buyer/vehicle-brands/vehicle-brands';
+import { VehicleModels } from './components/Buyer/vehicle-models/vehicle-models';
+import { Vehiclecategory } from './components/Buyer/vehiclecategory/vehiclecategory';
+import { VehicleProducts } from './components/Buyer/vehicle-products/vehicle-products';
+import { VehicleProductDetails } from './components/Buyer/vehicle-product-details/vehicle-product-details';
 
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginPage },
   { path: 'register', component: RegisterationPage },
-  { path: 'dashboard', component: Dashboard },
-  { path: 'twowheelersdashboard', component: TwowheelersDashboard },
+  
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'twowheelers-models', component: TwoWheelersModels },
-  { path: 'twowheelers-category', component: TwoWheelersCategory },
-  { path: 'twowheelers-product', component: TwoWheelersProduct },
-  { path: 'twowheelers-productDetails', component: TwoWheelerProductDetails },
+
+
+  // Buyer Routes
+  { path: 'dashboard', component: Dashboard },
+  { path: 'vehicles', component: VehicleBrands },
+  { path: 'vehicle-brands', component: VehicleBrands },
+  { path: 'vehicle-models', component: VehicleModels },
+  { path: 'vehicle-category', component: Vehiclecategory },
+  { path: 'vehicle-product', component: VehicleProducts },
+  { path: 'vehicle-productDetails', component: VehicleProductDetails },
+
 
   //Seller Routes
   { path: 'seller-login', component: SellerLoginComponent },
@@ -47,5 +53,8 @@ export const routes: Routes = [
 
   { path: 'seller-vehicle-brands', component: AddVehicleBrands },
   { path: 'seller-add-model', component: AddVehicleModels },
+
+  // payment route
+  { path: 'payment', component: RazorpayPaymentComponent },
   { path: '**', redirectTo: 'login' }
 ];

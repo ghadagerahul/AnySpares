@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TwoWheelersModels } from './two-wheelers-models';
+import { RazorpayPaymentComponent } from './razorpay-payment-component';
 
-describe('TwoWheelersModels', () => {
-  let component: TwoWheelersModels;
-  let fixture: ComponentFixture<TwoWheelersModels>;
+describe('RazorpayPaymentComponent', () => {
+  let component: RazorpayPaymentComponent;
+  let fixture: ComponentFixture<RazorpayPaymentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TwoWheelersModels]
+      imports: [RazorpayPaymentComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TwoWheelersModels);
+    fixture = TestBed.createComponent(RazorpayPaymentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
