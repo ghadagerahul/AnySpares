@@ -10,6 +10,7 @@ import lombok.Data;
 public class ProductDto {
 
 	private String name;
+	private String vehicleType;
 	private String brand;
 	private String model;
 	private String category;

@@ -18,7 +18,7 @@ export class AddVehicleBrands implements OnInit {
   submitted = false;
   selectedFileName = '';
   selectedImagePreview: string | ArrayBuffer | null = null;
-  vehicleCategories = ['Two Wheeler', 'Four Wheeler', 'Three Wheeler', 'Heavy Vehicle'];
+  vehicleCategories = ['Two Wheelers', 'Four Wheelers', 'Three Wheelers', 'Heavy Vehicles'];
 
   constructor(private fb: FormBuilder, private vehicleService: SellerVehicleService, private dialog: MatDialog
 

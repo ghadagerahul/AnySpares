@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface VehicleModelsRepo extends JpaRepository<VehicleModelDetailsEntity, Long> {
 
-	List<VehicleModelDetailsEntity> findByVehicleCategory(String vehicleCategory);
+	List<VehicleModelDetailsEntity> findByBrandId(long brandId);
 	
 }

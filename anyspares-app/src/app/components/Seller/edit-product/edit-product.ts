@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-edit-product',
@@ -31,6 +32,7 @@ export class EditProduct implements OnInit, OnDestroy {
   filePreviewUrls: string[] = [];
 
   private destroy$ = new Subject<void>();
+  vehicleType: string | null = "";
 
   // convenience getter for template access
   get f() { return this.productForm.controls; }
@@ -38,10 +40,14 @@ export class EditProduct implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private location: Location,
-    private sellerProductService: TwoWheelerProductService
+    private sellerProductService: TwoWheelerProductService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+
+    this.vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
+    console.log('###===|||||||||Vehicle Type on init:', this.vehicleType);
     this.initializeSessionData();
     this.initializeProductId();
     this.initializeForm();
@@ -316,7 +322,9 @@ export class EditProduct implements OnInit, OnDestroy {
 
   private prepareFormData(status: string): FormData {
     const fv = { ...this.productForm.value };
-
+    console.log('||||Form values before processing:', this.vehicleType);
+    fv.vehicleType = this.vehicleType;
+    console.log('||||Form values after adding vehicleType:', fv.vehicleType);
     // Convert numeric fields to numbers
     fv.mrp = this.parseNumber(fv.mrp) || 0;
     fv.price = this.parseNumber(fv.price) || 0;
@@ -344,7 +352,7 @@ export class EditProduct implements OnInit, OnDestroy {
 
     // Create FormData with proper structure matching backend
     const formData = new FormData();
-    
+
     // Append product data as "product" part (JSON blob)
     console.log('Product data to send:', fv);
     formData.append(

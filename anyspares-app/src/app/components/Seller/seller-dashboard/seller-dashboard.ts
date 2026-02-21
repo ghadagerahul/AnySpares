@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TwoWheelerDashboardService } from '../../../services/Seller/twowheeler-dashboard.service';
+import { Constants } from '../../../Constants/Constants';
 
 
 interface StatCard {
@@ -145,10 +146,10 @@ export class SellerDashboard {
 
   /* ---------- Actions ---------- */
   addProduct(vehicleType: string): void {
-    console.log(`Add product clicked for ${vehicleType}`);
-
-    // Navigate to add product page
-    this.router.navigate(['/seller-twowheller-category'], { queryParams: { type: vehicleType } });
+    console.log(`Add product clicked for: `+vehicleType);
+if (vehicleType === Constants.TWO_WHEELER) {
+    this.router.navigate(['/seller-category'], { queryParams: { vehicleType: vehicleType } });
+}
   }
 
   openNotifications(): void {

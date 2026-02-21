@@ -77,7 +77,10 @@ export class SellerCategoryService {
      */
     addCategory(categoryData: any): Observable<any> {
         const url = this.appUrl + '/add';
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let headers = new HttpHeaders();
+        if (!(categoryData instanceof FormData)) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
 
         return this.http.post<any>(url, categoryData, { headers }).pipe(
             catchError(error => {

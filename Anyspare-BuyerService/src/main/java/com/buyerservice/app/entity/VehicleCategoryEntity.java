@@ -1,4 +1,4 @@
-package com.sellerservice.app.entity;
+package com.buyerservice.app.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +10,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "hm_product_category")
-public class CategoryEntity {
+public class VehicleCategoryEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

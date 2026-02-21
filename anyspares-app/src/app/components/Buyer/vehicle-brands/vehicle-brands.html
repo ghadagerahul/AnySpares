@@ -15,7 +15,7 @@
     <div
       class="brand-card"
       *ngFor="let brand of filteredBrands()"
-      (click)="onBrandSelect(brand)"
+      (click)="onBrandSelect(brand.brandId)"
     >
       <div class="tag">Popular</div>
       <img [src]="brand.imageName" alt="{{ brand.brndname }}" />

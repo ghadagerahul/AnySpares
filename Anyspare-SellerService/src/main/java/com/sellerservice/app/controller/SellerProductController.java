@@ -38,7 +38,7 @@ public class SellerProductController {
 	public ResponseEntity<Map<String, Object>> addNewProduct(@RequestPart("product") ProductDto productDto,
 			@RequestPart(value = "images", required = false) List<MultipartFile> images) {
 
-		productLogger.info("Called ProductController-addNewProduct");
+		productLogger.info("Called ProductController-addNewProduct"+productDto);
 
 		try {
 			productDto.setImages(images);

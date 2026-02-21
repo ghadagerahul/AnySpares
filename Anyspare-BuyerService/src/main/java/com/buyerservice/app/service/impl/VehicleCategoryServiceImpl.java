@@ -10,20 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.buyerservice.app.dto.VehicleCategoryDto;
 import com.buyerservice.app.dto.VehicleModelsDto;
-import com.buyerservice.app.entity.VehicleModelDetailsEntity;
-import com.buyerservice.app.repo.VehicleModelsRepo;
-import com.buyerservice.app.service.VehicleModelsService;
+import com.buyerservice.app.entity.VehicleCategoryEntity;
+import com.buyerservice.app.repo.VehicleCategoriesRepo;
+import com.buyerservice.app.service.VehicleCategoryService;
 
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Service
-public class VehicleModelsServiceImpl implements VehicleModelsService {
-
-	@Autowired
-	private S3Presigner presigner;
+public class VehicleCategoryServiceImpl implements VehicleCategoryService {
 
 	@Value("${aws.s3.bucket}")
 	private String bucketName;
@@ -32,30 +30,32 @@ public class VehicleModelsServiceImpl implements VehicleModelsService {
 	private long presignExpiryMinutes;
 
 	@Autowired
-	private VehicleModelsRepo modelsRepo;
+	private S3Presigner presigner;
+
+	@Autowired
+	private VehicleCategoriesRepo categoriesRepo;
 
 	@Override
-	public List<VehicleModelsDto> loadVehicleModels(long brandId) {
+	public List<VehicleCategoryDto> loadVehicleCategory(String vehicleType) {
 
-		List<VehicleModelDetailsEntity> vehicleModelsList = modelsRepo.findByBrandId(brandId);
+		List<VehicleCategoryEntity> categoryForvehicletypeList = categoriesRepo
+				.findByCategoryForvehicletype(vehicleType);
 
-		if (vehicleModelsList == null || vehicleModelsList.isEmpty()) {
+		if (null == categoryForvehicletypeList || categoryForvehicletypeList.size() == 0)
 			return Collections.emptyList();
-		}
 
-		return vehicleModelsList.stream().filter(Objects::nonNull)
-				.collect(Collectors.toMap(VehicleModelDetailsEntity::getModelName, entry -> entry, (e1, e2) -> e1))
+		return categoryForvehicletypeList.stream().filter(Objects::nonNull)
+				.collect(Collectors.toMap(VehicleCategoryEntity::getCategoryName, category -> category, (e1, e2) -> e1))
 				.values().stream().map(entry -> {
 
-					VehicleModelsDto dto = new VehicleModelsDto();
-					dto.setModelId(entry.getModelId());
-					dto.setModelName(entry.getModelName());
-					String modelDurationDate = entry.getModelYearFrom() + "-" + entry.getModelYearTo();
-					dto.setModelDurationDate(modelDurationDate);
+					VehicleCategoryDto categoryDto = new VehicleCategoryDto();
+					categoryDto.setCategoryId(entry.getCategoryId());
+					categoryDto.setName(entry.getCategoryName());
+					categoryDto.setDescription(entry.getDescription());
 
-					dto.setModelImageUrl(getPrisignedUrlFromName(entry.getModelImage()));
-
-					return dto;
+					String imageName = entry.getImage();
+					categoryDto.setImage(getPrisignedUrlFromName(imageName));
+					return categoryDto;
 				}).collect(Collectors.toList());
 
 	}

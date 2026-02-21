@@ -6,9 +6,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sellerservice.app.entity.CategoryEntity;
 import com.sellerservice.app.model.CategoryDto;
+import com.sellerservice.app.model.CategoryResponseDto;
 import com.sellerservice.app.model.ProductSummaryDto;
 import com.sellerservice.app.service.CategoryService;
 
@@ -35,7 +38,7 @@ public class SellersCategoryController {
 		Map<String, Object> response = new HashMap<>();
 
 		try {
-			List<CategoryDto> categories = categoryService.getAllCategories();
+			List<CategoryResponseDto> categories = categoryService.getAllCategories();
 
 			response.put("success", true);
 			response.put("message", "Categories fetched successfully");
@@ -78,8 +81,8 @@ public class SellersCategoryController {
 	/**
 	 * Add new category
 	 */
-	@PostMapping("/add")
-	public ResponseEntity<Map<String, Object>> addCategory(@RequestBody CategoryDto categoryDto) {
+	@PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Map<String, Object>> addCategory(@ModelAttribute CategoryDto categoryDto) {
 
 		// Basic validation
 		if (categoryDto == null || categoryDto.getName() == null || categoryDto.getName().trim().isEmpty()) {

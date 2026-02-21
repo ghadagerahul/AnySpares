@@ -5,7 +5,9 @@ import lombok.Data;
 @Data
 public class VehicleModelsDto {
 
-	private String brndname;
-	private String imageName;
+	private long modelId;
+	private String modelName;
+	private String modelDurationDate;
+	private String modelImageUrl;
 
 }

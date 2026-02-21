@@ -18,9 +18,9 @@
 }
 
 .img-small {
-  width: 50px;
-  height: auto;
-  border-radius: 8px;
+    width: 50px;
+    height: auto;
+    border-radius: 8px;
 }
 
 .back-btn {
@@ -157,6 +157,14 @@ nav a.active {
     padding: 16px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.category-icon {
+    width: 100%;
+    height: 100%;
+    /* object-fit: contain; */
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .icon-box {
@@ -340,6 +348,7 @@ nav a.active {
         opacity: 0;
         max-height: 0;
     }
+
     to {
         opacity: 1;
         max-height: 1000px;

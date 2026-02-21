@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar-component/navbar-component";
 import { TwowheelerService } from '../../../services/app.twowheelerservice';
 import { CommonModule } from '@angular/common';
+import { AppConstants } from '../../../services/appconstants';
+import { Constants } from '../../../Constants/Constants';
 
 interface VehicleCategory {
   id: number;
@@ -58,7 +60,7 @@ export class Dashboard implements OnInit {
 
     console.log('Navigating to category:', name);
     if (name === 'Two-Wheeler') {
-      this.router.navigate(['/vehicles'], { queryParams: { category: 'Two Wheeler' } });
+      this.router.navigate(['/vehicles'], { queryParams: { category: Constants.TWO_WHEELER } });
     }
     else {
       console.warn('Route not implemented for this category');

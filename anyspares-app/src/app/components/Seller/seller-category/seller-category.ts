@@ -1,23 +1,23 @@
 import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SellerCategoryService } from '../../../services/Seller/seller-category.service';
 
 interface Category {
+  image: any;
   name: string;
   totalProducts: number;
   icon: string;
   color: string;
 }
-
 @Component({
-  selector: 'app-two-wheeler-categories',
+  selector: 'app-seller-category',
   imports: [CommonModule, FormsModule],
-  templateUrl: './two-wheeler-categories.html',
-  styleUrl: './two-wheeler-categories.css'
+  templateUrl: './seller-category.html',
+  styleUrl: './seller-category.css',
 })
-export class SellerTwoWheelerCategories implements OnInit {
+export class SellerCategory implements OnInit {
 
   sellerName = '';
   storeName = '';
@@ -27,28 +27,30 @@ export class SellerTwoWheelerCategories implements OnInit {
 
   newCategory = {
     name: '',
+    forvehicletype: '',
     description: '',
-    icon: '',
-    color: '',
-    image: '',
-    totalProducts: 0
+    totalProducts: 0,
+    image: null
   };
+
+  selectedFile: File | null = null;
 
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
   isFormExpanded = false;
+  vehicleType: string | null = "";
 
-  constructor(private location: Location, private router: Router, private sellerCategoryService: SellerCategoryService) { }
+  constructor(private location: Location, private router: Router, private sellerCategoryService: SellerCategoryService, private route: ActivatedRoute) { }
 
-  categories1: Category[] = [
-    { name: 'Engine Parts', totalProducts: 42, icon: '⚙️', color: 'green' },
-    { name: 'Brakes', totalProducts: 28, icon: '🛑', color: 'red' },
-    { name: 'Electrical', totalProducts: 35, icon: '⚡', color: 'orange' },
-    { name: 'Suspension', totalProducts: 18, icon: '🌬️', color: 'purple' },
-    { name: 'Body Parts', totalProducts: 15, icon: '🚗', color: 'blue' },
-    { name: 'Hydraulic / Fluids', totalProducts: 7, icon: '💧', color: 'cyan' }
-  ];
+  // categories1: Category[] = [
+  //   { name: 'Engine Parts', totalProducts: 42, icon: '⚙️', color: 'green' },
+  //   { name: 'Brakes', totalProducts: 28, icon: '🛑', color: 'red' },
+  //   { name: 'Electrical', totalProducts: 35, icon: '⚡', color: 'orange' },
+  //   { name: 'Suspension', totalProducts: 18, icon: '🌬️', color: 'purple' },
+  //   { name: 'Body Parts', totalProducts: 15, icon: '🚗', color: 'blue' },
+  //   { name: 'Hydraulic / Fluids', totalProducts: 7, icon: '💧', color: 'cyan' }
+  // ];
 
   summary = {
     total: 0,
@@ -58,6 +60,8 @@ export class SellerTwoWheelerCategories implements OnInit {
 
   ngOnInit(): void {
 
+    this.vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
+    console.log('Received vehicleType:', this.vehicleType);
     this.sellerName = sessionStorage.getItem('sellerName') || '';
     this.storeName = sessionStorage.getItem('businesstName') || '';
     this.avtarName = this.getAvatarName(this.sellerName);
@@ -114,7 +118,7 @@ export class SellerTwoWheelerCategories implements OnInit {
     const categoryName = category.name;
 
     this.router.navigate(['/seller-category-parts'], {
-      queryParams: { category: categoryName }
+      queryParams: { category: categoryName, vehicleType: this.vehicleType }
     });
 
     //   //ex
@@ -148,6 +152,15 @@ export class SellerTwoWheelerCategories implements OnInit {
 
   goBack() { this.location.back(); }
 
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+  }
+
+  getRandomColor(): string {
+    const colors = ['green', 'red', 'orange', 'purple', 'blue', 'cyan'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
   /**
    * Adds a new category by calling the service
    */
@@ -161,18 +174,19 @@ export class SellerTwoWheelerCategories implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const categoryData = {
-      name: this.newCategory.name,
-      description: this.newCategory.description,
-      icon: this.newCategory.icon,
-      color: this.newCategory.color,
-      image: this.newCategory.image,
-      totalProducts: this.newCategory.totalProducts
-    };
+    const formData = new FormData();
+    formData.append('name', this.newCategory.name);
+    formData.append('forvehicletype', this.newCategory.forvehicletype);
+    formData.append('description', this.newCategory.description);
+    formData.append('color', this.getRandomColor());
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+    formData.append('totalProducts', this.newCategory.totalProducts.toString());
 
-    console.log('Submitting new category:', JSON.stringify(categoryData));
+    console.log('Submitting new category:', formData);
 
-    this.sellerCategoryService.addCategory(categoryData).subscribe(
+    this.sellerCategoryService.addCategory(formData).subscribe(
       (response) => {
         console.log('Category added successfully:', response);
         this.isSubmitting = false;
@@ -199,18 +213,18 @@ export class SellerTwoWheelerCategories implements OnInit {
       return false;
     }
 
+    if (!this.newCategory.forvehicletype || !this.newCategory.forvehicletype.trim()) {
+      this.errorMessage = 'Vehicle type is required.';
+      return false;
+    }
+
     if (!this.newCategory.description || !this.newCategory.description.trim()) {
       this.errorMessage = 'Description is required.';
       return false;
     }
 
-    if (!this.newCategory.icon || !this.newCategory.icon.trim()) {
-      this.errorMessage = 'Icon is required.';
-      return false;
-    }
-
-    if (!this.newCategory.color) {
-      this.errorMessage = 'Color theme is required.';
+    if (!this.selectedFile) {
+      this.errorMessage = 'Image is required.';
       return false;
     }
 
@@ -223,12 +237,12 @@ export class SellerTwoWheelerCategories implements OnInit {
   resetForm(): void {
     this.newCategory = {
       name: '',
+      forvehicletype: '',
       description: '',
-      icon: '',
-      color: '',
-      image: '',
-      totalProducts: 0
+      totalProducts: 0,
+      image: null
     };
+    this.selectedFile = null;
     this.successMessage = '';
     this.errorMessage = '';
   }

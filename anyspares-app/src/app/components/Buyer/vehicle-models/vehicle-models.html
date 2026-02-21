@@ -10,11 +10,11 @@
 
     <!-- Model Cards -->
     <div class="model-grid">
-        <div class="model-card" *ngFor="let model of filteredModels()" (click)="onModelSelect(model)">
-            <img [src]="model.image" alt="{{ model.name }}" />
+        <div class="model-card" *ngFor="let model of filteredModels()" (click)="onModelSelect(model.modelId)">
+            <img [src]="model.modelImageUrl" alt="{{ model.modelName }}" />
             <div class="model-info">
-                <h3>{{ model.name }}</h3>
-                <p>{{ model.years }}</p>
+                <h3>{{ model.modelName }}</h3>
+                <p>{{ model.modelDurationDate }}</p>
             </div>
         </div>
     </div>

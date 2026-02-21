@@ -1,17 +1,16 @@
 package com.sellerservice.app.model;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import lombok.Data;
 
 @Data
-public class CategoryDto {
+public class CategoryResponseDto {
 
+	private Long categoryId;
 	private String name;
 	private String forvehicletype;
 	private String description;
 	private String color;
-	private MultipartFile image;
+	private String image;
 	private Integer totalProducts;
 
 }

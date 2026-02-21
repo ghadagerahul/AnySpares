@@ -55,7 +55,7 @@
         <div class="category-grid">
             <div class="category-card" *ngFor="let cat of categories">
                 <div class="icon-box" [ngClass]="cat.color">
-                    {{ cat.icon }}
+                    <img [src]="cat.image" alt="{{cat.name}}" class="category-icon">
                 </div>
 
                 <h4>{{ cat.name }}</h4>
@@ -110,69 +110,31 @@
                 <form class="add-category-form" (ngSubmit)="onAddCategory()">
                     <div class="form-group">
                         <label for="categoryName">Category Name *</label>
-                        <input 
-                            type="text" 
-                            id="categoryName"
-                            [(ngModel)]="newCategory.name"
-                            name="categoryName"
-                            placeholder="e.g., Engine Parts, Brakes, Electrical"
-                            required
-                        />
+                        <input type="text" id="categoryName" [(ngModel)]="newCategory.name" name="categoryName"
+                            placeholder="e.g., Engine Parts, Brakes, Electrical" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryFor">Category For: *</label>
+                        <select id="categoryFor" [(ngModel)]="newCategory.forvehicletype" name="categoryFor" required>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Two Wheelers">Two-Wheelers</option>
+                            <option value="Three Wheelers">Three-Wheelers</option>
+                            <option value="Four Wheelers">Four-Wheelers</option>
+                            <option value="Heavy Vehicles">Heavy Vehicles</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="categoryDescription">Description *</label>
-                        <textarea 
-                            id="categoryDescription"
-                            [(ngModel)]="newCategory.description"
-                            name="categoryDescription"
-                            placeholder="e.g., Pistons, rings, gaskets, valves"
-                            rows="3"
-                            required
-                        ></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="categoryIcon">Icon *</label>
-                            <input 
-                                type="text" 
-                                id="categoryIcon"
-                                [(ngModel)]="newCategory.icon"
-                                name="categoryIcon"
-                                placeholder="e.g., ⚙️, 🛑, ⚡"
-                                required
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="categoryColor">Color Theme *</label>
-                            <select 
-                                id="categoryColor"
-                                [(ngModel)]="newCategory.color"
-                                name="categoryColor"
-                                required
-                            >
-                                <option value="">Select Color</option>
-                                <option value="green">Green</option>
-                                <option value="red">Red</option>
-                                <option value="orange">Orange</option>
-                                <option value="purple">Purple</option>
-                                <option value="blue">Blue</option>
-                                <option value="cyan">Cyan</option>
-                            </select>
-                        </div>
+                        <textarea id="categoryDescription" [(ngModel)]="newCategory.description"
+                            name="categoryDescription" placeholder="e.g., Pistons, rings, gaskets, valves" rows="3"
+                            required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="categoryImage">Image URL</label>
-                        <input 
-                            type="text" 
-                            id="categoryImage"
-                            [(ngModel)]="newCategory.image"
-                            name="categoryImage"
-                            placeholder="e.g., assets/two-wheelers/category/engine.jpg"
-                        />
+                        <label for="categoryImage">Upload Image *</label>
+                        <input type="file" id="categoryImage" name="categoryImage" (change)="onFileSelected($event)" accept="image/*" required />
                     </div>
 
                     <div class="form-actions">

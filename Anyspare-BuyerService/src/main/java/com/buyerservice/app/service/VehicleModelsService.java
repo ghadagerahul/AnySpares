@@ -6,6 +6,6 @@ import com.buyerservice.app.dto.VehicleModelsDto;
 
 public interface VehicleModelsService {
 
-	List<VehicleModelsDto> loadVehicleModels(String vehicletype);
+	List<VehicleModelsDto> loadVehicleModels(long brandId);
 
 }

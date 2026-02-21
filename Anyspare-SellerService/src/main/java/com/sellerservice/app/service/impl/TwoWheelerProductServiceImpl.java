@@ -64,6 +64,7 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 		// Map fields common for both new and update
 		entity.setName(productDto.getName());
+		entity.setVehicleType(productDto.getVehicleType());
 		entity.setBrand(productDto.getBrand());
 		entity.setModel(productDto.getModel());
 		entity.setCategory(productDto.getCategory());
@@ -92,9 +93,9 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 	}
 
 	private void updateTotalProductsToCategoryDetails(ProductEntity save) {
-		String category = save.getCategory().trim();
+		String categoryName = save.getCategory().trim();
 		try {
-			categoryRepository.updateTotalProducts(category);
+			categoryRepository.updateTotalProducts(categoryName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -145,10 +146,12 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 	public boolean updateProduct(ProductDto dto, String productId) {
 
 		prodServiceLogger.info("TwoWheelerProductServiceImpl-updateProduct:productId: " + productId);
+		prodServiceLogger.info("TwoWheelerProductServiceImpl-updateProduct:dto: " + dto);
 
 		return productRepository.findById(Long.parseLong(productId)).map(existing -> {
 
 			existing.setName(dto.getName());
+			existing.setVehicleType(dto.getVehicleType());
 			existing.setBrand(dto.getBrand());
 			existing.setCategory(dto.getCategory());
 			existing.setModel(dto.getModel());

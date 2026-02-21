@@ -7,31 +7,32 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sellerservice.app.entity.CategoryEntity;
-
-import jakarta.transaction.Transactional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
-	boolean existsByName(String name);
+	// ✔ Matches entity field: categoryName
+	boolean existsByCategoryName(String categoryName);
 
-	@Query(value = "SELECT DISTINCT name FROM spare.hm_product_category WHERE name IS NOT NULL", nativeQuery = true)
+	// ✔ Native query can still use DB column names
+	@Query(value = "SELECT DISTINCT category_Name FROM hm_product_category WHERE category_Name IS NOT NULL", nativeQuery = true)
 	List<String> findDistinctCategories();
 
+	// ✔ Update total products safely
 	@Modifying
 	@Transactional
 	@Query(value = """
-			UPDATE spare.hm_product_category c
+			UPDATE hm_product_category c
 			SET total_products = (
 			    SELECT COUNT(*)
-			    FROM spare.hm_twowheeler_products p
-			    WHERE p.category = c.name
+			    FROM hm_vehicle_products p
+			    WHERE p.category = c.category_Name
 			      AND p.status = 'Active'
 			)
-			WHERE c.name = :category
+			WHERE c.category_Name =  :categoryName
 			""", nativeQuery = true)
-	int updateTotalProducts(@Param("category") String category);
-
+	int updateTotalProducts(@Param("categoryName") String categoryName);
 }

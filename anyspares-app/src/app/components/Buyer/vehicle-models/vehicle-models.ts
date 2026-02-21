@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { VehicleModelService } from '../../../services/Buyer/vehicle-model.services';
 
 @Component({
   selector: 'app-vehicle-models',
@@ -9,14 +10,16 @@ import { Router } from '@angular/router';
   templateUrl: './vehicle-models.html',
   styleUrl: './vehicle-models.css',
 })
-export class VehicleModels {
-selectedYear: string = '';
+export class VehicleModels implements OnInit {
+  selectedYear: string = '';
 
-  constructor(private router: Router){}
+  constructor(private router: Router, private vehicleModelService: VehicleModelService, private route: ActivatedRoute) { }
+ 
 
   allYears: string[] = ['2019', '2020', '2021', '2022', '2023', '2024'];
+  models: any[] = [];
 
-  models = [
+  models1 = [
     {
       name: 'Activa',
       years: '2019–2024',
@@ -44,6 +47,23 @@ selectedYear: string = '';
     }
   ];
 
+  ngOnInit(): void {
+
+const brandId = this.route.snapshot.queryParamMap.get('brandId');
+console.log('Received brandId:', brandId);
+console.log('Received category:', this.route.snapshot.queryParamMap.get('category'));
+   // this.models = this.models1;
+if (brandId) {
+  this.vehicleModelService.loadVehicleModels(brandId).subscribe(
+        (res: any) => {
+          console.log('Vehicle models:', res); 
+          if (res.success) {
+            this.models = res.data;
+          }
+    });
+}
+}
+
   filteredModels() {
     if (!this.selectedYear) return this.models;
     return this.models.filter(model => {
@@ -53,12 +73,8 @@ selectedYear: string = '';
     });
   }
 
-  onModelSelect(model: any) {
-    console.log('Selected model:', model.name);
-    // Navigate or load spare parts logic here
-
-
-
-    this.router.navigate(['/vehicle-category']);
+  onModelSelect(modelId: any) {
+    console.log('Selected model:', modelId);
+    this.router.navigate(['/vehicle-category'], { queryParams: { modelId: modelId, category: this.route.snapshot.queryParamMap.get('category') } });
   }
 }

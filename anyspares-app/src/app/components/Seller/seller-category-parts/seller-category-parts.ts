@@ -1,8 +1,8 @@
-import { CommonModule, Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SellerCategoryPartsService } from '../../../services/Seller/seller-category-parts.services';
+import { CommonModule, Location } from '@angular/common';
 
 
 
@@ -44,6 +44,7 @@ export class SellerCategoryParts implements OnInit {
   selectedStatus: string = 'All';
   filteredProducts: Product[] = [];
   statusOptions = ['All', 'Active', 'OutOfStock', 'Draft'];
+  vehicleType: any;
 
   // products1: Product[] = [
   //   { name: 'Piston Ring Set - Honda Activa', category: 'Engine Parts', stock: 25, price: 899, status: 'Active', statusLabel: 'Active' },
@@ -70,9 +71,14 @@ export class SellerCategoryParts implements OnInit {
       if (params['category']) {
         this.categoryName = params['category'];
       }
+      if(params['vehicleType']){
+        console.log('Received vehicle type:', params['vehicleType']);
+        this.vehicleType = params['vehicleType'];
+      }
     });
 
     console.log('###Category:', this.categoryName);
+    console.log('###Vehicle Type:', this.vehicleType);
 
     this.sellerCategoryPartsService.getPartsUnderCategories(this.categoryName).subscribe(
       response => {
@@ -159,12 +165,12 @@ export class SellerCategoryParts implements OnInit {
 
   addProduct(): void {
     console.log('Add Product clicked');
-    this.router.navigate(['/seller-addproduct']);
+    this.router.navigate(['/seller-addproduct'], { queryParams: { vehicleType: this.vehicleType } });
   }
 
   goToEditProduct(productId: any): void {
     console.log('Edit Product clicked for ID:', productId);
-    this.router.navigate(['/seller-editproduct'], { queryParams: { productId: productId } });
+    this.router.navigate(['/seller-editproduct'], { queryParams: { productId: productId, vehicleType: this.vehicleType } });
   }
   goBack() { this.location.back(); }
 

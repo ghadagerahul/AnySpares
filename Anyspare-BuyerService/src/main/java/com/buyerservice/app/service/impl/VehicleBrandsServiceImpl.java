@@ -6,21 +6,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.buyerservice.app.dto.VehicleModelsDto;
-import com.buyerservice.app.entity.VehicleModelDetailsEntity;
-import com.buyerservice.app.repo.VehicleModelsRepo;
-import com.buyerservice.app.service.VehicleModelsService;
+import com.buyerservice.app.dto.VehicleBrandsDto;
+import com.buyerservice.app.entity.VehicleBrandDetailsEntity;
+import com.buyerservice.app.repo.VehicleBrandsRepo;
+import com.buyerservice.app.service.VehicleBrandsService;
 
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 @Service
-public class VehicleModelsServiceImpl implements VehicleModelsService {
+public class VehicleBrandsServiceImpl implements VehicleBrandsService {
 
 	@Autowired
 	private S3Presigner presigner;
@@ -32,32 +33,32 @@ public class VehicleModelsServiceImpl implements VehicleModelsService {
 	private long presignExpiryMinutes;
 
 	@Autowired
-	private VehicleModelsRepo modelsRepo;
+	private VehicleBrandsRepo brandsRepo;
 
 	@Override
-	public List<VehicleModelsDto> loadVehicleModels(long brandId) {
+	public List<VehicleBrandsDto> loadVehicleBrands(String vehicleType) {
 
-		List<VehicleModelDetailsEntity> vehicleModelsList = modelsRepo.findByBrandId(brandId);
+		List<VehicleBrandDetailsEntity> vehicleBrandList = brandsRepo.findByVehicleCategory(vehicleType);
 
-		if (vehicleModelsList == null || vehicleModelsList.isEmpty()) {
+		if (vehicleBrandList == null || vehicleBrandList.isEmpty()) {
 			return Collections.emptyList();
 		}
 
-		return vehicleModelsList.stream().filter(Objects::nonNull)
-				.collect(Collectors.toMap(VehicleModelDetailsEntity::getModelName, entry -> entry, (e1, e2) -> e1))
-				.values().stream().map(entry -> {
+		return vehicleBrandList.stream().filter(Objects::nonNull).collect(Collectors
+				.toMap(VehicleBrandDetailsEntity::getBrandName, entity -> entity, (existing, replacement) -> existing
 
-					VehicleModelsDto dto = new VehicleModelsDto();
-					dto.setModelId(entry.getModelId());
-					dto.setModelName(entry.getModelName());
-					String modelDurationDate = entry.getModelYearFrom() + "-" + entry.getModelYearTo();
-					dto.setModelDurationDate(modelDurationDate);
+				)).values().stream().map(entity -> {
+					VehicleBrandsDto dto = new VehicleBrandsDto();
 
-					dto.setModelImageUrl(getPrisignedUrlFromName(entry.getModelImage()));
+					dto.setBrandId(entity.getVid());
+					dto.setBrndname(entity.getBrandName());
+					String imageUrl = StringUtils.isNotBlank(entity.getBrandImage())
+							? getPrisignedUrlFromName(entity.getBrandImage())
+							: "";
 
+					dto.setImageName(imageUrl);
 					return dto;
 				}).collect(Collectors.toList());
-
 	}
 
 	private String getPrisignedUrlFromName(String fileName) {
@@ -68,6 +69,6 @@ public class VehicleModelsServiceImpl implements VehicleModelsService {
 				r -> r.getObjectRequest(getObjectRequest).signatureDuration(Duration.ofMinutes(presignExpiryMinutes)));
 
 		return presignedGet.url().toString();
-	}
 
+	}
 }

@@ -1,28 +1,57 @@
 package com.sellerservice.app.service.impl;
 
+import java.io.IOException;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sellerservice.app.constants.AppConstants;
 import com.sellerservice.app.entity.CategoryEntity;
 import com.sellerservice.app.model.CategoryDto;
+import com.sellerservice.app.model.CategoryResponseDto;
 import com.sellerservice.app.model.ProductSummaryDto;
 import com.sellerservice.app.repo.CategoryRepository;
 import com.sellerservice.app.repo.ProductRepository;
 import com.sellerservice.app.service.CategoryService;
 
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
+
+	@Value("${aws.s3.bucket}")
+	private String bucketName;
+
+	@Value("${aws.presign.expiry.minutes}")
+	private long presignExpiryMinutes;
 
 	@Autowired
 	private ProductRepository productRepository;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+
+	@Autowired
+	private S3Client client;
+
+	@Autowired
+	private S3Presigner presigner;
 
 	@Override
 	public boolean addCategory(CategoryDto categoryDto) {
@@ -32,16 +61,36 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 
 		CategoryEntity entity = new CategoryEntity();
-		entity.setName(categoryDto.getName());
+		entity.setCategoryName(categoryDto.getName());
+		entity.setCategoryForvehicletype(categoryDto.getForvehicletype());
 		entity.setDescription(categoryDto.getDescription());
-		entity.setIcon(categoryDto.getIcon());
 		entity.setColor(categoryDto.getColor());
-		entity.setImage(categoryDto.getImage());
+
+		MultipartFile image = categoryDto.getImage();
+		String originalFilename = image.getOriginalFilename();
+		String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
+		String fileName = UUID.randomUUID().toString() + extention;
+
+		uploadImageToS3(image, fileName);
+		entity.setImage(fileName);
 		entity.setTotalProducts(categoryDto.getTotalProducts());
 
 		CategoryEntity savedEntity = categoryRepository.save(entity);
 
 		return savedEntity != null && savedEntity.getCategoryId() != null;
+	}
+
+	private void uploadImageToS3(MultipartFile image, String fileName) {
+
+		PutObjectRequest putObjectRequest = software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+				.bucket(bucketName).key(fileName).contentType(image.getContentType()).build();
+		try {
+			PutObjectResponse putObject = client.putObject(putObjectRequest,
+					RequestBody.fromInputStream(image.getInputStream(), image.getSize()));
+
+		} catch (AwsServiceException | SdkClientException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -51,11 +100,11 @@ public class CategoryServiceImpl implements CategoryService {
 			return false;
 		}
 
-		return categoryRepository.existsByName(categoryName.trim());
+		return categoryRepository.existsByCategoryName(categoryName);
 	}
 
 	@Override
-	public List<CategoryDto> getAllCategories() {
+	public List<CategoryResponseDto> getAllCategories() {
 
 		List<CategoryEntity> entities = categoryRepository.findAll();
 
@@ -64,16 +113,32 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 
 		return entities.stream().map(entity -> {
-			CategoryDto dto = new CategoryDto();
+			CategoryResponseDto dto = new CategoryResponseDto();
 			dto.setCategoryId(entity.getCategoryId());
-			dto.setName(entity.getName());
+			dto.setName(entity.getCategoryName());
+			dto.setForvehicletype(entity.getCategoryForvehicletype());
 			dto.setDescription(entity.getDescription());
-			dto.setIcon(entity.getIcon());
 			dto.setColor(entity.getColor());
-			dto.setImage(entity.getImage());
 			dto.setTotalProducts(entity.getTotalProducts());
+
+			String imagename = entity.getImage();
+			dto.setImage(getPresignedS3Url(imagename));
+
 			return dto;
 		}).collect(Collectors.toList());
+	}
+
+	private String getPresignedS3Url(String imagename) {
+
+		if (StringUtils.isBlank(imagename))
+			return "";
+
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(imagename).build();
+
+		PresignedGetObjectRequest presignedGet = presigner.presignGetObject(
+				r -> r.getObjectRequest(getObjectRequest).signatureDuration(Duration.ofMinutes(presignExpiryMinutes)));
+
+		return presignedGet.url().toString();
 	}
 
 	@Override
@@ -83,19 +148,30 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public boolean updateCategory(Long id, CategoryDto categoryRequest) {
+	public boolean updateCategory(Long id, CategoryDto categoryDto) {
 
-		if (id == null || categoryRequest == null) {
+		if (id == null || categoryDto == null) {
 			return false;
 		}
 
 		return categoryRepository.findById(id).map(existingCategory -> {
-			existingCategory.setName(categoryRequest.getName());
-			existingCategory.setDescription(categoryRequest.getDescription());
-			existingCategory.setIcon(categoryRequest.getIcon());
-			existingCategory.setColor(categoryRequest.getColor());
-			existingCategory.setImage(categoryRequest.getImage());
-			existingCategory.setTotalProducts(categoryRequest.getTotalProducts());
+
+			existingCategory.setCategoryName(categoryDto.getName());
+			existingCategory.setCategoryForvehicletype(existingCategory.getCategoryForvehicletype());
+			existingCategory.setDescription(categoryDto.getDescription());
+			existingCategory.setColor(categoryDto.getColor());
+
+			MultipartFile image = categoryDto.getImage();
+			String originalFilename = image.getOriginalFilename();
+			String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
+			String fileName = UUID.randomUUID().toString() + extention;
+
+			uploadImageToS3(image, fileName);
+
+			existingCategory.setImage(fileName);
+			// Need to update products under category from product table on category &
+			// vehicle type
+			existingCategory.setTotalProducts(categoryDto.getTotalProducts());
 
 			categoryRepository.save(existingCategory);
 			return true;

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TwoWheelerCategories } from './two-wheeler-categories';
+import { SellerCategory } from './seller-category';
 
-describe('TwoWheelerCategories', () => {
-  let component: TwoWheelerCategories;
-  let fixture: ComponentFixture<TwoWheelerCategories>;
+describe('SellerCategory', () => {
+  let component: SellerCategory;
+  let fixture: ComponentFixture<SellerCategory>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TwoWheelerCategories]
+      imports: [SellerCategory]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(TwoWheelerCategories);
+    fixture = TestBed.createComponent(SellerCategory);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

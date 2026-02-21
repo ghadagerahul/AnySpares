@@ -13,32 +13,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.buyerservice.app.dto.VehicleModelsDto;
-import com.buyerservice.app.service.VehicleModelsService;
+import com.buyerservice.app.dto.VehicleCategoryDto;
+import com.buyerservice.app.service.VehicleCategoryService;
 
 @RestController
-@RequestMapping("/vehicle-models")
-public class VehicleModelsController {
+@RequestMapping("/vehicle-categories")
+public class VehicleCategoryController {
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private VehicleModelsService modelsService;
+	private VehicleCategoryService categoryService;
 
 	@GetMapping("/load")
-	public ResponseEntity<HashMap<String, Object>> loadVehiclemodels(@RequestParam String brandId) {
+	public ResponseEntity<HashMap<String, Object>> loadVehicleCategories(@RequestParam String vehicleType) {
 
-		logger.info("===========================================");
-		logger.info("VehicleModelsController-loadVehiclemodels");
-		logger.info("loadVehiclemodels-vehicletype: " + brandId);
-		logger.info("===========================================");
-
-		List<VehicleModelsDto> vehicleModels = modelsService.loadVehicleModels(Long.parseLong(brandId));
+		List<VehicleCategoryDto> vehicleCategoryList = categoryService.loadVehicleCategory(vehicleType);
 
 		HashMap<String, Object> responseMap = new HashMap<>();
-		if (null != vehicleModels && vehicleModels.size() > 0) {
+		if (null != vehicleCategoryList && vehicleCategoryList.size() > 0) {
 			responseMap.put("success", true);
-			responseMap.put("data", vehicleModels);
+			responseMap.put("data", vehicleCategoryList);
 			return ResponseEntity.ok(responseMap);
 		}
 

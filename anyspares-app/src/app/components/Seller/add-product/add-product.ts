@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TwoWheelerProductService } from '../../../services/Seller/twowheeler-product.service';
 import { AppConstants } from '../../../services/appconstants';
 import { routes } from '../../../app.routes';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -37,6 +37,7 @@ export class AddProduct implements OnInit, OnDestroy {
   profit: number | null = null;
 
   private destroy$ = new Subject<void>();
+  vehicleType: string | null = "";
 
   // convenience getter for template access
   get f() { return this.productForm.controls; }
@@ -67,11 +68,15 @@ export class AddProduct implements OnInit, OnDestroy {
     private location: Location,
     private sellerProductService: TwoWheelerProductService,
     private appConstants: AppConstants,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
 
   ngOnInit(): void {
+
+this.vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
+console.log('###Vehicle Type on init:', this.vehicleType);
     this.initializeSessionData();
     this.initializeForm();
     this.setupDynamicValidators();
@@ -375,6 +380,7 @@ export class AddProduct implements OnInit, OnDestroy {
   private prepareFormData(status: string): FormData {
     const fv = { ...this.productForm.value };
 
+    fv.vehicleType = this.vehicleType; 
     // Convert numeric fields to numbers
     fv.mrp = this.parseNumber(fv.mrp) || 0;
     fv.price = this.parseNumber(fv.price) || 0;

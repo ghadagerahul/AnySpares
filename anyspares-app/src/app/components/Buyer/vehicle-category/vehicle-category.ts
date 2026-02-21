@@ -1,21 +1,25 @@
+
 import { CommonModule, Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { VehicleCategoryService } from '../../../services/Buyer/vehicle-category.service';
+
 
 @Component({
-  selector: 'app-vehiclecategory',
+  selector: 'app-vehicle-category',
   imports: [CommonModule, FormsModule],
-  templateUrl: './vehiclecategory.html',
-  styleUrl: './vehiclecategory.css',
+  templateUrl: './vehicle-category.html',
+  styleUrl: './vehicle-category.css',
 })
-export class Vehiclecategory {
+export class VehicleCategory implements OnInit {
 
-  constructor(private location: Location, private router: Router) { }
+  constructor(private location: Location, private router: Router, private route: ActivatedRoute, private vehicleCategoryService: VehicleCategoryService) { }
 
   searchTerm: string = '';
-
-  categories = [
+  categories: any[] = [];
+  modelId: String | null = '';
+  categories1 = [
     {
       name: 'Engine Parts',
       description: 'Pistons, rings, gaskets, valves',
@@ -48,6 +52,28 @@ export class Vehiclecategory {
     }
   ];
 
+  ngOnInit(): void {
+
+    this.modelId = this.route.snapshot.queryParamMap.get('modelId');
+    console.log('Received modelId:', this.modelId);
+    
+    const category = this.route.snapshot.queryParamMap.get('category');
+    console.log('Received category:', category);
+
+    this.vehicleCategoryService.loadVehicleCategories(category).subscribe(
+      (res: any) => {
+        this.categories = res.data;
+        console.log('Fetched categories:', this.categories);
+      },
+      (error) => {
+        console.error('Error fetching categories:', error);
+      }
+    );
+
+
+
+  }
+
   filteredCategories() {
     return this.categories.filter(cat =>
       cat.name.toLowerCase().includes(this.searchTerm.toLowerCase())
@@ -56,7 +82,8 @@ export class Vehiclecategory {
 
   onCategorySelect(category: any) {
     console.log('Selected category:', category.name);
-    // Navigate or load spare parts logic here
+    console.log('Model ID for product listing:', this.modelId);
+    this.router.navigate(['/vehicle-product'], { queryParams: { modelId: this.modelId, category: category.name } });
   }
 
   goBack() {
@@ -68,3 +95,4 @@ export class Vehiclecategory {
     this.router.navigate(['/vehicle-product']);
   }
 }
+

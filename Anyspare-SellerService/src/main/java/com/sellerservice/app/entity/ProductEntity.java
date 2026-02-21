@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "hm_twowheeler_products")
+@Table(name = "hm_vehicle_products")
 public class ProductEntity {
 
 	@Id
@@ -45,5 +45,7 @@ public class ProductEntity {
 	private boolean warranty;
 
 	private String productimage;
+
+	private String vehicleType;
 
 }

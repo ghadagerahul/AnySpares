@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { VehicleModelService } from '../../../services/Buyer/vehicle-model.services';
+import { VehicleBrandsService } from '../../../services/Buyer/vehicle-brands.services';
 
 @Component({
   selector: 'app-vehicle-brands',
@@ -15,7 +16,7 @@ export class VehicleBrands implements OnInit {
   searchTerm: string = '';
   brands: any[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private vehicleModelService: VehicleModelService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private vehicleModelService: VehicleModelService, private vehicleBrandsService: VehicleBrandsService) { }
 
 
   brands1 = [
@@ -32,16 +33,16 @@ export class VehicleBrands implements OnInit {
     console.log('Received category on init:', category);
 
     if (category) {
-      this.vehicleModelService.loadVehicleModels(category).subscribe(
+      this.vehicleBrandsService.loadVehicleBrands(category).subscribe(
         (res: any) => {
-          console.log('Vehicle models:', res);
+          console.log('Vehicle brands:', res);
           if (res.success) {
             this.brands = res.data;
             console.log('Loaded brands:', this.brands);
           }
         },
         (error) => {
-          console.error('Error loading vehicle models:', error);
+          console.error('Error loading vehicle brands:', error);
         }
       );
     }
@@ -53,10 +54,9 @@ export class VehicleBrands implements OnInit {
     );
   }
 
-  onBrandSelect(brand: any) {
-    console.log('Selected brand:', brand.name);
-    this.router.navigate(['/vehicle-models']);
-
+  onBrandSelect(brandId: any) {
+    console.log('Selected brand:', brandId);
+    this.router.navigate(['/vehicle-models'], { queryParams: { brandId: brandId, category: this.route.snapshot.queryParamMap.get('category') } });
   }
 
 }

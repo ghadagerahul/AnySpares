@@ -4,15 +4,15 @@ import { Injectable } from "@angular/core";
 @Injectable({
     providedIn: 'root'
 })
-export class VehicleModelService {
+export class VehicleBrandsService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = "http://localhost:8181/buyers/vehicle-models";
+    private appUrl = "http://localhost:8181/buyers/vehicle-brands";
 
 
-loadVehicleModels(brandId: string) {
-    const url = `${this.appUrl}/load?brandId=${encodeURIComponent(brandId)}`;
+loadVehicleBrands(brand: string) {
+    const url = `${this.appUrl}/load?vehicletype=${encodeURIComponent(brand)}`;
     return this.http.get<any[]>(url);
   }
 
