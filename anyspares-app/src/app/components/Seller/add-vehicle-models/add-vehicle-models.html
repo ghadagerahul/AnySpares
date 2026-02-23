@@ -149,8 +149,8 @@
                     <button 
                         type="button" 
                         class="change-btn" 
-                        *ngIf="selectedImagePreview"
-                        (click)="fileInput.nativeElement.click()"
+                        *ngIf="selectedImagePreview" 
+                        (click)="onChangeImage()"
                     >
                         Change Image
                     </button>

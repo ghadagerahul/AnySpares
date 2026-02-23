@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { VehicleModelService } from '../../../services/Buyer/vehicle-model.services';
+import { ActivatedRoute } from '@angular/router';
+import { VehicleProductService } from '../../../services/Buyer/vehicle-product.services';
 
-
-
-interface Product {
+interface VehicleProductDto {
   name: string;
   type: 'OEM' | 'Aftermarket';
   rating: number;
@@ -17,16 +18,41 @@ interface Product {
 
 @Component({
   selector: 'app-vehicle-products',
+  standalone: true, // ✅ required for standalone components
   imports: [CommonModule, FormsModule],
   templateUrl: './vehicle-products.html',
-  styleUrl: './vehicle-products.css',
+  styleUrls: ['./vehicle-products.css'], // ✅ plural
 })
-export class VehicleProducts {
+export class VehicleProducts implements OnInit {
 
-  products: Product[] = [];
+  products: VehicleProductDto[] = [];
+
+  modelId: string | null = null;
+  category: string | null = null;
+  vehicleType: string | null = null;
+
+  constructor(
+    private vehicleProductService: VehicleProductService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    //  this.setDummyData();
 
+    this.modelId = this.route.snapshot.queryParamMap.get('modelId');
+    console.log('Received modelId:', this.modelId);
+
+    this.category = this.route.snapshot.queryParamMap.get('category');
+    console.log('Received category:', this.category);
+
+    this.vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
+    console.log('Received vehicleType:', this.vehicleType);
+
+    // Uncomment when backend is ready
+    this.loadProductsData();
+  }
+
+  setDummyData(): void {
     this.products = [
       {
         name: 'Air Filter Element',
@@ -61,4 +87,17 @@ export class VehicleProducts {
     ];
   }
 
+  loadProductsData(): void {
+    this.vehicleProductService
+      .loadProductData(this.modelId, this.category, this.vehicleType)
+      .subscribe((res: any) => {
+        console.log('Fetched products:', res);
+        if (res.success) {
+          this.products = res.data;
+        } else {
+          console.warn('API responded with success: false. No products loaded.');
+          this.products = [];
+        }
+      });
+  }
 }

@@ -19,6 +19,8 @@ import com.sellerservice.app.entity.ProductEntity;
 import com.sellerservice.app.model.ProductDto;
 import com.sellerservice.app.repo.CategoryRepository;
 import com.sellerservice.app.repo.ProductRepository;
+import com.sellerservice.app.repo.VehicleBrandsDetailsRepo;
+import com.sellerservice.app.repo.VehicleModelsDetailsRepo;
 import com.sellerservice.app.service.AwsS3Service;
 import com.sellerservice.app.service.TwoWheelerProductService;
 
@@ -27,6 +29,12 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private VehicleBrandsDetailsRepo brandsDetailsRepo;
+
+	@Autowired
+	private VehicleModelsDetailsRepo modelDetailsRepo;
 
 	@Autowired
 	private AwsS3Service awsS3Service;
@@ -124,8 +132,8 @@ public class TwoWheelerProductServiceImpl implements TwoWheelerProductService {
 
 		Map<String, List<String>> formReloadDatamap = new HashMap<>();
 		formReloadDatamap.put("category", safeSortedList(categoryRepository.findDistinctCategories()));
-		formReloadDatamap.put("brands", safeSortedList(productRepository.findDistinctBrands()));
-		formReloadDatamap.put("models", safeSortedList(productRepository.findDistinctModels()));
+		formReloadDatamap.put("brands", safeSortedList(brandsDetailsRepo.findDistinctBrands()));
+		formReloadDatamap.put("models", safeSortedList(modelDetailsRepo.findDistinctModels()));
 		return formReloadDatamap;
 	}
 

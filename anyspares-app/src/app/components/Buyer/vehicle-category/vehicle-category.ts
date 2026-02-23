@@ -57,10 +57,10 @@ export class VehicleCategory implements OnInit {
     this.modelId = this.route.snapshot.queryParamMap.get('modelId');
     console.log('Received modelId:', this.modelId);
     
-    const category = this.route.snapshot.queryParamMap.get('category');
-    console.log('Received category:', category);
+    const vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
+    console.log('Received vehicleType:', vehicleType);
 
-    this.vehicleCategoryService.loadVehicleCategories(category).subscribe(
+    this.vehicleCategoryService.loadVehicleCategories(vehicleType).subscribe(
       (res: any) => {
         this.categories = res.data;
         console.log('Fetched categories:', this.categories);
@@ -83,7 +83,7 @@ export class VehicleCategory implements OnInit {
   onCategorySelect(category: any) {
     console.log('Selected category:', category.name);
     console.log('Model ID for product listing:', this.modelId);
-    this.router.navigate(['/vehicle-product'], { queryParams: { modelId: this.modelId, category: category.name } });
+    this.router.navigate(['/vehicle-product'], { queryParams: { modelId: this.modelId, category: category.name, vehicleType: this.route.snapshot.queryParamMap.get('vehicleType') } });
   }
 
   goBack() {

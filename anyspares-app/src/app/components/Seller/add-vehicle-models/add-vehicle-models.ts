@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
   styleUrl: './add-vehicle-models.css',
 })
 export class AddVehicleModels implements OnInit {
+
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   modelForm!: FormGroup;
@@ -174,6 +175,11 @@ export class AddVehicleModels implements OnInit {
   resetForm(): void {
     this.modelForm.reset();
     this.submitted = false;
+    this.selectedFileName = '';
+    this.selectedImagePreview = null;
+  }
+
+  onChangeImage() {
     this.selectedFileName = '';
     this.selectedImagePreview = null;
   }

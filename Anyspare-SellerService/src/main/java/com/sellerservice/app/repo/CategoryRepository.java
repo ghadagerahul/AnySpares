@@ -14,7 +14,6 @@ import com.sellerservice.app.entity.CategoryEntity;
 @Repository
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
 
-	// ✔ Matches entity field: categoryName
 	boolean existsByCategoryName(String categoryName);
 
 	// ✔ Native query can still use DB column names

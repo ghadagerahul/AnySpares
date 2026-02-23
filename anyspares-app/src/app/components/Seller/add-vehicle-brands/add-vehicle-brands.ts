@@ -97,8 +97,8 @@ export class AddVehicleBrands implements OnInit {
       (response: any) => {
         console.log('Brand added successfully:', response);
         if (response && !response.success && response.message === 'Details already exists') {
-        //   alert('Brand already exists!');
-        // } else if (response && response.success) {
+           alert('Brand already exists!');
+         } else if (response && response.success) {
 
           this.dialog.open(ConfirmDialogComponent, {
             data: { 

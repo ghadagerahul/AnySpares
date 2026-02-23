@@ -14,9 +14,9 @@ export class VehicleModels implements OnInit {
   selectedYear: string = '';
 
   constructor(private router: Router, private vehicleModelService: VehicleModelService, private route: ActivatedRoute) { }
- 
 
-  allYears: string[] = ['2019', '2020', '2021', '2022', '2023', '2024'];
+
+  allYears: string[] = ['2009','2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'];
   models: any[] = [];
 
   models1 = [
@@ -49,32 +49,38 @@ export class VehicleModels implements OnInit {
 
   ngOnInit(): void {
 
-const brandId = this.route.snapshot.queryParamMap.get('brandId');
-console.log('Received brandId:', brandId);
-console.log('Received category:', this.route.snapshot.queryParamMap.get('category'));
-   // this.models = this.models1;
-if (brandId) {
-  this.vehicleModelService.loadVehicleModels(brandId).subscribe(
+    const brandId = this.route.snapshot.queryParamMap.get('brandId');
+    console.log('Received brandId:', brandId);
+    console.log('Received category:', this.route.snapshot.queryParamMap.get('category'));
+    // this.models = this.models1;
+    if (brandId) {
+      this.vehicleModelService.loadVehicleModels(brandId).subscribe(
         (res: any) => {
-          console.log('Vehicle models:', res); 
+          console.log('Vehicle models:', res);
           if (res.success) {
             this.models = res.data;
           }
-    });
-}
+        });
+    }
+  }
+
+ filteredModels() {
+  if (!this.selectedYear) return this.models;
+  const filtered = this.models.filter(model => {
+    const [start, end] = model.modelDurationDate
+      .split('-')
+      .map((x: string) => Number(x.trim()));
+
+    const year = Number(this.selectedYear);
+    return year >= start && year <= end;
+  });
+  return filtered.length > 0 ? filtered : [];
 }
 
-  filteredModels() {
-    if (!this.selectedYear) return this.models;
-    return this.models.filter(model => {
-      const [start, end] = model.years.split('–').map(Number);
-      const year = Number(this.selectedYear);
-      return year >= start && year <= end;
-    });
-  }
+
 
   onModelSelect(modelId: any) {
     console.log('Selected model:', modelId);
-    this.router.navigate(['/vehicle-category'], { queryParams: { modelId: modelId, category: this.route.snapshot.queryParamMap.get('category') } });
+    this.router.navigate(['/vehicle-category'], { queryParams: { modelId: modelId, vehicleType: this.route.snapshot.queryParamMap.get('category') } });
   }
 }
