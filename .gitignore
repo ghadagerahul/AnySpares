@@ -4,7 +4,7 @@
 # ----------------------
 # Angular app ignores
 # ----------------------
-/anyspares-app/dist
+# /anyspares-app/dist
 /anyspares-app/tmp
 /anyspares-app/out-tsc
 /anyspares-app/bazel-out
