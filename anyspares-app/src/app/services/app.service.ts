@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,9 @@ export class AppService {
 
   constructor(private http: HttpClient) { }
 
-  private appUrl = "http://localhost:8181/auth";
+  private appUrl = environment.apiUrl + "/auth";
+  // ...existing code...
+  // Make sure to update environment.ts and environment.prod.ts for apiUrl
 
 
 

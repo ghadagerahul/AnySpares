@@ -3,15 +3,15 @@ spring:
     name: SERVICEGATEWAY
 
   profiles:
-    active: local
+    active: remote
 
   cloud:
     gateway:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins:
-              - "http://localhost:4200"
+            allowedOriginPatterns:
+              - "*"
             allowedMethods:
               - GET
               - POST
@@ -44,25 +44,8 @@ spring:
           filters:
             - StripPrefix=1
 
-        - id: SELLERSERVICE
-          uri: lb://SELLERSERVICE
-          predicates:
-            - Path=/sellers/**
-          filters:
-            - StripPrefix=1
-
 server:
   port: 8181
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    hostname: localhost
-    prefer-ip-address: true
 
 logging:
   level:

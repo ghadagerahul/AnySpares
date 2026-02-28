@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, of, tap } from "rxjs";
+import { environment } from '../../../environments/environment';
 
 interface VehicleBrandResponse {
     success: boolean;
@@ -17,7 +18,7 @@ interface VehicleModelResponse {
 })
 export class SellerVehicleService {
   
-    private apiUrl = 'http://localhost:8181/sellers/Vehicles';
+    private apiUrl = environment.apiUrl + '/sellers/Vehicles';
     
     constructor(private http: HttpClient) { }
 

@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, Observable, of } from "rxjs";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,7 @@ export class TwoWheelerProductService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/sellers/seller/products';
+    private appUrl = environment.apiUrl + '/sellers/seller/products';
 
 
 

@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -8,7 +9,7 @@ export class VehicleModelService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = "http://localhost:8181/buyers/vehicle-models";
+    private appUrl = environment.apiUrl + "/buyers/vehicle-models";
 
 
 loadVehicleModels(brandId: string) {

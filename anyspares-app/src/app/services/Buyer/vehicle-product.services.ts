@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { environment } from '../../../environments/environment';
 
 // export interface VehicleProductDto {
 //   name: string;
@@ -17,7 +18,8 @@ import { Injectable } from "@angular/core";
 })
 export class VehicleProductService {
 
-    private appUrl = "http://localhost:8181/buyers/vehicle-products";
+    private appUrl = environment.apiUrl + "/buyers/vehicle-products";
+    // ...existing code...
 
     constructor(private http: HttpClient) { }
 
