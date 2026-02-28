@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://wagon-organization-phentermine-committees.trycloudflare.com',
+  apiUrl: 'https://defense-only-control-catherine.trycloudflare.com',
   configUrl: '/assets/config/app-constants.json'
 };
