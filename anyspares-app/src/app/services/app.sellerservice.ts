@@ -32,23 +32,37 @@ export class SellerService {
     }
 
 
+    // /**
+    // * Sends registration request to the backend.
+    // *
+    // * @param loginForm - User details for registration.
+    // * @returns Observable with API response or a fallback error object.
+    // */
+    // loginUser(loginForm: any): Observable<any> {
+    //     const url = this.appUrl + '/login';
+    //     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    //     console.log("loginForm: " + loginForm.mobileNumber);
+    //     return this.http.post<any>(url, loginForm, { headers }).pipe(
+    //         catchError(error => {
+    //             console.error("Error during Seller Login:", error);
+    //             return of({ success: false, message: 'Seller Login failed' });
+    //         })
+    //     );
+    // }
+
     /**
-    * Sends registration request to the backend.
-    *
-    * @param loginForm - User details for registration.
-    * @returns Observable with API response or a fallback error object.
-    */
-    loginUser(loginForm: any): Observable<any> {
-        const url = this.appUrl + '/login';
+     * Sends forgot password request for seller to backend.
+     * @param form - object with email or mobileNumber
+     */
+    forgotPassword(form: any): Observable<any> {
+        const url = this.appUrl + '/forgot-password';
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-        console.log("loginForm: " + loginForm.mobileNumber);
-        return this.http.post<any>(url, loginForm, { headers }).pipe(
+        return this.http.post<any>(url, form, { headers }).pipe(
             catchError(error => {
-                console.error("Error during Seller Login:", error);
-                return of({ success: false, message: 'Seller Login failed' });
+                console.error("Error during Seller Forgot Password:", error);
+                return of({ success: false, message: 'Seller Forgot password failed' });
             })
         );
     }
-
 
 }

@@ -3,10 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SellerService } from '../../../services/app.sellerservice';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-seller-login',
-  imports: [RouterLink, FormsModule, ReactiveFormsModule,CommonModule ],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule,CommonModule],
   templateUrl: './seller-login.html',
   styleUrl: './seller-login.css'
 })
@@ -17,7 +18,7 @@ invalidCred: boolean=false;
 
 
 
-  constructor(private router: Router, private fb: FormBuilder, private sellerService: SellerService) { }
+  constructor(private router: Router, private fb: FormBuilder, private sellerService: SellerService, private authService: AuthService) { }
 
 
   ngOnInit(): void {
@@ -41,7 +42,7 @@ invalidCred: boolean=false;
 
 
 
-    this.sellerService.loginUser(this.loginForm.value).subscribe({
+    this.authService.LoginSellerUserToPortal(this.loginForm.value).subscribe({
       next: (res: any) => {
 
         if (res.success) {

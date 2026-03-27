@@ -106,6 +106,16 @@
     color: white;
 }
 
+.orders-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.bucket-btn {
+    background-color: #ff6b6b;
+    color: white;
+}
+
 .info {
     margin-top: 1rem;
     font-size: 0.9rem;

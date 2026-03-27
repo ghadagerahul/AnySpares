@@ -13,7 +13,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Modal } from 'bootstrap';
-import { AppService } from '../../../services/app.service';
+import { BuyerService } from '../../../services/app.buyerservice';
 declare var bootstrap: any;
 @Component({
   selector: 'app-registeration-page',
@@ -26,11 +26,7 @@ export class RegisterationPage implements OnInit {
   registrationForm!: FormGroup;
 
 
-  constructor(
-    private appservice: AppService,
-    private fb: FormBuilder,
-    private router: Router
-  ) { }
+  constructor(private appservice: BuyerService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group(

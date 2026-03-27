@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AppService } from '../../../services/app.service';
+import { AuthService } from '../../../services/auth.service';
 
 
 interface LoginRequest {
@@ -24,7 +24,7 @@ export class LoginPage {
   loginDataNew: LoginRequest = { emailId: '', mobileNo: '', password: '' };
 
 
-  constructor(private appservice: AppService, private router: Router) { }
+  constructor(private router: Router, private authservice: AuthService) { }
 
   onSubmit(form: any): void {
     if (form.valid) {
@@ -40,7 +40,7 @@ export class LoginPage {
 
       console.log("Login Request:", this.loginDataNew);
 
-      this.appservice.LoginUserToPortal(this.loginDataNew).subscribe({
+      this.authservice.LoginBuyerUserToPortal(this.loginDataNew).subscribe({
         next: (res: any) => {
           if (res.success) {
             console.log('✅ Login successful');

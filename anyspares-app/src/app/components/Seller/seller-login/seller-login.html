@@ -46,13 +46,14 @@
 
             <form [formGroup]="loginForm" (ngSubmit)="loginAsSeller()">
                 <label>Mobile Number *</label>
-                <input type="number" placeholder="Enter mobile number" formControlName="mobileNumber" required minlength="10" maxlength="12" />
+                <input type="number" placeholder="Enter mobile number" formControlName="mobileNumber" required
+                    minlength="10" maxlength="12" />
 
                 <div class="password-row">
                     <label>Password *</label>
-                    <a (click)="forgotPassword()">Forgot Password?</a>
+                    <a routerLink="/seller-forgot-password">Forgot Password?</a>
                 </div>
-                <input type="password" placeholder="Enter password"  formControlName="password"/>
+                <input type="password" placeholder="Enter password" formControlName="password" />
 
                 <button class="login-btn" (click)="loginAsSeller()">
                     Sign In as Seller →

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SellerRegister } from './seller-register';
+import { SellerRegisterComponent } from './seller-register';
 
-describe('SellerRegister', () => {
-  let component: SellerRegister;
-  let fixture: ComponentFixture<SellerRegister>;
+describe('SellerRegisterComponent', () => {
+  let component: SellerRegisterComponent;
+  let fixture: ComponentFixture<SellerRegisterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SellerRegister]
+      imports: [SellerRegisterComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SellerRegister);
+    fixture = TestBed.createComponent(SellerRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

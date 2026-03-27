@@ -1,0 +1,147 @@
+<app-navbar-component></app-navbar-component>
+
+<div class="bucket-container">
+  <div class="bucket-wrapper">
+    <!-- Header -->
+    <div class="bucket-header">
+      <h1 class="bucket-title">🛒 My Bucket</h1>
+      <p class="bucket-subtitle">{{ totalItems }} item(s) in your bucket</p>
+    </div>
+
+    <!-- Message Notification -->
+    <div *ngIf="showOrderMessage" class="message-notification" [ngClass]="messageType">
+      {{ orderMessage }}
+    </div>
+
+    <div class="bucket-content">
+      <!-- Items List Section -->
+      <div class="items-section">
+        <div *ngIf="bucketItems.length === 0" class="empty-bucket">
+          <div class="empty-icon">📦</div>
+          <h3>Your bucket is empty</h3>
+          <p>Add items to get started with your order</p>
+          <button class="btn-continue-shopping" (click)="continueShopping()">
+            Continue Shopping
+          </button>
+        </div>
+
+        <div *ngIf="bucketItems.length > 0" class="bucket-items">
+          <div class="bucket-item" *ngFor="let item of bucketItems">
+            <!-- Item Image -->
+            <div class="item-image">
+              <img [src]="item.imageUrl" [alt]="item.productName" />
+            </div>
+
+            <!-- Item Details -->
+            <div class="item-details">
+              <h3 class="item-name">{{ item.productName }}</h3>
+              <p class="item-description" *ngIf="item.description">{{ item.description }}</p>
+              <div class="item-price">
+                <span class="price-label">Price:</span>
+                <span class="price-value">₹{{ item.price }}</span>
+              </div>
+            </div>
+
+            <!-- Quantity Controls -->
+            <div class="quantity-controls">
+              <label class="qty-label">Quantity</label>
+              <div class="qty-selector">
+                <button class="qty-btn" [disabled]="item.quantity <= 1" 
+                  (click)="decreaseQuantity(item)" title="Decrease">
+                  −
+                </button>
+                <span class="qty-display">{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="increaseQuantity(item)" title="Increase">
+                  +
+                </button>
+              </div>
+              <div class="subtotal">
+                Subtotal: <strong>₹{{ item.price * item.quantity }}</strong>
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <button class="btn-remove" (click)="removeItem(item)" title="Remove from bucket">
+              🗑️ Remove
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Section -->
+      <div *ngIf="bucketItems.length > 0" class="summary-section">
+        <div class="summary-card">
+          <h3 class="summary-title">Order Summary</h3>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹{{ totalPrice }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span class="shipping-free">FREE</span>
+          </div>
+
+          <div class="summary-row">
+            <span>Discount</span>
+            <span class="discount">- ₹0</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row total-row">
+            <span>Total Amount</span>
+            <span class="total-amount">₹{{ totalPrice }}</span>
+          </div>
+
+          <div class="promo-section">
+            <input type="text" placeholder="Enter promo code" class="promo-input" />
+            <button class="btn-apply-promo">Apply</button>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn-place-order" [disabled]="isPlacingOrder || bucketItems.length === 0"
+              (click)="placeOrder()">
+              <span *ngIf="!isPlacingOrder">✓ Place Order</span>
+              <span *ngIf="isPlacingOrder">Placing Order...</span>
+            </button>
+            <button class="btn-clear-bucket" (click)="clearBucket()">
+              Clear Bucket
+            </button>
+          </div>
+
+          <button class="btn-continue" (click)="continueShopping()">
+            ← Continue Shopping
+          </button>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-icon">✅</div>
+            <div class="info-text">
+              <strong>Free Delivery</strong>
+              <p>On orders above ₹500</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">🛡️</div>
+            <div class="info-text">
+              <strong>Secure Checkout</strong>
+              <p>Safe & encrypted payment</p>
+            </div>
+          </div>
+          <div class="info-card">
+            <div class="info-icon">🔄</div>
+            <div class="info-text">
+              <strong>Easy Returns</strong>
+              <p>Within 7 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

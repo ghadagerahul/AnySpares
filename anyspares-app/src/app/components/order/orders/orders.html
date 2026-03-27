@@ -1,0 +1,17 @@
+<app-navbar-component></app-navbar-component>
+<div class="orders-container">
+  <div class="container">
+    <h2>My Orders</h2>
+    <div class="orders-list">
+      <div class="order-card" *ngFor="let order of orders">
+        <div class="order-header">
+          <h5>{{ order.product }}</h5>
+          <span class="status" [ngClass]="order.status.toLowerCase().replace(' ', '-')">{{ order.status }}</span>
+        </div>
+        <p>Order Date: {{ order.date }}</p>
+        <p>Price: ₹{{ order.price }}</p>
+      </div>
+    </div>
+    <p *ngIf="orders.length === 0">No orders found.</p>
+  </div>
+</div>

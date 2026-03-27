@@ -8,7 +8,8 @@ import { EditProduct } from './components/Seller/edit-product/edit-product';
 import { SellerCategoryParts } from './components/Seller/seller-category-parts/seller-category-parts';
 import { LoginPage } from './components/Buyer/login-page/login-page';
 import { RegisterationPage } from './components/Buyer/registeration-page/registeration-page';
-import { Dashboard } from './components/Buyer/dashboard/dashboard'; import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
+import { Dashboard } from './components/Buyer/dashboard/dashboard';
+import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
 import { AddVehicleBrands } from './components/Seller/add-vehicle-brands/add-vehicle-brands';
 import { AddVehicleModels } from './components/Seller/add-vehicle-models/add-vehicle-models';
 import { RazorpayPaymentComponent } from './components/Payment/razorpay-payment-component/razorpay-payment-component';
@@ -17,7 +18,10 @@ import { VehicleModels } from './components/Buyer/vehicle-models/vehicle-models'
 import { VehicleProducts } from './components/Buyer/vehicle-products/vehicle-products';
 import { VehicleProductDetails } from './components/Buyer/vehicle-product-details/vehicle-product-details';
 import { SellerCategory } from './components/Seller/seller-category/seller-category';
+import { SellerForgotPasswordComponent } from './components/Seller/seller-forgot-password/seller-forgot-password';
 import { VehicleCategory } from './components/Buyer/vehicle-category/vehicle-category';
+import { Orders } from './components/order/orders/orders';
+import { MyBucketComponent } from './components/order/my-bucket/my-bucket';
 
 
 export const routes: Routes = [
@@ -36,10 +40,13 @@ export const routes: Routes = [
   { path: 'vehicle-category', component: VehicleCategory },
   { path: 'vehicle-product', component: VehicleProducts },
   { path: 'vehicle-productDetails', component: VehicleProductDetails },
+  { path: 'orders', component: Orders },
+  { path: 'my-bucket', component: MyBucketComponent },
 
 
   //Seller Routes
   { path: 'seller-login', component: SellerLoginComponent },
+  { path: 'seller-forgot-password', component: SellerForgotPasswordComponent },
   { path: 'seller-register', component: SellerRegisterComponent },
   { path: 'seller-dashboard', component: SellerDashboard },
   { path: 'seller-category', component: SellerCategory },

@@ -3,7 +3,7 @@ spring:
     name: SERVICEGATEWAY
 
   profiles:
-    active: remote
+    active: local
 
   cloud:
     gateway:
@@ -23,6 +23,13 @@ spring:
             allowCredentials: true
 
       routes:
+        - id: USERSERVICE
+          uri: lb://USERSERVICE
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+
         - id: SELLERSERVICE
           uri: lb://SELLERSERVICE
           predicates:

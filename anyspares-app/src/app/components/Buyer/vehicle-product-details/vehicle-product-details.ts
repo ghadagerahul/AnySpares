@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar-component/navbar-component";
 
 @Component({
@@ -13,6 +14,8 @@ export class VehicleProductDetails {
  quantity = 1;
   activeTab: "specs" | "features" | "compatibility" = "specs";
   Math = Math;
+
+  constructor(private router: Router) {}
 
   product = {
     name: "Carburetor Repair Kit",
@@ -43,5 +46,13 @@ export class VehicleProductDetails {
 
   addToCart(): void {
     console.log("addToCart method called..!!!");
+  }
+
+  goToOrders(): void {
+    this.router.navigate(['/orders']);
+  }
+
+  goToBucket(): void {
+    this.router.navigate(['/my-bucket']);
   }
 }
