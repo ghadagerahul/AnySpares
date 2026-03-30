@@ -3,7 +3,7 @@ package com.anyspares.app.dto;
 import lombok.Data;
 
 @Data
-public class SellerForgotPasswordRequestDto {
+public class ForgotPasswordRequestDto {
 
 	private String emailOrMobile;
 

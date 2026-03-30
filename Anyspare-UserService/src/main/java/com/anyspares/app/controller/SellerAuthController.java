@@ -1,6 +1,5 @@
 package com.anyspares.app.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,21 +9,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anyspares.app.dto.SellerForgotPasswordRequestDto;
+import com.anyspares.app.dto.ForgotPasswordRequestDto;
 import com.anyspares.app.dto.SellerLoginDto;
 import com.anyspares.app.dto.SellerUserRegistrationDto;
 import com.anyspares.app.entity.SellerUserDetails;
 import com.anyspares.app.service.AuthService;
-import com.anyspares.app.utils.EmailTemplateUtils;
 
-@CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping("/sellerAuth")
 public class SellerAuthController {
@@ -100,7 +95,7 @@ public class SellerAuthController {
 	}
 
 	@PostMapping("/forgot-password")
-	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody SellerForgotPasswordRequestDto request) {
+	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("forgotPassword - request: {}", request);
@@ -130,7 +125,7 @@ public class SellerAuthController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		boolean otpGenerated = appUserService.generateForgetPasswordOtp(emailId, mobileNo);
+		boolean otpGenerated = appUserService.generateSellerForgetPasswordOtp(emailId, mobileNo);
 
 		if (!otpGenerated) {
 			response.put("success", false);

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.anyspares.app.dto.BuyerLoginDto;
 import com.anyspares.app.dto.BuyerUserRegistrationDto;
+import com.anyspares.app.dto.ForgotPasswordRequestDto;
 import com.anyspares.app.entity.BuyerUserDetails;
+import com.anyspares.app.entity.UserOtpDto;
 import com.anyspares.app.repo.BuyerUsersRepo;
 import com.anyspares.app.service.AuthService;
 
@@ -35,7 +36,6 @@ import io.micrometer.common.util.StringUtils;
  * @author Rahul
  * @since 21-09-2025
  */
-@CrossOrigin(originPatterns = "*")
 @RestController
 @RequestMapping("/buyerAuth")
 public class BuyerAuthController {
@@ -122,6 +122,102 @@ public class BuyerAuthController {
 		response.put("success", false);
 		response.put("message", "Invalid login");
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	}
+
+	@PostMapping("/forgot-password")
+	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("forgotPassword - request: {}", request);
+		}
+
+		Map<String, Object> response = new HashMap<>();
+
+		if (request == null || StringUtils.isBlank(request.getEmailOrMobile())) {
+			response.put("success", false);
+			response.put("message", "Email or Mobile is required");
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		String emailId = null;
+		Long mobileNo = null;
+
+		try {
+
+			if (request.getEmailOrMobile().contains("@")) {
+				emailId = request.getEmailOrMobile().trim();
+			} else {
+				mobileNo = Long.parseLong(request.getEmailOrMobile().trim());
+			}
+		} catch (NumberFormatException e) {
+			response.put("success", false);
+			response.put("message", "Invalid mobile number format");
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		boolean otpGenerated = appService.generateBuyerForgetPasswordOtp(emailId, mobileNo);
+
+		if (!otpGenerated) {
+			response.put("success", false);
+			response.put("message", "User not found or OTP generation failed");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+
+		response.put("success", true);
+		response.put("message", "OTP sent successfully");
+
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/verify-otp")
+	public ResponseEntity<Map<String, Object>> verifyOtp(@RequestBody UserOtpDto request) {
+
+		boolean isOtpVerified = false;
+		if (null != request) {
+			String mobileNo = request.getEmailOrMobile();
+			String otp = request.getOtp();
+
+			isOtpVerified = appService.verifyBuyerForgetPasswordOtp(mobileNo, otp);
+
+			if (isOtpVerified) {
+				Map<String, Object> response = new HashMap<>();
+				response.put("success", true);
+				response.put("message", "OTP verified successfully");
+				return ResponseEntity.ok(response);
+			}
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("success", false);
+		response.put("message", "OTP is Invalid.");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody UserOtpDto request) {
+
+		boolean isOtpVerified = false;
+		if (null != request) {
+			String mobileNo = request.getEmailOrMobile();
+			String otp = request.getOtp();
+			String newPassword = request.getNewPassword();
+
+			isOtpVerified = appService.resetBuyerPassword(mobileNo, otp, newPassword);
+
+			if (isOtpVerified) {
+				Map<String, Object> response = new HashMap<>();
+				response.put("success", true);
+				response.put("message", "Password reset successfully");
+				return ResponseEntity.ok(response);
+			}
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("success", false);
+		response.put("message", "Password reset failed. Invalid OTP.");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
 	}
 
 }

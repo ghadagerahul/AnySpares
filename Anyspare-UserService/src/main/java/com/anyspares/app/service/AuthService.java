@@ -50,5 +50,14 @@ public interface AuthService {
 
 	public SellerUserDetails finduserByMobileNumber(Long mobileno);
 
-	public boolean generateForgetPasswordOtp(String emailIdStr, Long mobileNo);
+	public boolean generateSellerForgetPasswordOtp(String emailIdStr, Long mobileNo);
+
+	public boolean generateBuyerForgetPasswordOtp(String emailIdStr, Long mobileNo);
+
+	public boolean verifySellerForgetPasswordOtp(String mobileNo, String otp);
+
+	public boolean verifyBuyerForgetPasswordOtp(String mobileNo, String otp);
+
+	public boolean resetBuyerPassword(String mobileNo, String otp, String newPassword);
+
 }

@@ -19,7 +19,7 @@ public class PasswordResetOtp {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Long sellerUserId;
+	private Long userId;
 
 	@Column(length = 10)
 	private String otp;
@@ -32,6 +32,6 @@ public class PasswordResetOtp {
 
 	private LocalDateTime expiresAt;
 
-	private boolean used;
+	private String isUsed;
 
 }

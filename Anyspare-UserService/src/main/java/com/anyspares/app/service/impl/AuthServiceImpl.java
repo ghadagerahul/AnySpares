@@ -1,6 +1,7 @@
 package com.anyspares.app.service.impl;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.anyspares.app.constants.Constants;
 import com.anyspares.app.dto.BuyerUserRegistrationDto;
 import com.anyspares.app.dto.SellerUserRegistrationDto;
 import com.anyspares.app.entity.BuyerUserDetails;
@@ -22,11 +24,13 @@ import com.anyspares.app.service.AuthService;
 import com.anyspares.app.service.EmailService;
 import com.anyspares.app.utils.EmailTemplateUtils;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
 	@Autowired
-	private BuyerUsersRepo appUserRepo;
+	private BuyerUsersRepo buyerUserRepo;
 
 	@Autowired
 	private SellerUserRepo sellerUserRepo;
@@ -38,6 +42,8 @@ public class AuthServiceImpl implements AuthService {
 	private EmailService emailService;
 
 	Logger logger = LoggerFactory.getLogger(getClass());
+
+	private static final String SUCCESS = "SUCCESS";
 
 	@Override
 	public BuyerUserDetails registerNewUser(BuyerUserRegistrationDto userdetails) {
@@ -55,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 			details.setPassword(userdetails.getPassword());
 
 			try {
-				save = appUserRepo.save(details);
+				save = buyerUserRepo.save(details);
 			} catch (Exception e) {
 				logger.error("Exception while Registering New user: " + e.getMessage());
 			}
@@ -69,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
 
 		List<BuyerUserDetails> byMobileNo = null;
 		try {
-			byMobileNo = appUserRepo.findByMobileNo(mobileno);
+			byMobileNo = buyerUserRepo.findByMobileNo(mobileno);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -139,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public boolean generateForgetPasswordOtp(String emailIdStr, Long mobileNo) {
+	public boolean generateSellerForgetPasswordOtp(String emailIdStr, Long mobileNo) {
 
 		SellerUserDetails user = null;
 
@@ -163,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		if (user == null) {
-			return false; 
+			return false;
 		}
 
 		String ownerName = user.getOwnerName();
@@ -175,13 +181,13 @@ public class AuthServiceImpl implements AuthService {
 
 		// persist OTP with timestamps
 		PasswordResetOtp pwd = new PasswordResetOtp();
-		pwd.setSellerUserId(user.getId());
+		pwd.setUserId(user.getId());
 		pwd.setOtp(otp);
 		pwd.setEmail(user.getEmailAddress());
 		pwd.setMobileNo(user.getMobileNo());
-		pwd.setCreatedAt(LocalDateTime.now());
-		pwd.setExpiresAt(LocalDateTime.now().plusMinutes(10));
-		pwd.setUsed(false);
+		pwd.setCreatedAt(LocalDateTime.now().withNano(0));
+		pwd.setExpiresAt(LocalDateTime.now().withNano(0).plusMinutes(10));
+		pwd.setIsUsed("N");
 
 		try {
 			passwordResetOtpRepo.save(pwd);
@@ -194,7 +200,122 @@ public class AuthServiceImpl implements AuthService {
 		String toEmail = user.getEmailAddress();
 		String sendResult = emailService.sendPwdResetOtpMail(toEmail, ownerName, otp);
 
-		return "SUCCESS".equalsIgnoreCase(sendResult);
+		return SUCCESS.equalsIgnoreCase(sendResult);
+	}
+
+	@Override
+	public boolean generateBuyerForgetPasswordOtp(String emailIdStr, Long mobileNo) {
+
+		BuyerUserDetails user = null;
+
+		// Validate inputs
+		if (mobileNo == null && StringUtils.isBlank(emailIdStr)) {
+			return false;
+		}
+
+		if (mobileNo != null) {
+			List<BuyerUserDetails> byMobile = buyerUserRepo.findByMobileNo(mobileNo);
+			if (byMobile != null && !byMobile.isEmpty()) {
+				user = byMobile.stream().filter(Objects::nonNull).findFirst().orElse(null);
+			}
+		}
+
+		if (user == null && StringUtils.isNotBlank(emailIdStr)) {
+			List<BuyerUserDetails> byEmail = buyerUserRepo.findByEmailId(emailIdStr);
+			if (byEmail != null && !byEmail.isEmpty()) {
+				user = byEmail.stream().filter(Objects::nonNull).findFirst().orElse(null);
+			}
+		}
+
+		if (user == null) {
+			return false;
+		}
+
+		String ownerName = user.getFirstName();
+		if (StringUtils.containsIgnoreCase(ownerName, " "))
+			ownerName = ownerName.split(" ")[0];
+
+		// generate OTP
+		String otp = EmailTemplateUtils.generateOTP();
+
+		// persist OTP with timestamps
+		PasswordResetOtp otpObj = new PasswordResetOtp();
+		otpObj.setUserId(user.getId());
+		otpObj.setOtp(otp);
+		otpObj.setEmail(user.getEmailId());
+		otpObj.setMobileNo(user.getMobileNo());
+		otpObj.setCreatedAt(LocalDateTime.now().withNano(0));
+		otpObj.setExpiresAt(LocalDateTime.now().withNano(0).plusMinutes(10));
+		otpObj.setIsUsed(Constants.N);
+
+		try {
+			passwordResetOtpRepo.save(otpObj);
+		} catch (Exception e) {
+			logger.error("Error saving PasswordResetOtp: {}", e.getMessage());
+			return false;
+		}
+
+		// send email
+		String toEmail = user.getEmailId();
+		String sendResult = emailService.sendPwdResetOtpMail(toEmail, ownerName, otp);
+
+		return SUCCESS.equalsIgnoreCase(sendResult);
+	}
+
+	@Override
+	public boolean verifySellerForgetPasswordOtp(String mobileNo, String otp) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean verifyBuyerForgetPasswordOtp(String mobileNo, String otp) {
+
+		Long mobileNoLong = Long.valueOf(mobileNo);
+
+		List<BuyerUserDetails> buyerUserDetailsList = buyerUserRepo.findByMobileNo(mobileNoLong);
+
+		if (null != buyerUserDetailsList && buyerUserDetailsList.size() > 0) {
+
+			BuyerUserDetails userDetails = buyerUserDetailsList.stream().filter(Objects::nonNull).findFirst().get();
+
+			PasswordResetOtp validOtp = passwordResetOtpRepo.findLatestUserIssuedOtp(userDetails.getId(), mobileNoLong,
+					Constants.N);
+
+			if (null != validOtp) {
+
+				if (StringUtils.equals(validOtp.getOtp(), otp) && validOtp.getExpiresAt().isAfter(LocalDateTime.now())
+						&& validOtp.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now())) {
+					validOtp.setIsUsed(Constants.Y);
+					passwordResetOtpRepo.save(validOtp);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	@Transactional
+	public boolean resetBuyerPassword(String mobileNo, String otp, String newPassword) {
+
+		if (StringUtils.isBlank(mobileNo) || StringUtils.isBlank(otp)) {
+			return false;
+		}
+
+		PasswordResetOtp otpVerified = passwordResetOtpRepo.checkOtpVerified(mobileNo, otp);
+
+		if (null != otpVerified && StringUtils.equalsIgnoreCase(Constants.Y, otpVerified.getIsUsed())) {
+
+			// update password
+			int updated = buyerUserRepo.updatePasswordByMobileNo(mobileNo, otpVerified.getUserId(), newPassword);
+
+			return updated == 1;
+
+		}
+
+		return false;
 	}
 
 }
