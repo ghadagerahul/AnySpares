@@ -11,12 +11,13 @@ export class BuyerService {
 
   constructor(private http: HttpClient) { }
 
-  private appUrl = environment.apiUrl + "user/sellerAuth";
+  private appUrl = environment.apiUrl + "/user/buyerAuth";
 
   registerUser(regForm: any): Observable<any> {
     const url = this.appUrl + '/register';
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
+console.log("INSIDE registerUser:"+ regForm);
+console.log("========= URL: " + url);
     return this.http.post<any>(url, regForm, { headers }).pipe(
       catchError(error => {
         console.error("Error during registration:", error);
@@ -45,7 +46,31 @@ export class BuyerService {
     return this.http.post<any>(url, form, { headers }).pipe(
       catchError(error => {
         console.error('Error during Buyer Forgot Password:', error);
-        return of({ success: false, message: 'Forgot password request failed' });
+        return of({ success: false, message: error.error?.message  });
+      })
+    );
+  }
+
+  verifyOtp(form: any): Observable<any> {
+    const url = this.appUrl + '/verify-otp';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.post<any>(url, form, { headers }).pipe(
+      catchError(error => {
+        console.error('Error during Buyer OTP verification:', error);
+        return of({ success: false, message: 'OTP verification failed' });
+      })
+    );
+  }
+
+  resetPassword(form: any): Observable<any> {
+    const url = this.appUrl + '/reset-password';
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+    return this.http.post<any>(url, form, { headers }).pipe(
+      catchError(error => {
+        console.error('Error during Buyer password reset:', error);
+        return of({ success: false, message: 'Password reset failed' });
       })
     );
   }

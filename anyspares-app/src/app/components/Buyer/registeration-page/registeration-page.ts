@@ -71,7 +71,7 @@ export class RegisterationPage implements OnInit {
           if (data.success) {
             this.openSuccessModal();
           }
-          this.registrationForm.reset();
+          //this.registrationForm.reset();
         },
         error: (err: any) => {
           console.error('Error:', err);

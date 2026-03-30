@@ -65,4 +65,26 @@ export class SellerService {
         );
     }
 
+    verifyOtp(form: any): Observable<any> {
+        const url = this.appUrl + '/verify-otp';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<any>(url, form, { headers }).pipe(
+            catchError(error => {
+                console.error("Error during Seller OTP verification:", error);
+                return of({ success: false, message: 'Seller OTP verification failed' });
+            })
+        );
+    }
+
+    resetPassword(form: any): Observable<any> {
+        const url = this.appUrl + '/reset-password';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<any>(url, form, { headers }).pipe(
+            catchError(error => {
+                console.error("Error during Seller password reset:", error);
+                return of({ success: false, message: 'Seller password reset failed' });
+            })
+        );
+    }
+
 }
