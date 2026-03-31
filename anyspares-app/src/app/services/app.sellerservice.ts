@@ -10,7 +10,7 @@ export class SellerService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = environment.apiUrl + "/spares/sellerAuth";
+    private appUrl = environment.apiUrl + "/user/sellerAuth";
 
 
     /**
@@ -82,7 +82,7 @@ export class SellerService {
         return this.http.post<any>(url, form, { headers }).pipe(
             catchError(error => {
                 console.error("Error during Seller password reset:", error);
-                return of({ success: false, message: 'Seller password reset failed' });
+                return of({ success: false, message: error.error?.message || 'Seller password reset failed' });
             })
         );
     }

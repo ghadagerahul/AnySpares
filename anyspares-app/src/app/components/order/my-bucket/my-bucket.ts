@@ -119,7 +119,7 @@ export class MyBucketComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Place order
+     * Place order - Navigate to checkout
      */
     placeOrder(): void {
         if (this.bucketItems.length === 0) {
@@ -127,30 +127,8 @@ export class MyBucketComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.isPlacingOrder = true;
-        const buyerId = localStorage.getItem('userId') || 'guest-user';
-
-        this.orderService.placeOrder(buyerId)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (response) => {
-                    if (response.success) {
-                        this.showMessage('Order placed successfully!', 'success');
-                        this.orderService.clearBucket();
-                        setTimeout(() => {
-                            this.router.navigate(['/orders']);
-                        }, 2000);
-                    } else {
-                        this.showMessage(response.message || 'Failed to place order', 'error');
-                    }
-                    this.isPlacingOrder = false;
-                },
-                error: (error) => {
-                    console.error('Error placing order:', error);
-                    this.showMessage('Failed to place order. Please try again.', 'error');
-                    this.isPlacingOrder = false;
-                }
-            });
+        // Navigate to checkout instead of placing order directly
+        this.router.navigate(['/checkout']);
     }
 
     /**

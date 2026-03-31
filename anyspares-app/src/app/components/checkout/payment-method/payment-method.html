@@ -1,0 +1,65 @@
+<div class="payment-method">
+  <div class="payment-container">
+    <p class="payment-description">
+      Choose your preferred payment method to complete the order.
+    </p>
+
+    <div class="payment-options">
+      <div class="payment-option" *ngFor="let method of paymentMethods"
+           [ngClass]="{'selected': isMethodSelected(method.id)}"
+           (click)="selectPaymentMethod(method.id)">
+        <div class="option-header">
+          <div class="option-icon">{{ method.icon }}</div>
+          <div class="option-content">
+            <div class="option-name">
+              {{ method.name }}
+              <span class="popular-badge" *ngIf="method.popular">Most Popular</span>
+            </div>
+            <div class="option-description">{{ method.description }}</div>
+          </div>
+        </div>
+        <div class="selection-indicator" *ngIf="isMethodSelected(method.id)">
+          ✓ Selected
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Security Info -->
+    <div class="security-info">
+      <div class="security-item">
+        <div class="security-icon">🔒</div>
+        <div class="security-text">
+          <strong>Secure Payment</strong>
+          <p>Your payment information is encrypted and secure</p>
+        </div>
+      </div>
+      <div class="security-item">
+        <div class="security-icon">🛡️</div>
+        <div class="security-text">
+          <strong>SSL Protected</strong>
+          <p>256-bit SSL encryption for all transactions</p>
+        </div>
+      </div>
+      <div class="security-item">
+        <div class="security-icon">✅</div>
+        <div class="security-text">
+          <strong>Trusted Gateway</strong>
+          <p>Powered by Razorpay - India's leading payment gateway</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COD Notice -->
+    <div class="cod-notice" *ngIf="isMethodSelected('cod')">
+      <div class="notice-header">
+        📢 Cash on Delivery Notice
+      </div>
+      <ul class="notice-list">
+        <li>Additional ₹50 COD charges will apply</li>
+        <li>Exact change is preferred for faster delivery</li>
+        <li>COD available only for orders below ₹5000</li>
+        <li>Delivery partner will contact you before delivery</li>
+      </ul>
+    </div>
+  </div>
+</div>

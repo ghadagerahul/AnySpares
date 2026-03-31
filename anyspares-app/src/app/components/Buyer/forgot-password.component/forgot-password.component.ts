@@ -27,6 +27,7 @@ export class ForgotPasswordComponent {
   resendTimer = 30;
   resendEnabled = false;
   private timerInterval: any;
+  private passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
   constructor(private appService: BuyerService, private router: Router) { }
 
@@ -108,8 +109,8 @@ export class ForgotPasswordComponent {
       return;
     }
 
-    if (this.newPassword.length < 6) {
-      this.showMessage('Password must be at least 6 characters long.', 'error');
+    if (!this.passwordRegex.test(this.newPassword)) {
+      this.showMessage('Password must be at least 6 characters with uppercase, lowercase, number, and special character (@$!%*?&).', 'error');
       return;
     }
 

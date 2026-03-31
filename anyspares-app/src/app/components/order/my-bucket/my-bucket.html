@@ -102,10 +102,8 @@
 
           <!-- Action Buttons -->
           <div class="action-buttons">
-            <button class="btn-place-order" [disabled]="isPlacingOrder || bucketItems.length === 0"
-              (click)="placeOrder()">
-              <span *ngIf="!isPlacingOrder">✓ Place Order</span>
-              <span *ngIf="isPlacingOrder">Placing Order...</span>
+            <button class="btn-place-order" (click)="placeOrder()">
+              <span>🛒 Proceed to Checkout</span>
             </button>
             <button class="btn-clear-bucket" (click)="clearBucket()">
               Clear Bucket

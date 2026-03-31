@@ -1,0 +1,85 @@
+<div class="address-selection">
+  <!-- Saved Addresses -->
+  <div class="saved-addresses" *ngIf="savedAddresses.length > 0">
+    <h3 class="section-title">Select Delivery Address</h3>
+    <div class="address-list">
+      <div class="address-card" *ngFor="let address of savedAddresses"
+           [ngClass]="{'selected': selectedAddressId === address.id}"
+           (click)="selectAddress(address)">
+        <div class="address-header">
+          <span class="address-name">{{ address.name }}</span>
+          <span class="default-badge" *ngIf="address.isDefault">Default</span>
+        </div>
+        <div class="address-details">
+          <p>{{ address.street }}, {{ address.city }}</p>
+          <p>{{ address.state }} - {{ address.pincode }}</p>
+          <p>Phone: {{ address.phone }}</p>
+        </div>
+        <div class="selection-indicator" *ngIf="selectedAddressId === address.id">
+          ✓ Selected
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Address -->
+  <div class="add-address-section">
+    <h3 class="section-title" *ngIf="savedAddresses.length > 0">Or Add New Address</h3>
+    <h3 class="section-title" *ngIf="savedAddresses.length === 0">Add Delivery Address</h3>
+
+    <form [formGroup]="addressForm" (ngSubmit)="onAddressFormSubmit()" class="address-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" formControlName="name" placeholder="Enter your full name">
+          <div class="error" *ngIf="addressForm.get('name')?.invalid && addressForm.get('name')?.touched">
+            Name is required and must be at least 2 characters
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" formControlName="phone" placeholder="Enter 10-digit phone number">
+          <div class="error" *ngIf="addressForm.get('phone')?.invalid && addressForm.get('phone')?.touched">
+            Please enter a valid 10-digit phone number
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="street">Street Address *</label>
+        <input type="text" id="street" formControlName="street" placeholder="House number, street, area">
+        <div class="error" *ngIf="addressForm.get('street')?.invalid && addressForm.get('street')?.touched">
+          Street address is required
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City *</label>
+          <input type="text" id="city" formControlName="city" placeholder="Enter city">
+          <div class="error" *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">
+            City is required
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="state">State *</label>
+          <input type="text" id="state" formControlName="state" placeholder="Enter state">
+          <div class="error" *ngIf="addressForm.get('state')?.invalid && addressForm.get('state')?.touched">
+            State is required
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pincode">Pincode *</label>
+          <input type="text" id="pincode" formControlName="pincode" placeholder="Enter 6-digit pincode">
+          <div class="error" *ngIf="addressForm.get('pincode')?.invalid && addressForm.get('pincode')?.touched">
+            Please enter a valid 6-digit pincode
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-save-address" [disabled]="!isFormValid()">
+        {{ selectedAddressId ? 'Update Address' : 'Save Address' }}
+      </button>
+    </form>
+  </div>
+</div>

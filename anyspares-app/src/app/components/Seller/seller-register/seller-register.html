@@ -28,6 +28,8 @@
         <div class="form-group">
             <label>Business Name *</label>
             <input type="text" placeholder="Enter your business name"  formControlName="businesstName"/>
+            <small *ngIf="registrationForm.get('businesstName')?.hasError('required') && registrationForm.get('businesstName')?.touched" class="error-text">Business name is required</small>
+            <small *ngIf="registrationForm.get('businesstName')?.hasError('minlength') && registrationForm.get('businesstName')?.touched" class="error-text">Business name must be at least 3 characters</small>
         </div>
 
         <div class="form-group">
@@ -36,12 +38,16 @@
         </div>
 
         <div class="grid-2">
-            <div class="form-group">
-                <label>Mobile Number *</label>
-                <input type="text" placeholder="10-digit number" formControlName="mobileNo"/>
-            </div>
+        <div class="form-group">
+            <label>Mobile Number *</label>
+            <input type="text" placeholder="10-digit number" formControlName="mobileNo"/>
+            <small *ngIf="registrationForm.get('mobileNo')?.hasError('required') && registrationForm.get('mobileNo')?.touched" class="error-text">Mobile number is required</small>
+            <small *ngIf="registrationForm.get('mobileNo')?.hasError('minlength') && registrationForm.get('mobileNo')?.touched" class="error-text">Mobile number must be 10 digits</small>
+        </div>
 
             <div class="form-group">
+                <small *ngIf="registrationForm.get('emailAddress')?.hasError('required') && registrationForm.get('emailAddress')?.touched" class="error-text">Email is required</small>
+                <small *ngIf="registrationForm.get('emailAddress')?.hasError('email') && registrationForm.get('emailAddress')?.touched" class="error-text">Please enter a valid email</small>
                 <label>Email Address *</label>
                 <input type="email" placeholder="your@email.com" formControlName="emailAddress"/>
             </div>
@@ -76,27 +82,13 @@
         <h3 class="section-title">Vehicle Types Supported</h3>
         <p class="hint">Select all vehicle types you support *</p>
 
-        <div class="checkbox-grid">
-            <label class="checkbox-card">
-                <input type="checkbox"  formControlName="vehicleType"/>
-                Two Wheeler
-            </label>
-
-            <label class="checkbox-card">
-                <input type="checkbox" formControlName="vehicleType"/>
-                Three Wheeler
-            </label>
-
-            <label class="checkbox-card">
-                <input type="checkbox" formControlName="vehicleType"/>
-                Four Wheeler
-            </label>
-
-            <label class="checkbox-card">
-                <input type="checkbox" formControlName="vehicleType"/>
-                Heavy Vehicle
+        <div class="checkbox-grid" [formGroup]="registrationForm">
+            <label class="checkbox-card" *ngFor="let option of vehicleTypeOptions; let i = index">
+                <input type="checkbox" [formControl]="vehicleTypesFormArray.at(i)"/>
+                {{ option.label }}
             </label>
         </div>
+        <small *ngIf="registrationForm.get('vehicleTypes')?.hasError('vehicleTypeRequired') && registrationForm.get('vehicleTypes')?.touched" class="error-text">Please select at least one vehicle type</small>
 
         <!-- Password -->
         <h3 class="section-title">Create Password</h3>
@@ -105,16 +97,18 @@
             <div class="form-group">
                 <label>Password *</label>
                 <input type="password" placeholder="Min. 8 characters" formControlName="password"/>
+                <small *ngIf="registrationForm.get('password')?.hasError('minlength')" class="error-text">Password must be at least 8 characters</small>
             </div>
 
             <div class="form-group">
                 <label>Confirm Password *</label>
                 <input type="password" placeholder="Re-enter password" formControlName="confPassword"/>
+                <small *ngIf="registrationForm.hasError('passwordMismatch') && registrationForm.get('confPassword')?.touched" class="error-text">Passwords do not match</small>
             </div>
         </div>
 
         <!-- SUBMIT -->
-        <button class="submit-btn" >
+        <button class="submit-btn" [disabled]="!registrationForm.valid" type="submit">
             Register as Seller 🏪
         </button>
 

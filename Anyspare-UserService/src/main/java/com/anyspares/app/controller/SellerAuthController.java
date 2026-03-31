@@ -18,6 +18,7 @@ import com.anyspares.app.dto.ForgotPasswordRequestDto;
 import com.anyspares.app.dto.SellerLoginDto;
 import com.anyspares.app.dto.SellerUserRegistrationDto;
 import com.anyspares.app.entity.SellerUserDetails;
+import com.anyspares.app.entity.UserOtpDto;
 import com.anyspares.app.service.AuthService;
 
 @RestController
@@ -94,6 +95,7 @@ public class SellerAuthController {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
 	}
 
+
 	@PostMapping("/forgot-password")
 	public ResponseEntity<Map<String, Object>> forgotPassword(@RequestBody ForgotPasswordRequestDto request) {
 
@@ -138,4 +140,56 @@ public class SellerAuthController {
 
 		return ResponseEntity.ok(response);
 	}
+
+	@PostMapping("/verify-otp")
+	public ResponseEntity<Map<String, Object>> verifyOtp(@RequestBody UserOtpDto request) {
+
+		boolean isOtpVerified = false;
+		if (null != request) {
+			String mobileNo = request.getEmailOrMobile();
+			String otp = request.getOtp();
+
+			isOtpVerified = appUserService.verifySellerForgetPasswordOtp(mobileNo, otp);
+
+			if (isOtpVerified) {
+				Map<String, Object> response = new HashMap<>();
+				response.put("success", true);
+				response.put("message", "OTP verified successfully");
+				return ResponseEntity.ok(response);
+			}
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("success", false);
+		response.put("message", "OTP is Invalid.");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody UserOtpDto request) {
+
+		boolean isOtpVerified = false;
+		if (null != request) {
+			String mobileNo = request.getEmailOrMobile();
+			String otp = request.getOtp();
+			String newPassword = request.getNewPassword();
+
+			isOtpVerified = appUserService.resetSellerPassword(mobileNo, otp, newPassword);
+
+			if (isOtpVerified) {
+				Map<String, Object> response = new HashMap<>();
+				response.put("success", true);
+				response.put("message", "Password reset successfully");
+				return ResponseEntity.ok(response);
+			}
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("success", false);
+		response.put("message", "Password reset failed. Invalid OTP.");
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+
+	}
+
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -103,8 +104,12 @@ public class AuthServiceImpl implements AuthService {
 			details.setCompleteAddress(userdetails.getCompleteAddress());
 			details.setCity(userdetails.getCity());
 			details.setPincode(userdetails.getPincode());
-
-			details.setVehicleType(userdetails.getVehicleType());
+			String vehicleTypes = "";
+			if (null != userdetails.getVehicleType() && userdetails.getVehicleType().size() > 0) {
+				vehicleTypes = userdetails.getVehicleType().stream().filter(Objects::nonNull)
+						.collect(Collectors.joining("|"));
+			}
+			details.setVehicleType(vehicleTypes);
 			details.setPassword(userdetails.getPassword());
 
 			try {
@@ -263,14 +268,15 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public boolean verifySellerForgetPasswordOtp(String mobileNo, String otp) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean verifyBuyerForgetPasswordOtp(String mobileNo, String otp) {
 
+		if (StringUtils.isNotBlank(mobileNo) && StringUtils.containsIgnoreCase(mobileNo, "@")) {
+			List<BuyerUserDetails> byEmailId = buyerUserRepo.findByEmailId(mobileNo);
+			if (null != byEmailId && !byEmailId.isEmpty()) {
+				BuyerUserDetails userDetails = byEmailId.stream().filter(Objects::nonNull).findFirst().get();
+				mobileNo = String.valueOf(userDetails.getMobileNo());
+			}
+		}
 		Long mobileNoLong = Long.valueOf(mobileNo);
 
 		List<BuyerUserDetails> buyerUserDetailsList = buyerUserRepo.findByMobileNo(mobileNoLong);
@@ -285,7 +291,7 @@ public class AuthServiceImpl implements AuthService {
 			if (null != validOtp) {
 
 				if (StringUtils.equals(validOtp.getOtp(), otp) && validOtp.getExpiresAt().isAfter(LocalDateTime.now())
-						&& validOtp.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now())) {
+						&& LocalDateTime.now().isBefore(validOtp.getCreatedAt().plusMinutes(10))) {
 					validOtp.setIsUsed(Constants.Y);
 					passwordResetOtpRepo.save(validOtp);
 					return true;
@@ -304,15 +310,83 @@ public class AuthServiceImpl implements AuthService {
 			return false;
 		}
 
+		if (StringUtils.isNotBlank(mobileNo) && StringUtils.containsIgnoreCase(mobileNo, "@")) {
+			List<BuyerUserDetails> byEmailId = buyerUserRepo.findByEmailId(mobileNo);
+			if (null != byEmailId && !byEmailId.isEmpty()) {
+				BuyerUserDetails userDetails = byEmailId.stream().filter(Objects::nonNull).findFirst().get();
+				mobileNo = String.valueOf(userDetails.getMobileNo());
+			}
+		}
+
 		PasswordResetOtp otpVerified = passwordResetOtpRepo.checkOtpVerified(mobileNo, otp);
 
 		if (null != otpVerified && StringUtils.equalsIgnoreCase(Constants.Y, otpVerified.getIsUsed())) {
 
 			// update password
 			int updated = buyerUserRepo.updatePasswordByMobileNo(mobileNo, otpVerified.getUserId(), newPassword);
-
 			return updated == 1;
+		}
 
+		return false;
+	}
+
+	@Override
+	public boolean verifySellerForgetPasswordOtp(String mobileNo, String otp) {
+
+		if (StringUtils.isNotBlank(mobileNo) && StringUtils.containsIgnoreCase(mobileNo, "@")) {
+			List<SellerUserDetails> byEmailId = sellerUserRepo.findByEmailAddress(mobileNo);
+			if (null != byEmailId && !byEmailId.isEmpty()) {
+				SellerUserDetails userDetails = byEmailId.stream().filter(Objects::nonNull).findFirst().get();
+				mobileNo = String.valueOf(userDetails.getMobileNo());
+			}
+		}
+		Long mobileNoLong = Long.valueOf(mobileNo);
+
+		List<SellerUserDetails> buyerUserDetailsList = sellerUserRepo.findByMobileNo(mobileNoLong);
+
+		if (null != buyerUserDetailsList && buyerUserDetailsList.size() > 0) {
+
+			SellerUserDetails userDetails = buyerUserDetailsList.stream().filter(Objects::nonNull).findFirst().get();
+
+			PasswordResetOtp validOtp = passwordResetOtpRepo.findLatestUserIssuedOtp(userDetails.getId(), mobileNoLong,
+					Constants.N);
+
+			if (null != validOtp) {
+
+				if (StringUtils.equals(validOtp.getOtp(), otp) && validOtp.getExpiresAt().isAfter(LocalDateTime.now())
+						&& LocalDateTime.now().isBefore(validOtp.getCreatedAt().plusMinutes(10))) {
+					validOtp.setIsUsed(Constants.Y);
+					passwordResetOtpRepo.save(validOtp);
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean resetSellerPassword(String mobileNo, String otp, String newPassword) {
+
+		if (StringUtils.isBlank(mobileNo) || StringUtils.isBlank(otp)) {
+			return false;
+		}
+
+		if (StringUtils.isNotBlank(mobileNo) && StringUtils.containsIgnoreCase(mobileNo, "@")) {
+			List<SellerUserDetails> byEmailId = sellerUserRepo.findByEmailAddress(mobileNo);
+			if (null != byEmailId && !byEmailId.isEmpty()) {
+				SellerUserDetails userDetails = byEmailId.stream().filter(Objects::nonNull).findFirst().get();
+				mobileNo = String.valueOf(userDetails.getMobileNo());
+			}
+		}
+
+		PasswordResetOtp otpVerified = passwordResetOtpRepo.checkOtpVerified(mobileNo, otp);
+
+		if (null != otpVerified && StringUtils.equalsIgnoreCase(Constants.Y, otpVerified.getIsUsed())) {
+
+			// update password
+			int updated = sellerUserRepo.updatePasswordByMobileNo(mobileNo, otpVerified.getUserId(), newPassword);
+			return updated == 1;
 		}
 
 		return false;

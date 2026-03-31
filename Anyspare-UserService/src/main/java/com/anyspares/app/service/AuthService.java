@@ -60,4 +60,6 @@ public interface AuthService {
 
 	public boolean resetBuyerPassword(String mobileNo, String otp, String newPassword);
 
+	public boolean resetSellerPassword(String mobileNo, String otp, String newPassword);
+
 }

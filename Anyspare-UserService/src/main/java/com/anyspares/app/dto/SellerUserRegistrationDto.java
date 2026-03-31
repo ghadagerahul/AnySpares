@@ -1,5 +1,7 @@
 package com.anyspares.app.dto;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
@@ -13,7 +15,7 @@ public class SellerUserRegistrationDto {
 	private String completeAddress;
 	private String city;
 	private String pincode;
-	private String vehicleType;
+	private List<String> vehicleType;
 	private String password;
 	private String confPassword;
 
