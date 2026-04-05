@@ -15,17 +15,15 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>AnySpares-ServiceGateway</name>
 
-	<!-- ✅ Use JAR -->
-	<packaging>jar</packaging>
+	<!-- ✅ WAR packaging -->
+	<packaging>war</packaging>
 
 	<properties>
 		<java.version>17</java.version>
 	</properties>
 
-
 	<dependencies>
-
-		<!-- Reactive Web -->
+		<!-- Spring Boot WebFlux -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
@@ -64,11 +62,9 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
-
-	<!-- ✅ Spring Cloud BOM -->
+	<!-- Spring Cloud BOM -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -81,12 +77,30 @@
 		</dependencies>
 	</dependencyManagement>
 
-
 	<build>
 		<plugins>
+			<!-- Spring Boot plugin to repackage WAR -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Maven WAR plugin to skip web.xml -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.0</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
