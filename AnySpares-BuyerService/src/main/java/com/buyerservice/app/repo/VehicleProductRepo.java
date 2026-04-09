@@ -13,11 +13,12 @@ import com.buyerservice.app.entity.VehicleProductEntiry;
 public interface VehicleProductRepo extends JpaRepository<VehicleProductEntiry, Long> {
 
 	@Query(value = """
-			SELECT * FROM hm_vehicle_products vd WHERE
-			    vd.model = :modelId
-			AND vd.vehicle_type = :vehicleType
-			   AND vd.category = :category
-			""", nativeQuery = true)
+						SELECT *
+			FROM hm_vehicle_products vd
+			WHERE vd.model = :modelId
+			  AND vd.vehicle_type = :vehicleType
+			  AND vd.category = :category;
+						""", nativeQuery = true)
 	List<VehicleProductEntiry> loadProductsData(@Param("modelId") String modelId, @Param("category") String category,
 			@Param("vehicleType") String vehicleType);
 }

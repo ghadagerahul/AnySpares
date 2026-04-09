@@ -42,6 +42,7 @@ export const routes: Routes = [
   { path: 'vehicle-category', component: VehicleCategory },
   { path: 'vehicle-product', component: VehicleProducts },
   { path: 'vehicle-productDetails', component: VehicleProductDetails },
+  { path: 'vehicle-productDetails/:id', component: VehicleProductDetails },
   { path: 'orders', component: Orders },
   { path: 'my-bucket', component: MyBucketComponent },
   { path: 'checkout', component: CheckoutComponent },

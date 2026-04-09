@@ -33,6 +33,8 @@ export class VehicleBrands implements OnInit {
     console.log('Received category on init:', category);
 
     if (category) {
+          console.log('###Received category on init:', category);
+
       this.vehicleBrandsService.loadVehicleBrands(category).subscribe(
         (res: any) => {
           console.log('Vehicle brands:', res);

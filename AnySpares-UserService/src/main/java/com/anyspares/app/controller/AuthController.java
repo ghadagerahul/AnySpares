@@ -1,10 +1,8 @@
 package com.anyspares.app.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,32 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.anyspares.app.dto.BuyerLoginDto;
-import com.anyspares.app.dto.BuyerUserRegistrationDto;
 import com.anyspares.app.dto.ForgotPasswordRequestDto;
-import com.anyspares.app.entity.BuyerUserDetails;
+import com.anyspares.app.dto.UserLoginDto;
+import com.anyspares.app.dto.UserRegistrationDto;
 import com.anyspares.app.entity.UserOtpDto;
-import com.anyspares.app.repo.BuyerUsersRepo;
 import com.anyspares.app.service.AuthService;
 
-import io.micrometer.common.util.StringUtils;
-
-/**
- * REST controller that manages user authentication actions like registration
- * and login.
- *
- * <p>
- * Exposes endpoints under {@code /auth}./p>
- *
- * @author Rahul
- * @since 21-09-2025
- */
 @RestController
-@RequestMapping("/buyerAuth")
-public class BuyerAuthController {
-
-	@Autowired
-	private BuyerUsersRepo appUserRepo;
+@RequestMapping("/v1/auth")
+public class AuthController {
 
 	@Autowired
 	private AuthService appService;
@@ -60,7 +41,7 @@ public class BuyerAuthController {
 	 * @return success or failure response
 	 */
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> registerUser(@RequestBody BuyerUserRegistrationDto user) {
+	public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserRegistrationDto user) {
 		logger.debug("registerUser- user: " + user);
 
 		Map<String, Object> response = new HashMap<>();
@@ -69,15 +50,16 @@ public class BuyerAuthController {
 
 			Long mobileNo = user.getMobileNo();
 
-			if (appService.isUserPresent(mobileNo)) {
+			if (appService.isUserPresent(mobileNo, user.getUserType())) {
 				response.put("success", true);
 				response.put("message", "User Already Present");
 				return ResponseEntity.ok(response);
 			}
 
-			if (StringUtils.isNotBlank(user.getUserName()) && StringUtils.isNotBlank(user.getPassword())) {
-				BuyerUserDetails save = appService.registerNewUser(user);
-				if (null != save) {
+			if ((StringUtils.isNotBlank(user.getUserName()) || StringUtils.isNotBlank(user.getOwnerName()))
+					&& StringUtils.isNotBlank(user.getPassword())) {
+				boolean isRegistered = appService.registerNewUser(user);
+				if (isRegistered) {
 					response.put("success", true);
 					response.put("message", "Registration successful");
 					return ResponseEntity.ok(response);
@@ -97,25 +79,18 @@ public class BuyerAuthController {
 	 * @return success or failure response
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, Object>> loginWithExistingUser(@RequestBody BuyerLoginDto details) {
+	public ResponseEntity<Map<String, Object>> loginWithExistingUser(@RequestBody UserLoginDto details) {
 		logger.debug("loginWithExistingUser- details: " + details);
 		Map<String, Object> response = new HashMap<>();
+
 		if (null != details) {
 
-			long mobileNo = details.getMobileNo();
-			List<BuyerUserDetails> userDetailsbyMobileNo = appUserRepo.findByMobileNo(mobileNo);
-
-			if (null != userDetailsbyMobileNo && !userDetailsbyMobileNo.isEmpty() && userDetailsbyMobileNo.size() > 0) {
-
-				boolean isMatch = userDetailsbyMobileNo.stream().filter(Objects::nonNull)
-						.anyMatch(x -> x.getPassword().equals(details.getPassword()));
-
-				if (isMatch) {
-					response.put("success", true);
-					response.put("message", "Login successful");
-					return ResponseEntity.ok(response);
-				}
-
+			boolean validateUserLogin = appService.validateUserLogin(details);
+			if (validateUserLogin) {
+				response.put("success", true);
+				response.put("message", "Login successful");
+				response.put("user", appService.finduserByMobileNumber(details.getMobileNo()));
+				return ResponseEntity.ok(response);
 			}
 		}
 

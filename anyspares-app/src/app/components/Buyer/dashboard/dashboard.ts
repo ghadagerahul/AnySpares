@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavbarComponent } from "../navbar-component/navbar-component";
-import { TwowheelerService } from '../../../services/app.twowheelerservice';
 import { CommonModule } from '@angular/common';
-import { AppConstants } from '../../../services/appconstants';
+import { VehicleDashboardService } from '../../../services/Buyer/vehicle-dashboard.services';
 import { Constants } from '../../../Constants/Constants';
+
 
 interface VehicleCategory {
   id: number;
@@ -13,6 +13,12 @@ interface VehicleCategory {
   icon: string;
   route: string;
   gradientClass: string;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message: string;
 }
 
 @Component({
@@ -28,43 +34,45 @@ export class Dashboard implements OnInit {
 
   constructor(
     private router: Router,
-    private twowheelerService: TwowheelerService
+    private vehicleDashboardService: VehicleDashboardService,
+    private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadVehicleCategories();
   }
 
-  private loadVehicleCategories() {
-    this.twowheelerService.getVehicleCategories().subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.vehicleCategories = response.data;
-        } else {
-          console.error('Failed to load vehicle categories:', response.message);
-          this.vehicleCategories = [];
-        }
+  private loadVehicleCategories(): void {
+    this.vehicleDashboardService.loadVehicleTypesData().subscribe({
+      next: (response: ApiResponse<VehicleCategory[]>) => {
+        this.vehicleCategories = response?.success ? response.data ?? [] : [];
+        this.cdr.markForCheck();
       },
-      error: (error) => {
-        console.error('Error loading vehicle categories:', error);
+      error: (err) => {
+        console.error('Error loading vehicle categories:', err);
         this.vehicleCategories = [];
+        this.cdr.markForCheck();
       }
     });
   }
 
-  onSamePage() {
+  onSamePage(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  navigateToCategory(name: string) {
+  navigateToCategory(category: VehicleCategory): void {
 
-    console.log('Navigating to category:', name);
-    if (name === 'Two-Wheeler') {
-      this.router.navigate(['/vehicles'], { queryParams: { category: Constants.TWO_WHEELER } });
+    console.log('Navigating to category:', category);
+
+    if (!category?.route) {
+      console.log('Route not available for category:', category);
+      return;
     }
-    else {
-      console.warn('Route not implemented for this category');
+
+    if (category.name === 'Two-Wheelers') {
+      this.router.navigate(['/vehicles'], {
+        queryParams: { category: Constants.TWO_WHEELER }
+      });
     }
   }
-
 }

@@ -3,12 +3,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { Constants } from '../../../Constants/Constants';
 
 
 interface LoginRequest {
   emailId: string;
   mobileNo: string;
   password: string;
+  userType: string;
 }
 
 @Component({
@@ -18,10 +20,10 @@ interface LoginRequest {
   styleUrls: ['./login-page.css']
 })
 export class LoginPage {
-  mobile: string = '';
-  password: string = '';
+  mobile: string = '9370005745';
+  password: string = 'Test@123';
 
-  loginDataNew: LoginRequest = { emailId: '', mobileNo: '', password: '' };
+  loginDataNew: LoginRequest = { emailId: '', mobileNo: '', password: '', userType: Constants.USER_BUYER };
 
 
   constructor(private router: Router, private authservice: AuthService) { }
@@ -33,14 +35,15 @@ export class LoginPage {
       this.loginDataNew = {
         emailId: '',
         mobileNo: this.mobile,
-        password: this.password
+        password: this.password,
+        userType: Constants.USER_BUYER
       };
 
 
 
       console.log("Login Request:", this.loginDataNew);
 
-      this.authservice.LoginBuyerUserToPortal(this.loginDataNew).subscribe({
+      this.authservice.LoginUserToPortal(this.loginDataNew).subscribe({
         next: (res: any) => {
           if (res.success) {
             console.log('✅ Login successful');

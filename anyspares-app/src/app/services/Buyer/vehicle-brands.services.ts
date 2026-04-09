@@ -14,6 +14,8 @@ export class VehicleBrandsService {
 
 loadVehicleBrands(brand: string) {
     const url = `${this.appUrl}/load?vehicletype=${encodeURIComponent(brand)}`;
+   console.log('Loading vehicle brands for type:', brand);
+   console.log('Constructed URL:', url);
     return this.http.get<any[]>(url);
   }
 

@@ -1,12 +1,12 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, Observable, of } from "rxjs";
-import { environment } from '../../environments/environment';
+import { catchError, Observable, of, tap } from "rxjs";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
-export class TwowheelerService {
+export class VehicleDashboardService {
 
     constructor(private http: HttpClient) { }
 
@@ -82,17 +82,17 @@ export class TwowheelerService {
      * 
      * @returns Observable<any> - Returns an array of vehicle categories
      */
-    getVehicleCategories(): Observable<any> {
+    loadVehicleTypesData(): Observable<any> {
         const url = this.appUrl + '/vehicleCategories';
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-        // Dummy data for now - replace with actual API call when backend is ready
+       // Dummy data for now - replace with actual API call when backend is ready
         const dummyResponse = {
             success: true,
             data: [
                 {
                     id: 1,
-                    name: 'Two-Wheeler',
+                    name: 'Two-Wheelers',
                     description: 'Motorbikes, Scooters & Mopeds',
                     icon: 'bi-bicycle',
                     route: '/twowheelersdashboard',
@@ -100,7 +100,7 @@ export class TwowheelerService {
                 },
                 {
                     id: 2,
-                    name: 'Three-Wheeler',
+                    name: 'Three-Wheelers',
                     description: 'Auto-rickshaws & Cargo Trikes',
                     icon: 'bi-truck-front',
                     route: '/threewheelersdashboard',
@@ -108,7 +108,7 @@ export class TwowheelerService {
                 },
                 {
                     id: 3,
-                    name: 'Four-Wheeler',
+                    name: 'Four-Wheelers',
                     description: 'Cars, SUVs & Vans',
                     icon: 'bi-car-front-fill',
                     route: '/fourwheelersdashboard',
@@ -127,16 +127,17 @@ export class TwowheelerService {
 
         return of(dummyResponse);
 
-        // Uncomment when backend API is ready
-        // return this.http.get<any>(url, { headers }).pipe(
-        //     tap(response => {
-        //         console.log("Vehicle categories fetched successfully:", response);
-        //     }),
-        //     catchError(error => {
-        //         console.error("Error fetching vehicle categories:", error);
-        //         return of({ success: false, message: 'Failed to fetch vehicle categories', data: [] });
-        //     })
-        // );
-    }
+    //    // Uncomment when backend API is ready
+    //    console.log('Fetching vehicle categories from API:', url);
+    //     return this.http.get<any>(url, { headers }).pipe(
+    //         tap((response: any) => {
+    //             console.log("Vehicle categories fetched successfully:", response);
+    //         }),
+    //         catchError(error => {
+    //             console.error("Error fetching vehicle categories:", error);
+    //             return of({ success: false, message: 'Failed to fetch vehicle categories', data: [] });
+    //         })
+    //     );
+    // }
 
-}
+}}

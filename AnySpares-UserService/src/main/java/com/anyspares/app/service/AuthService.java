@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.anyspares.app.dto.BuyerUserRegistrationDto;
 import com.anyspares.app.dto.SellerUserRegistrationDto;
+import com.anyspares.app.dto.UserLoginDto;
+import com.anyspares.app.dto.UserRegistrationDto;
 import com.anyspares.app.entity.BuyerUserDetails;
 import com.anyspares.app.entity.SellerUserDetails;
 
@@ -31,18 +33,19 @@ public interface AuthService {
 	/**
 	 * Registers a new user in the system.
 	 *
-	 * @param userdetails model object containing user input data
+	 * @param user model object containing user input data
 	 * @return saved {@link UserDetails} entity, or {@code null} if save fails
 	 */
-	public BuyerUserDetails registerNewUser(BuyerUserRegistrationDto userdetails);
+	public boolean registerNewUser(UserRegistrationDto user);
 
 	/**
 	 * Checks if a user exists in the system by mobile number.
 	 *
 	 * @param mobileno mobile number to check
+	 * @param userType 
 	 * @return {@code true} if user exists, otherwise {@code false}
 	 */
-	public boolean isUserPresent(Long mobileno);
+	public boolean isUserPresent(Long mobileno, String userType);
 
 	public SellerUserDetails registerSellerUser(SellerUserRegistrationDto userdetails);
 
@@ -61,5 +64,7 @@ public interface AuthService {
 	public boolean resetBuyerPassword(String mobileNo, String otp, String newPassword);
 
 	public boolean resetSellerPassword(String mobileNo, String otp, String newPassword);
+
+	public boolean validateUserLogin(UserLoginDto details);
 
 }

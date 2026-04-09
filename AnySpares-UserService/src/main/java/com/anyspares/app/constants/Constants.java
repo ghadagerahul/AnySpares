@@ -12,4 +12,7 @@ public class Constants {
 	public static final String Y = "Y";
 	public static final String N = "N";
 
+	public static final String USER_SELLER = "seller";
+	public static final String USER_BUYER = "buyer";
+
 }

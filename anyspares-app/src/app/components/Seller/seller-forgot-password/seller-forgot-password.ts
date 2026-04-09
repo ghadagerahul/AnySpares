@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SellerService } from '../../../services/app.sellerservice';
 import { LoginNavigatorComponent } from '../../shared/login-navigator/login-navigator';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-seller-forgot-password',
@@ -29,7 +29,7 @@ export class SellerForgotPasswordComponent {
   private timerInterval: any;
   private passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-  constructor(private sellerService: SellerService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   submitForgotPassword(): void {
     if (!this.emailOrMobile.trim()) {
@@ -40,7 +40,7 @@ export class SellerForgotPasswordComponent {
     this.loading = true;
     const payload = { emailOrMobile: this.emailOrMobile.trim() };
 
-    this.sellerService.forgotPassword(payload).subscribe({
+    this.authService.forgotPassword(payload).subscribe({
       next: (res: any) => {
         this.loading = false;
         if (res.success) {
@@ -78,7 +78,7 @@ export class SellerForgotPasswordComponent {
       otp: this.otp.trim()
     };
 
-    this.sellerService.verifyOtp(payload).subscribe({
+    this.authService.verifyOtp(payload).subscribe({
       next: (res: any) => {
         this.otpLoading = false;
         if (res.success) {
@@ -126,7 +126,7 @@ export class SellerForgotPasswordComponent {
       newPassword: this.newPassword.trim()
     };
 
-    this.sellerService.resetPassword(payload).subscribe({
+    this.authService.resetPassword(payload).subscribe({
       next: (res: any) => {
         this.resetLoading = false;
         if (res.success) {

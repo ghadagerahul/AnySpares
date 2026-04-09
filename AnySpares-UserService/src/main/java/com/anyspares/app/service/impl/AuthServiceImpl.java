@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.anyspares.app.constants.Constants;
 import com.anyspares.app.dto.BuyerUserRegistrationDto;
 import com.anyspares.app.dto.SellerUserRegistrationDto;
+import com.anyspares.app.dto.UserLoginDto;
+import com.anyspares.app.dto.UserRegistrationDto;
 import com.anyspares.app.entity.BuyerUserDetails;
 import com.anyspares.app.entity.PasswordResetOtp;
 import com.anyspares.app.entity.SellerUserDetails;
@@ -47,45 +49,86 @@ public class AuthServiceImpl implements AuthService {
 	private static final String SUCCESS = "SUCCESS";
 
 	@Override
-	public BuyerUserDetails registerNewUser(BuyerUserRegistrationDto userdetails) {
+	public boolean registerNewUser(UserRegistrationDto userdetails) {
 
-		BuyerUserDetails details = new BuyerUserDetails();
-		BuyerUserDetails save = null;
-		if (null != userdetails) {
+		if (null == userdetails)
+			return false;
+		;
 
-			details.setUserName(userdetails.getUserName());
-			details.setEmailId(userdetails.getEmail());
-			details.setFirstName(userdetails.getFirstName());
-			details.setLastName(userdetails.getLastName());
+		if (StringUtils.isNotBlank(userdetails.getUserType())
+				&& StringUtils.equalsIgnoreCase(userdetails.getUserType(), Constants.USER_SELLER)) {
+			SellerUserDetails details = new SellerUserDetails();
+			SellerUserDetails save = null;
+
+			details.setBusinesstName(userdetails.getBusinessName());
+			details.setOwnerName(userdetails.getOwnerName());
 			details.setMobileNo(userdetails.getMobileNo());
-			details.setAddress(null);
+
+			details.setEmailAddress(userdetails.getEmail());
+			details.setGstNumber(userdetails.getGstNumber());
+			details.setCompleteAddress(userdetails.getCompleteAddress());
+			details.setCity(userdetails.getCity());
+			details.setPincode(userdetails.getPincode());
+			details.setVehicleType(userdetails.getVehicleType() != null
+					? userdetails.getVehicleType().stream().filter(Objects::nonNull).collect(Collectors.joining("|"))
+					: null);
 			details.setPassword(userdetails.getPassword());
 
 			try {
-				save = buyerUserRepo.save(details);
+				save = sellerUserRepo.save(details);
+				return null != save ? true : false;
+
 			} catch (Exception e) {
 				logger.error("Exception while Registering New user: " + e.getMessage());
 			}
-			return save;
+
+		} else if (StringUtils.isNotBlank(userdetails.getUserType())
+				&& StringUtils.equalsIgnoreCase(userdetails.getUserType(), Constants.USER_BUYER)) {
+
+			BuyerUserDetails details = new BuyerUserDetails();
+			BuyerUserDetails save = null;
+			if (null != userdetails) {
+
+				details.setUserName(userdetails.getUserName());
+				details.setEmailId(userdetails.getEmail());
+				details.setFirstName(userdetails.getFirstName());
+				details.setLastName(userdetails.getLastName());
+				details.setMobileNo(userdetails.getMobileNo());
+				details.setAddress(null);
+				details.setPassword(userdetails.getPassword());
+
+				try {
+					save = buyerUserRepo.save(details);
+					return null != save ? true : false;
+				} catch (Exception e) {
+					logger.error("Exception while Registering New user: " + e.getMessage());
+				}
+
+			}
+
 		}
-		return null;
+		return false;
 	}
 
 	@Override
-	public boolean isUserPresent(Long mobileno) {
+	public boolean isUserPresent(Long mobileno, String userType) {
 
-		List<BuyerUserDetails> byMobileNo = null;
+		if (mobileno == null || StringUtils.isBlank(userType)) {
+			return false;
+		}
+
 		try {
-			byMobileNo = buyerUserRepo.findByMobileNo(mobileno);
+			if (Constants.USER_BUYER.equalsIgnoreCase(userType)) {
+				return !buyerUserRepo.findByMobileNo(mobileno).isEmpty();
+			}
+
+			if (Constants.USER_SELLER.equalsIgnoreCase(userType)) {
+				return !sellerUserRepo.findByMobileNo(mobileno).isEmpty();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		if (null != byMobileNo && !byMobileNo.isEmpty())
-			return true;
-
 		return false;
-
 	}
 
 	@Override
@@ -387,6 +430,30 @@ public class AuthServiceImpl implements AuthService {
 			// update password
 			int updated = sellerUserRepo.updatePasswordByMobileNo(mobileNo, otpVerified.getUserId(), newPassword);
 			return updated == 1;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean validateUserLogin(UserLoginDto details) {
+
+		if (details == null || StringUtils.isBlank(details.getUserType()) || details.getMobileNo() == 0
+				|| StringUtils.isBlank(details.getPassword())) {
+			return false;
+		}
+
+		long mobileNo = details.getMobileNo();
+		String password = details.getPassword();
+
+		if (Constants.USER_BUYER.equalsIgnoreCase(details.getUserType())) {
+			return buyerUserRepo.findByMobileNo(mobileNo).stream().filter(Objects::nonNull)
+					.anyMatch(user -> password.equals(user.getPassword()));
+		}
+
+		if (Constants.USER_SELLER.equalsIgnoreCase(details.getUserType())) {
+			return sellerUserRepo.findByMobileNo(mobileNo).stream().filter(Objects::nonNull)
+					.anyMatch(user -> password.equals(user.getPassword()));
 		}
 
 		return false;

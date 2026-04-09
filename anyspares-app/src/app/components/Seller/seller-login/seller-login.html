@@ -45,15 +45,15 @@
             <p class="text-danger small" *ngIf="invalidCred">Invalid Credientials</p>
 
             <form [formGroup]="loginForm" (ngSubmit)="loginAsSeller()">
-                <label>Mobile Number *</label>
-                <input type="number" placeholder="Enter mobile number" formControlName="mobileNumber" required
+                <label for="mobileNo">Mobile Number *</label>
+                <input id="mobileNo" type="number" placeholder="Enter mobile number" formControlName="mobileNo" required
                     minlength="10" maxlength="12" />
 
                 <div class="password-row">
-                    <label>Password *</label>
+                    <label for="password">Password *</label>
                     <a routerLink="/seller-forgot-password">Forgot Password?</a>
                 </div>
-                <input type="password" placeholder="Enter password" formControlName="password" />
+                <input id="password" type="password" placeholder="Enter password" formControlName="password" />
 
                 <button class="login-btn" (click)="loginAsSeller()">
                     Sign In as Seller →

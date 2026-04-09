@@ -2,19 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  FormsModule,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn
+  FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, AbstractControl, ValidationErrors, ValidatorFn
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Modal } from 'bootstrap';
-import { BuyerService } from '../../../services/app.buyerservice';
-declare var bootstrap: any;
+import { RegistrationRequest } from '../../shared/registration-request.model';
+import { Constants } from '../../../Constants/Constants';
+import { AuthService } from '../../../services/auth.service';
+
 @Component({
   selector: 'app-registeration-page',
   standalone: true,
@@ -25,8 +20,9 @@ declare var bootstrap: any;
 export class RegisterationPage implements OnInit {
   registrationForm!: FormGroup;
 
+  registrationFormNew!: RegistrationRequest;
 
-  constructor(private appservice: BuyerService, private fb: FormBuilder, private router: Router) { }
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit(): void {
     this.registrationForm = this.fb.group(
@@ -64,14 +60,34 @@ export class RegisterationPage implements OnInit {
 
   onSubmitData() {
     if (this.registrationForm.valid) {
+
+      this.registrationFormNew = {
+        firstName: this.registrationForm.value.firstName,
+        lastName: this.registrationForm.value.lastName,
+        email: this.registrationForm.value.email,
+        mobileNo: this.registrationForm.value.mobileNo,
+        userName: this.registrationForm.value.userName,
+        password: this.registrationForm.value.password,
+        confPassword: this.registrationForm.value.confPassword,
+
+        businessName: Constants.Empty_STRING,
+        ownerName: Constants.Empty_STRING,
+        gstNumber: Constants.Empty_STRING,
+        completeAddress: Constants.Empty_STRING,
+        city: Constants.Empty_STRING,
+        pincode: Constants.ZERO_NUMBER,
+        vehicleType: [],
+        userType: Constants.USER_BUYER
+      };
+
       console.log("registrationForm-firstName: " + this.registrationForm.value.firstName);
-      this.appservice.registerUser(this.registrationForm.value).subscribe({
+      this.authService.registerUser(this.registrationFormNew).subscribe({
         next: (data: any) => {
           console.log('Success:', data);
           if (data.success) {
             this.openSuccessModal();
           }
-          //this.registrationForm.reset();
+          this.registrationForm.reset();
         },
         error: (err: any) => {
           console.error('Error:', err);
