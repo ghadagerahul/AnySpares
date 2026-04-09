@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, of, tap } from "rxjs";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +10,7 @@ export class SellerCategoryService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/twowheelers/seller/categories';
+    private appUrl = environment.apiUrl + '/sellers/seller/categories';
 
     /**
      * Fetches all product categories from the backend.
@@ -23,6 +24,26 @@ export class SellerCategoryService {
         return this.http.get<any>(url, { headers }).pipe(
             tap(response => {
                 console.log("Categories fetched successfully:", response);
+            }),
+            catchError(error => {
+                console.error("Error fetching categories:", error);
+                return of({ success: false, message: 'Failed to fetch categories', data: [] });
+            })
+        );
+    }
+
+     /**
+     * Fetches all product categories from the backend.
+     * 
+     * @returns Observable<any> - Returns an array of categories from the backend
+     */
+    getProductSummary(): Observable<any> {
+        const url = this.appUrl + '/getSummary';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        return this.http.get<any>(url, { headers }).pipe(
+            tap(response => {
+                console.log("Summary fetched successfully:", response);
             }),
             catchError(error => {
                 console.error("Error fetching categories:", error);
@@ -57,7 +78,10 @@ export class SellerCategoryService {
      */
     addCategory(categoryData: any): Observable<any> {
         const url = this.appUrl + '/add';
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let headers = new HttpHeaders();
+        if (!(categoryData instanceof FormData)) {
+            headers = headers.set('Content-Type', 'application/json');
+        }
 
         return this.http.post<any>(url, categoryData, { headers }).pipe(
             catchError(error => {

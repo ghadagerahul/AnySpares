@@ -1,0 +1,143 @@
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { catchError, Observable, of, tap } from "rxjs";
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class VehicleDashboardService {
+
+    constructor(private http: HttpClient) { }
+
+    private appUrl = environment.apiUrl + "/buyer";
+
+
+    /**
+    * Sends registration request to the backend.
+    *
+    * @param regForm - User details for registration.
+    * @returns Observable with API response or a fallback error object.
+    */
+    loadTwoWheelerBrands(): Observable<any> {
+        const url = this.appUrl + '/loadModels';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+  const dummyResponse = {
+      success: true,
+      data: ['Honda', 'Yamaha', 'Suzuki', 'Bajaj', 'TVS']
+    };
+  // Return as Observable
+  return of(dummyResponse);
+
+        // return this.http.post<any>(url, { headers }).pipe(
+        //     catchError(error => {
+        //         console.error("Error during registration:", error);
+        //         return of({ success: false, message: 'Registration failed' });
+        //     })
+        // );
+    }
+
+
+     loadTwoWheelerModels(selectedModel: any): Observable<any>{
+
+
+  const dummyResponse = {
+    success: true,
+    data: [
+      {
+        company: 'Honda',
+        models: ['Activa 6G', 'Dio', 'Shine', 'Hornet']
+      },
+      {
+        company: 'Yamaha',
+        models: ['FZ', 'R15', 'MT-15']
+      },
+      {
+        company: 'Suzuki',
+        models: ['Access 125', 'Burgman Street', 'Gixxer']
+      },
+      {
+        company: 'Bajaj',
+        models: ['Pulsar 150', 'Dominar 400', 'CT 100']
+      },
+      {
+        company: 'TVS',
+        models: ['Apache RTR 160', 'Jupiter', 'Ntorq']
+      }
+    ]
+  };
+
+ const match = dummyResponse.data.find(
+    item => item.company.toLowerCase() === selectedModel.toLowerCase()
+  );
+
+  return of(match || null);
+
+
+     }
+
+    /**
+     * Fetches vehicle categories from the backend.
+     * 
+     * @returns Observable<any> - Returns an array of vehicle categories
+     */
+    loadVehicleTypesData(): Observable<any> {
+        const url = this.appUrl + '/vehicleCategories';
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+       // Dummy data for now - replace with actual API call when backend is ready
+        const dummyResponse = {
+            success: true,
+            data: [
+                {
+                    id: 1,
+                    name: 'Two-Wheelers',
+                    description: 'Motorbikes, Scooters & Mopeds',
+                    icon: 'bi-bicycle',
+                    route: '/twowheelersdashboard',
+                    gradientClass: 'bg-gradient-blue'
+                },
+                {
+                    id: 2,
+                    name: 'Three-Wheelers',
+                    description: 'Auto-rickshaws & Cargo Trikes',
+                    icon: 'bi-truck-front',
+                    route: '/threewheelersdashboard',
+                    gradientClass: 'bg-gradient-green'
+                },
+                {
+                    id: 3,
+                    name: 'Four-Wheelers',
+                    description: 'Cars, SUVs & Vans',
+                    icon: 'bi-car-front-fill',
+                    route: '/fourwheelersdashboard',
+                    gradientClass: 'bg-gradient-orange'
+                },
+                {
+                    id: 4,
+                    name: 'Heavy Vehicles',
+                    description: 'Trucks, Buses & Construction',
+                    icon: 'bi-truck',
+                    route: '/heavyvehiclesdashboard',
+                    gradientClass: 'bg-gradient-purple'
+                }
+            ]
+        };
+
+        return of(dummyResponse);
+
+    //    // Uncomment when backend API is ready
+    //    console.log('Fetching vehicle categories from API:', url);
+    //     return this.http.get<any>(url, { headers }).pipe(
+    //         tap((response: any) => {
+    //             console.log("Vehicle categories fetched successfully:", response);
+    //         }),
+    //         catchError(error => {
+    //             console.error("Error fetching vehicle categories:", error);
+    //             return of({ success: false, message: 'Failed to fetch vehicle categories', data: [] });
+    //         })
+    //     );
+    // }
+
+}}

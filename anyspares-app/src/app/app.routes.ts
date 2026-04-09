@@ -1,54 +1,71 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './components/login-page/login-page';
-import { RegisterationPage } from './components/registeration-page/registeration-page';
-import { Dashboard } from './components/dashboard/dashboard';
-import { TwowheelersDashboard } from './components/two-wheelers/twowheelers-dashboard/twowheelers-dashboard';
-import { ForgotPasswordComponent } from './components/forgot-password.component/forgot-password.component';
-import { TwoWheelersModels } from './components/two-wheelers/two-wheelers-models/two-wheelers-models';
-import { TwoWheelersCategory } from './components/two-wheelers/two-wheelers-category/two-wheelers-category';
-import { TwoWheelersProduct } from './components/two-wheelers/two-wheelers-product/two-wheelers-product';
-import { TwoWheelerProductDetails } from './components/two-wheelers/two-wheeler-product-details/two-wheeler-product-details';
 import { SellerLoginComponent } from './components/Seller/seller-login/seller-login';
 import { SellerRegisterComponent } from './components/Seller/seller-register/seller-register';
 import { SellerDashboard } from './components/Seller/seller-dashboard/seller-dashboard';
-import { SellerTwoWheelerCategories } from './components/Seller/two-wheeler-categories/two-wheeler-categories';
-import { SellerEngineParts } from './components/Seller/seller-engine-parts/seller-engine-parts';
 import { AddProduct } from './components/Seller/add-product/add-product';
 import { EditProduct } from './components/Seller/edit-product/edit-product';
-import { SellerBrakes } from './components/Seller/seller-brakes/seller-brakes';
-import { SellerElectricalParts } from './components/Seller/seller-electrical-parts/seller-electrical-parts';
-import { SellerSuspensionParts } from './components/Seller/seller-suspension-parts/seller-suspension-parts';
-import { SellerBodyParts } from './components/Seller/seller-body-parts/seller-body-parts';
-import { SellerHydraulicFluids } from './components/Seller/seller-hydraulic-fluids/seller-hydraulic-fluids';
+
 import { SellerCategoryParts } from './components/Seller/seller-category-parts/seller-category-parts';
+import { LoginPage } from './components/Buyer/login-page/login-page';
+import { RegisterationPage } from './components/Buyer/registeration-page/registeration-page';
+import { Dashboard } from './components/Buyer/dashboard/dashboard';
+import { ForgotPasswordComponent } from './components/Buyer/forgot-password.component/forgot-password.component';
+import { AddVehicleBrands } from './components/Seller/add-vehicle-brands/add-vehicle-brands';
+import { AddVehicleModels } from './components/Seller/add-vehicle-models/add-vehicle-models';
+import { RazorpayPaymentComponent } from './components/Payment/razorpay-payment-component/razorpay-payment-component';
+import { VehicleBrands } from './components/Buyer/vehicle-brands/vehicle-brands';
+import { VehicleModels } from './components/Buyer/vehicle-models/vehicle-models';
+import { VehicleProducts } from './components/Buyer/vehicle-products/vehicle-products';
+import { VehicleProductDetails } from './components/Buyer/vehicle-product-details/vehicle-product-details';
+import { SellerCategory } from './components/Seller/seller-category/seller-category';
+import { SellerForgotPasswordComponent } from './components/Seller/seller-forgot-password/seller-forgot-password';
+import { VehicleCategory } from './components/Buyer/vehicle-category/vehicle-category';
+import { Orders } from './components/order/orders/orders';
+import { MyBucketComponent } from './components/order/my-bucket/my-bucket';
+import { CheckoutComponent } from './components/checkout/checkout/checkout';
+import { OrderSuccessComponent } from './components/order-success/order-success';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginPage },
   { path: 'register', component: RegisterationPage },
-  { path: 'dashboard', component: Dashboard },
-  { path: 'twowheelersdashboard', component: TwowheelersDashboard },
+
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'twowheelers-models', component: TwoWheelersModels },
-  { path: 'twowheelers-category', component: TwoWheelersCategory },
-  { path: 'twowheelers-product', component: TwoWheelersProduct },
-  { path: 'twowheelers-productDetails', component: TwoWheelerProductDetails },
+
+
+  // Buyer Routes
+  { path: 'dashboard', component: Dashboard },
+  { path: 'vehicles', component: VehicleBrands },
+  { path: 'vehicle-brands', component: VehicleBrands },
+  { path: 'vehicle-models', component: VehicleModels },
+  { path: 'vehicle-category', component: VehicleCategory },
+  { path: 'vehicle-product', component: VehicleProducts },
+  { path: 'vehicle-productDetails', component: VehicleProductDetails },
+  { path: 'vehicle-productDetails/:id', component: VehicleProductDetails },
+  { path: 'orders', component: Orders },
+  { path: 'my-bucket', component: MyBucketComponent },
+  { path: 'checkout', component: CheckoutComponent },
+  { path: 'order-success', component: OrderSuccessComponent },
+
 
   //Seller Routes
   { path: 'seller-login', component: SellerLoginComponent },
+  { path: 'seller-forgot-password', component: SellerForgotPasswordComponent },
   { path: 'seller-register', component: SellerRegisterComponent },
   { path: 'seller-dashboard', component: SellerDashboard },
-  { path: 'seller-twowheller-category', component: SellerTwoWheelerCategories },
+  { path: 'seller-category', component: SellerCategory },
   //  seller category routes
   { path: 'seller-category-parts', component: SellerCategoryParts },
-  { path: 'seller-engine-parts', component: SellerEngineParts },
-  { path: 'seller-brakes-parts', component: SellerBrakes },
-  { path: 'seller-electrical-parts', component: SellerElectricalParts },
-  { path: 'seller-suspension-parts', component: SellerSuspensionParts },
-  { path: 'seller-bodyshow-parts', component: SellerBodyParts },
-  { path: 'seller-hydrolic-parts', component: SellerHydraulicFluids },
+
   //  seller product management routes
   { path: 'seller-addproduct', component: AddProduct },
   { path: 'seller-editproduct', component: EditProduct },
+
+  { path: 'seller-vehicle-brands', component: AddVehicleBrands },
+  { path: 'seller-add-model', component: AddVehicleModels },
+
+  // payment route
+  { path: 'payment', component: RazorpayPaymentComponent },
   { path: '**', redirectTo: 'login' }
 ];

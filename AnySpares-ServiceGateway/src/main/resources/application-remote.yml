@@ -1,16 +1,24 @@
 spring:
   datasource:
-    url: jdbc:mysql://mysql6598-rahulghadage1310.h.aivencloud.com:13103/spare
-    username: avnadmin
-    password: AVNS_MxdvJ6Ps7QCBedUaS7v
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL}
+
+  instance:
+    prefer-ip-address: true

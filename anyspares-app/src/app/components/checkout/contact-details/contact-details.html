@@ -1,0 +1,42 @@
+<div class="contact-details">
+  <div class="contact-form-container">
+    <p class="description">
+      Please provide your contact details for order confirmation and delivery updates.
+    </p>
+
+    <form [formGroup]="contactForm" (ngSubmit)="onContactFormSubmit()" class="contact-form">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" formControlName="name" placeholder="Enter your full name">
+        <div class="error" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+          Name is required and must be at least 2 characters
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number *</label>
+        <input type="tel" id="phone" formControlName="phone" placeholder="Enter 10-digit phone number">
+        <div class="error" *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">
+          Please enter a valid 10-digit phone number
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" formControlName="email" placeholder="Enter your email address">
+        <div class="error" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+          Please enter a valid email address
+        </div>
+      </div>
+
+      <div class="form-info">
+        <p>📧 We'll send order confirmation and tracking updates to this email</p>
+        <p>📞 Delivery partner will contact you on this number</p>
+      </div>
+
+      <button type="submit" class="btn-save-contact" [disabled]="!isFormValid()">
+        Save Contact Details
+      </button>
+    </form>
+  </div>
+</div>

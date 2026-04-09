@@ -1,0 +1,21 @@
+<div class="container">
+    <h2 class="title">Select Honda Model</h2>
+    <p class="subtitle">Choose your bike model to find spare parts</p>
+
+    <!-- Year Filter -->
+    <select [(ngModel)]="selectedYear" class="year-filter">
+        <option value="">All Years</option>
+        <option *ngFor="let year of allYears" [value]="year">{{ year }}</option>
+    </select>
+
+    <!-- Model Cards -->
+    <div class="model-grid">
+        <div class="model-card" *ngFor="let model of filteredModels()" (click)="onModelSelect(model.modelId)">
+            <img [src]="model.modelImageUrl" alt="{{ model.modelName }}" />
+            <div class="model-info">
+                <h3>{{ model.modelName }}</h3>
+                <p>{{ model.modelDurationDate }}</p>
+            </div>
+        </div>
+    </div>
+</div>

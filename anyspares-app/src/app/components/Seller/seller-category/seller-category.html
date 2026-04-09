@@ -1,0 +1,164 @@
+<div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo"><img src="../../../../assets/AnySparesLogo.png" class="img-small" alt="AS"></div>
+            <div>
+                <h4>AnySpares</h4>
+                <span>Seller Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a>📊 Dashboard</a>
+            <a class="active">📦 Products</a>
+            <a>🛒 Orders</a>
+            <a>💳 Payments</a>
+            <a>⚠️ Inventory Alerts</a>
+            <a>👤 Profile & KYC</a>
+            <a>🎧 Support</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="top-header">
+
+
+            <div class="breadcrumb">
+                <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+                <span class="separator">›</span>
+                <strong>Two Wheelers</strong>
+            </div>
+
+
+            <div class="header-right">
+                🔔
+                <div class="profile">
+                    <div class="avatar">{{ avtarName }}</div>
+                    <div>
+                        <strong>{{ sellerName }}</strong>
+                        <small>&nbsp;🏪{{ storeName }}</small>
+                    </div>
+                </div>
+                🌙
+            </div>
+        </header>
+
+        <h3 class="page-title">Two Wheeler Categories</h3>
+        <p class="page-subtitle">Select a category to manage products</p>
+
+        <!-- CATEGORY CARDS -->
+        <div class="category-grid">
+            <div class="category-card" *ngFor="let cat of categories">
+                <div class="icon-box" [ngClass]="cat.color">
+                    <img [src]="cat.image" alt="{{cat.name}}" class="category-icon">
+                </div>
+
+                <h4>{{ cat.name }}</h4>
+
+                <p class="count">
+                    📦 {{ cat.totalProducts }} Products
+                </p>
+
+                <div class="card-footer">
+                    <a class="view-link" (click)="viewProducts(cat)">
+                        View Products →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary">
+            <div class="summary-card">
+                <p>Total Products</p>
+                <h2>{{ summary.total }}</h2>
+            </div>
+
+            <div class="summary-card">
+                <p>Active Listings</p>
+                <h2 class="green">{{ summary.active }}</h2>
+            </div>
+
+            <div class="summary-card">
+                <p>Out of Stock</p>
+                <h2 class="red">{{ summary.outOfStock }}</h2>
+            </div>
+        </div>
+
+        <!-- ADD CATEGORY FORM -->
+        <div class="form-section">
+            <!-- COLLAPSED HEADER -->
+            <div class="form-header-collapsed" (click)="toggleFormExpanded()" [class.expanded]="isFormExpanded">
+                <div class="header-content">
+                    <span class="toggle-icon">{{ isFormExpanded ? '▼' : '▶' }}</span>
+                    <h3>➕ Add New Category</h3>
+                </div>
+                <span class="hint-text" *ngIf="!isFormExpanded">Click to expand form</span>
+            </div>
+
+            <!-- EXPANDED FORM -->
+            <div class="form-content" *ngIf="isFormExpanded" [@expandCollapse]>
+                <div class="form-header">
+                    <p>Create a new product category for two wheelers</p>
+                </div>
+
+                <form class="add-category-form" (ngSubmit)="onAddCategory()">
+                    <div class="form-group">
+                        <label for="categoryName">Category Name *</label>
+                        <input type="text" id="categoryName" [(ngModel)]="newCategory.name" name="categoryName"
+                            placeholder="e.g., Engine Parts, Brakes, Electrical" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryFor">Category For: *</label>
+                        <select id="categoryFor" [(ngModel)]="newCategory.forvehicletype" name="categoryFor" required>
+                            <option value="">Select Vehicle Type</option>
+                            <option value="Two Wheelers">Two-Wheelers</option>
+                            <option value="Three Wheelers">Three-Wheelers</option>
+                            <option value="Four Wheelers">Four-Wheelers</option>
+                            <option value="Heavy Vehicles">Heavy Vehicles</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryDescription">Description *</label>
+                        <textarea id="categoryDescription" [(ngModel)]="newCategory.description"
+                            name="categoryDescription" placeholder="e.g., Pistons, rings, gaskets, valves" rows="3"
+                            required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="categoryImage">Upload Image *</label>
+                        <input type="file" id="categoryImage" name="categoryImage" (change)="onFileSelected($event)" accept="image/*" required />
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+                            {{ isSubmitting ? '⏳ Adding...' : '✅ Submit' }}
+                        </button>
+                        <button type="reset" class="btn-reset" (click)="resetForm()">
+                            🔄 Clear
+                        </button>
+                        <button type="button" class="btn-cancel" (click)="toggleFormExpanded()">
+                            ✕ Collapse
+                        </button>
+                    </div>
+
+                    <div *ngIf="successMessage" class="alert alert-success">
+                        ✅ {{ successMessage }}
+                    </div>
+
+                    <div *ngIf="errorMessage" class="alert alert-error">
+                        ❌ {{ errorMessage }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>

@@ -169,15 +169,15 @@
 
                     <input type="file" #fileInput hidden multiple (change)="onFilesSelected($event)" />
 
-                    <button type="button" class="publish-btn" (click)="updateProduct()">
-                        💾 Update Product
+                    <button type="button" class="publish-btn" (click)="updateProduct()" [disabled]="isLoading">
+                        💾 {{ isLoading ? 'Updating...' : 'Update Product' }}
                     </button>
 
-                    <button type="button" class="draft-btn" (click)="saveDraft()">
-                        👁️ Save as Draft
+                    <button type="button" class="draft-btn" (click)="saveDraft()" [disabled]="isLoading">
+                        👁️ {{ isLoading ? 'Saving...' : 'Save as Draft' }}
                     </button>
 
-                    <button type="button" class="cancel-btn" (click)="cancel()">
+                    <button type="button" class="cancel-btn" (click)="cancel()" [disabled]="isLoading">
                         Cancel
                     </button>
                 </div>

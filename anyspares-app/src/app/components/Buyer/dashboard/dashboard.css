@@ -1,0 +1,107 @@
+/* ====== GLOBAL COLORS ====== */
+:root {
+  --blue: #1e3a8a;
+  --green: #0f766e;
+  --orange: #c2410c;
+  --purple: #6d28d9;
+  --accent: #06b6d4;
+  --text-light: #f9fafb;
+  --text-dark: #111827;
+  --navbar-bg: rgba(15, 23, 42, 0.9);
+  --page-bg: linear-gradient(135deg, #f0f9ff, #e0f2fe, #e0e7ff);
+}
+
+/* ====== PAGE BACKGROUND ====== */
+body,
+.main-wrapper {
+  background: var(--page-bg);
+  min-height: 100vh;
+  color: var(--text-dark);
+  font-family: 'Poppins', sans-serif;
+}
+
+
+/* Allow bootstrap to control placement; only keep z-index if needed */
+.dropdown-menu {
+  z-index: 2000;
+  /* don't override position — let bootstrap handle it */
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-orange {
+  color: #f97316;
+}
+
+
+
+
+.btn-accent {
+  background-color: var(--accent);
+  border: none;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  background-color: #0891b2;
+}
+
+
+
+/* ====== VEHICLE CARDS ====== */
+.vehicle-card {
+  border-radius: 14px;
+  text-align: center;
+  padding: 2.5rem;
+  color: var(--text-light);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  width: 100%;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.50);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Bright gradients for visibility */
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #2563eb, #60a5fa);
+}
+
+.bg-gradient-green {
+  background: linear-gradient(135deg, #059669, #34d399);
+}
+
+.bg-gradient-orange {
+  background: linear-gradient(135deg, #ea580c, #fb923c);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #7c3aed, #c084fc);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .vehicle-card {
+    padding: 1rem;
+  }
+
+  .navbar-custom {
+    border-radius: 6px;
+  }
+}

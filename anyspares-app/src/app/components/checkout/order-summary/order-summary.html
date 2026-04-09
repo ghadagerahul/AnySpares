@@ -1,0 +1,81 @@
+<div class="order-summary">
+  <div class="summary-container">
+    <!-- Order Items -->
+    <div class="order-items-section">
+      <h3 class="section-title">Order Items</h3>
+      <div class="order-items">
+        <div class="order-item" *ngFor="let item of checkoutData.items">
+          <div class="item-image">
+            <img [src]="item.imageUrl" [alt]="item.productName" />
+          </div>
+          <div class="item-details">
+            <h4 class="item-name">{{ item.productName }}</h4>
+            <p class="item-description" *ngIf="item.description">{{ item.description }}</p>
+            <div class="item-meta">
+              <span class="quantity">Qty: {{ item.quantity }}</span>
+              <span class="price">₹{{ item.price * item.quantity }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery Address -->
+    <div class="delivery-section" *ngIf="checkoutData.address">
+      <h3 class="section-title">Delivery Address</h3>
+      <div class="address-card">
+        <div class="address-name">{{ checkoutData.address.name }}</div>
+        <div class="address-details">
+          <p>{{ checkoutData.address.street }}</p>
+          <p>{{ checkoutData.address.city }}, {{ checkoutData.address.state }} - {{ checkoutData.address.pincode }}</p>
+          <p>Phone: {{ checkoutData.address.phone }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Details -->
+    <div class="contact-section" *ngIf="checkoutData.contact">
+      <h3 class="section-title">Contact Details</h3>
+      <div class="contact-card">
+        <p><strong>{{ checkoutData.contact.name }}</strong></p>
+        <p>{{ checkoutData.contact.email }}</p>
+        <p>{{ checkoutData.contact.phone }}</p>
+      </div>
+    </div>
+
+    <!-- Price Breakdown -->
+    <div class="price-breakdown">
+      <h3 class="section-title">Price Details</h3>
+      <div class="price-row">
+        <span>Subtotal</span>
+        <span>₹{{ getSubtotal() }}</span>
+      </div>
+      <div class="price-row">
+        <span>Shipping</span>
+        <span [ngClass]="{'free': getShippingCost() === 0}">
+          {{ getShippingCost() === 0 ? 'FREE' : '₹' + getShippingCost() }}
+        </span>
+      </div>
+      <div class="price-row">
+        <span>Tax (GST 18%)</span>
+        <span>₹{{ getTaxAmount() }}</span>
+      </div>
+      <div class="price-divider"></div>
+      <div class="price-row total">
+        <span>Total Amount</span>
+        <span>₹{{ getTotalAmount() }}</span>
+      </div>
+    </div>
+
+    <!-- Order Notes -->
+    <div class="order-notes">
+      <h3 class="section-title">Important Notes</h3>
+      <ul class="notes-list">
+        <li>🚚 Free delivery on orders above ₹500</li>
+        <li>📦 Items will be delivered within 3-5 business days</li>
+        <li>🔄 7-day return policy available</li>
+        <li>💳 Secure payment processing</li>
+      </ul>
+    </div>
+  </div>
+</div>

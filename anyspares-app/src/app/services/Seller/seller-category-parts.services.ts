@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, catchError, of, tap } from "rxjs";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +10,7 @@ export class SellerCategoryPartsService {
 
     constructor(private http: HttpClient) { }
 
-    private appUrl = 'http://localhost:8181/twowheelers/sellercategoryparts/categories';
+    private appUrl = environment.apiUrl + '/sellers/sellercategoryparts/categories';
 
     /**
      * Fetches all product categories from the backend.

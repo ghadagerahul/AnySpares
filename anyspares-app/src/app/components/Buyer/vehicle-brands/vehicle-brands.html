@@ -1,0 +1,25 @@
+<div class="container">
+  <h2 class="title">Select Your Brand</h2>
+  <p class="subtitle">Choose from popular two-wheeler brands</p>
+
+  <!-- Search bar -->
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Search for brands..."
+    class="search-bar"
+  />
+
+  <!-- Brand tiles -->
+  <div class="brand-grid">
+    <div
+      class="brand-card"
+      *ngFor="let brand of filteredBrands()"
+      (click)="onBrandSelect(brand.brandId)"
+    >
+      <div class="tag">Popular</div>
+      <img [src]="brand.imageName" alt="{{ brand.brndname }}" />
+      <div class="brand-name">{{ brand.brndname }}</div>
+    </div>
+  </div>
+</div>

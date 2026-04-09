@@ -1,0 +1,92 @@
+<app-navbar-component></app-navbar-component>
+
+<div class="success-container">
+  <div class="success-wrapper">
+    <!-- Success Animation/Icon -->
+    <div class="success-icon">
+      <div class="checkmark">✓</div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-content">
+      <h1 class="success-title">Order Placed Successfully!</h1>
+      <p class="success-subtitle">Thank you for shopping with AnySpares</p>
+
+      <!-- Order Details -->
+      <div class="order-details-card">
+        <div class="order-info">
+          <div class="info-item">
+            <span class="label">Order ID:</span>
+            <span class="value">{{ orderId }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Estimated Delivery:</span>
+            <span class="value">{{ estimatedDelivery }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- What's Next -->
+      <div class="next-steps">
+        <h3>What's Next?</h3>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-icon">📦</div>
+            <div class="step-content">
+              <h4>Order Processing</h4>
+              <p>Your order is being processed and prepared for shipment</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">🚚</div>
+            <div class="step-content">
+              <h4>Shipping</h4>
+              <p>We'll ship your order within 1-2 business days</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">📱</div>
+            <div class="step-content">
+              <h4>Tracking Updates</h4>
+              <p>Get real-time updates via SMS and email</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon">✅</div>
+            <div class="step-content">
+              <h4>Delivery</h4>
+              <p>Expected delivery by {{ estimatedDelivery }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button class="btn-primary" (click)="continueShopping()">
+          Continue Shopping
+        </button>
+        <button class="btn-secondary" (click)="viewOrders()">
+          View My Orders
+        </button>
+      </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="additional-info">
+      <div class="info-card">
+        <h4>Need Help?</h4>
+        <p>📞 Call us: +91-9876543210</p>
+        <p>✉️ Email: support@anyspares.com</p>
+        <p>💬 WhatsApp: +91-9876543210</p>
+      </div>
+
+      <div class="info-card">
+        <h4>Return Policy</h4>
+        <p>🛡️ 7-day return window</p>
+        <p>🔄 Easy returns & exchanges</p>
+        <p>💰 Refund within 5-7 days</p>
+      </div>
+    </div>
+  </div>
+</div>

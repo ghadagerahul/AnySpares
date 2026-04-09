@@ -1,0 +1,60 @@
+<app-navbar-component></app-navbar-component>
+
+<div class="checkout-container">
+  <div class="checkout-wrapper">
+    <!-- Progress Bar -->
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+      </div>
+      <div class="steps-container">
+        <div class="step" *ngFor="let step of steps"
+             [ngClass]="{'active': currentStep === step.id, 'completed': currentStep > step.id, 'valid': isStepValid(step.id)}"
+             (click)="goToStep(step.id)">
+          <div class="step-icon">{{ step.icon }}</div>
+          <div class="step-name">{{ step.name }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="step-content">
+      <!-- Address Step -->
+      <div *ngIf="currentStep === 1" class="step-section">
+        <h2 class="step-title">Delivery Address</h2>
+        <app-address-selection></app-address-selection>
+      </div>
+
+      <!-- Contact Step -->
+      <div *ngIf="currentStep === 2" class="step-section">
+        <h2 class="step-title">Contact Details</h2>
+        <app-contact-details></app-contact-details>
+      </div>
+
+      <!-- Review Step -->
+      <div *ngIf="currentStep === 3" class="step-section">
+        <h2 class="step-title">Review Your Order</h2>
+        <app-order-summary></app-order-summary>
+      </div>
+
+      <!-- Payment Step -->
+      <div *ngIf="currentStep === 4" class="step-section">
+        <h2 class="step-title">Payment Method</h2>
+        <app-payment-method></app-payment-method>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <button class="btn-secondary" *ngIf="currentStep > 1" (click)="previousStep()">
+        ← Previous
+      </button>
+      <button class="btn-primary" *ngIf="currentStep < totalSteps" [disabled]="!canProceedToNext()" (click)="nextStep()">
+        Next →
+      </button>
+      <button class="btn-primary" *ngIf="currentStep === totalSteps" [disabled]="!canProceedToNext()" (click)="proceedToPayment()">
+        Process Payment
+      </button>
+    </div>
+  </div>
+</div>

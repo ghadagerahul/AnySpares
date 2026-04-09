@@ -1,0 +1,22 @@
+{
+    "brands": [
+        "Honda",
+        "Yamaha",
+        "Bajaj",
+        "TVS",
+        "Hero"
+    ],
+    "models": [
+        "Activa",
+        "Shine",
+        "R15",
+        "Pulsar",
+        "Apache"
+    ],
+    "categories": [
+        "Engine Parts",
+        "Brakes",
+        "Electrical",
+        "Suspension"
+    ]
+}

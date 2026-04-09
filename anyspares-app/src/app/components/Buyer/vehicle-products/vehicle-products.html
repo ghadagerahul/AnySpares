@@ -1,0 +1,21 @@
+<div class="product-grid">
+  <div class="product-card" *ngFor="let product of products" (click)="navigateToProductDetails(product)">
+    <div class="product-image-container">
+      <img [src]="product.imageUrl" [alt]="product.name" />
+      <div class="discount-badge">{{ product.discount }}% OFF</div>
+    </div>
+    <div class="product-info">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-type" [ngClass]="product.type.toLowerCase()">{{ product.type }}</p>
+      <div class="rating-section">
+        <span class="rating-stars">⭐ {{ product.rating }}</span>
+        <span class="review-count">({{ product.reviews }} reviews)</span>
+      </div>
+      <div class="price-section">
+        <span class="current-price">₹{{ product.discountedPrice }}</span>
+        <span class="original-price">₹{{ product.originalPrice }}</span>
+      </div>
+      <button class="view-details-btn">View Details</button>
+    </div>
+  </div>
+</div>

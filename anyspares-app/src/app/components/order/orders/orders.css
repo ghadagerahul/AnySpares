@@ -1,0 +1,38 @@
+.orders-container {
+  padding: 20px;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.order-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background: #fff;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.delivered {
+  background: #d4edda;
+  color: #155724;
+}
+
+.in-transit {
+  background: #fff3cd;
+  color: #856404;
+}

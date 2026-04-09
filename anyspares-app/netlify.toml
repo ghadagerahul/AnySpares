@@ -1,0 +1,13 @@
+[build]
+  base = "anyspares-app"
+  command = "npm run build"
+  publish = "dist/anyspares-app/browser"
+
+[[plugins]]
+  package = "@netlify/angular-runtime"
+
+# 🔁 Redirect all routes to index.html (Angular routing fix)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
