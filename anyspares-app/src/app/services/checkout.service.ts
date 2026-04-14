@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { BucketItem } from './order.service';
+import { environment } from '../../environments/environment.prod';
+import { HttpClient } from '@angular/common/http';
 
 export interface Address {
   id?: string;
@@ -40,8 +42,35 @@ export class CheckoutService {
   });
 
   public checkoutData$ = this.checkoutDataSubject.asObservable();
+  backendUrl = environment.apiUrl+'/payments/razorpay';
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
+
+
+  createOrder(totalAmt: number) {
+   // const formValue = this.paymentForm.value;
+    const body = {
+      amount: totalAmt * 100, // Razorpay expects amount in paisa
+      currency: 'INR',
+      receipt: 'ORD_' + new Date().getTime()
+    };
+
+    this.http.post<any>(`${this.backendUrl}/create-order`, body)
+      .subscribe({
+        next: (order: any) => {
+          console.log('Create Order Response:', JSON.stringify(order));
+         // this.openCheckout(order);
+        },
+        error: (err: any) => {
+          console.error('Create Order Error:', err);
+          //this.loading = false;
+          //this.message = 'Failed to create payment order. Please try again.';
+          //this.cdr.detectChanges();
+        }
+      });
+  }
+
+
 
   /**
    * Set checkout items

@@ -44,7 +44,7 @@ export const routes: Routes = [
   { path: 'vehicle-productDetails', component: VehicleProductDetails },
   { path: 'vehicle-productDetails/:id', component: VehicleProductDetails },
   { path: 'orders', component: Orders },
-  { path: 'my-bucket', component: MyBucketComponent },
+  { path: 'view-cart', component: MyBucketComponent },
   { path: 'checkout', component: CheckoutComponent },
   { path: 'order-success', component: OrderSuccessComponent },
 

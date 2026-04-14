@@ -44,10 +44,10 @@ spring:
           filters:
             - StripPrefix=1
 
-        - id: THREEWHEELERSERVICE
-          uri: lb://THREEWHEELERSERVICE
+        - id: PAYMENTSERVICE
+          uri: lb://PAYMENTSERVICE
           predicates:
-            - Path=/threewheelers/**
+            - Path=/payments/**
           filters:
             - StripPrefix=1
 

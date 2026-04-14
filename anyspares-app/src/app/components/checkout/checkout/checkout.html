@@ -8,12 +8,13 @@
         <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
       </div>
       <div class="steps-container">
-        <div class="step" *ngFor="let step of steps"
-             [ngClass]="{'active': currentStep === step.id, 'completed': currentStep > step.id, 'valid': isStepValid(step.id)}"
-             (click)="goToStep(step.id)">
+        <button class="step" *ngFor="let step of steps"
+                [ngClass]="{'active': currentStep === step.id, 'completed': currentStep > step.id, 'valid': isStepValid(step.id)}"
+                (click)="goToStep(step.id)"
+                type="button">
           <div class="step-icon">{{ step.icon }}</div>
           <div class="step-name">{{ step.name }}</div>
-        </div>
+        </button>
       </div>
     </div>
 
@@ -38,10 +39,10 @@
       </div>
 
       <!-- Payment Step -->
-      <div *ngIf="currentStep === 4" class="step-section">
+      <!-- <div *ngIf="currentStep === 4" class="step-section">
         <h2 class="step-title">Payment Method</h2>
         <app-payment-method></app-payment-method>
-      </div>
+      </div> -->
     </div>
 
     <!-- Navigation Buttons -->

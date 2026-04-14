@@ -14,8 +14,14 @@
     </div>
 
     <div class="bucket-content">
+      <!-- Loading State for Bucket -->
+      <div *ngIf="isLoadingBucket" class="loading-container">
+        <div class="loading-spinner">🔄</div>
+        <p>Loading your bucket...</p>
+      </div>
+
       <!-- Items List Section -->
-      <div class="items-section">
+      <div class="items-section" *ngIf="!isLoadingBucket">
         <div *ngIf="bucketItems.length === 0" class="empty-bucket">
           <div class="empty-icon">📦</div>
           <h3>Your bucket is empty</h3>
@@ -46,13 +52,15 @@
             <div class="quantity-controls">
               <label class="qty-label">Quantity</label>
               <div class="qty-selector">
-                <button class="qty-btn" [disabled]="item.quantity <= 1" 
-                  (click)="decreaseQuantity(item)" title="Decrease">
-                  −
+                <button class="qty-btn" [disabled]="item.quantity <= 1 || isLoading" (click)="decreaseQuantity(item)"
+                  title="Decrease">
+                  <span *ngIf="isLoading">⏳</span>
+                  <span *ngIf="!isLoading">−</span>
                 </button>
                 <span class="qty-display">{{ item.quantity }}</span>
-                <button class="qty-btn" (click)="increaseQuantity(item)" title="Increase">
-                  +
+                <button class="qty-btn" [disabled]="isLoading" (click)="increaseQuantity(item)" title="Increase">
+                  <span *ngIf="isLoading">⏳</span>
+                  <span *ngIf="!isLoading">+</span>
                 </button>
               </div>
               <div class="subtotal">
@@ -61,8 +69,10 @@
             </div>
 
             <!-- Remove Button -->
-            <button class="btn-remove" (click)="removeItem(item)" title="Remove from bucket">
-              🗑️ Remove
+            <button class="btn-remove" [disabled]="isLoading" (click)="removeItem(item)" title="Remove from bucket">
+              <span *ngIf="isLoading">⏳</span>
+              <span *ngIf="!isLoading">🗑️</span>
+              {{ isLoading ? 'Removing...' : 'Remove' }}
             </button>
           </div>
         </div>
@@ -102,11 +112,13 @@
 
           <!-- Action Buttons -->
           <div class="action-buttons">
-            <button class="btn-place-order" (click)="placeOrder()">
-              <span>🛒 Proceed to Checkout</span>
+            <button class="btn-place-order" [disabled]="isLoading" (click)="placeOrder()">
+              <span *ngIf="isLoading">⏳</span>
+              <span *ngIf="!isLoading">🛒</span>
+              {{ isLoading ? 'Processing...' : 'Proceed to Checkout' }}
             </button>
-            <button class="btn-clear-bucket" (click)="clearBucket()">
-              Clear Bucket
+            <button class="btn-clear-bucket" [disabled]="isLoading" (click)="clearBucket()">
+              {{ isLoading ? 'Clearing...' : 'Clear Bucket' }}
             </button>
           </div>
 

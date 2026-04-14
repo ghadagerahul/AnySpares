@@ -17,7 +17,7 @@ import { PaymentMethodComponent } from '../payment-method/payment-method';
         AddressSelectionComponent,
         ContactDetailsComponent,
         OrderSummaryComponent,
-        PaymentMethodComponent
+        // PaymentMethodComponent
     ],
     templateUrl: './checkout.html',
     styleUrl: './checkout.css'
@@ -26,13 +26,13 @@ import { PaymentMethodComponent } from '../payment-method/payment-method';
 export class CheckoutComponent implements OnInit {
     checkoutData: CheckoutData;
     currentStep: number = 1;
-    totalSteps: number = 4;
+    totalSteps: number = 3;
 
     steps = [
         { id: 1, name: 'Address', icon: '📍' },
         { id: 2, name: 'Contact', icon: '📞' },
         { id: 3, name: 'Review', icon: '👀' },
-        { id: 4, name: 'Payment', icon: '💳' }
+        // { id: 4, name: 'Payment', icon: '💳' }
     ];
 
     constructor(
@@ -96,6 +96,8 @@ export class CheckoutComponent implements OnInit {
     proceedToPayment(): void {
         if (this.checkoutService.isCheckoutComplete()) {
             this.router.navigate(['/payment']);
+          const totalAmt =  this.checkoutData.totalAmount ;
+            this.checkoutService.createOrder(totalAmt);
         }
     }
 }

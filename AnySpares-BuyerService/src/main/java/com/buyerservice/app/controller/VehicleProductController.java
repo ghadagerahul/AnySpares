@@ -42,4 +42,34 @@ public class VehicleProductController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(responseMap);
 
 	}
+
+	@GetMapping("/details/{productId}/{userId}")
+	public ResponseEntity<HashMap<String, Object>> getProductDetails(@PathVariable Long productId,
+			@PathVariable long userId) {
+		logger.info("VehicleProductController-getProductDetails || productId: " + productId);
+
+		VehicleProductDto productDetails = productService.getProductDetails(productId);
+
+		/// Added For Testing Need to Remove
+		if(null !=productDetails)
+			productDetails.setInStock(true);
+		
+		HashMap<String, Object> responseMap = new HashMap<>();
+		if (null != productDetails) {
+			responseMap.put("success", true);
+			responseMap.put("data", productDetails);
+			return ResponseEntity.ok(responseMap);
+		}
+
+		responseMap.put("success", false);
+		responseMap.put("data", null);
+		return ResponseEntity.status(HttpStatus.CREATED).body(responseMap);
+	}
+
+	@GetMapping("/{productId}/reviews")
+	public void getProductReviews(@PathVariable long productId) {
+		logger.info("VehicleProductController-getProductReviews || productId: " + productId);
+
+	}
+
 }

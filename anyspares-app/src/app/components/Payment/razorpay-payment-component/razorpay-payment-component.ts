@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { CheckoutService } from '../../../services/checkout.service';
 import { OrderService } from '../../../services/order.service';
+import { environment } from '../../../../environments/environment.prod';
 
 declare var Razorpay: any;
 
@@ -20,7 +21,9 @@ export class RazorpayPaymentComponent implements OnInit {
   message = '';
   checkoutData: any;
 
-  private backendUrl = 'http://localhost:8085/rozorpay';
+  
+  
+  private backendUrl = '';
   private razorpayKey = 'rzp_test_SHeIIvLsLonxGH';
 
   constructor(
@@ -31,6 +34,7 @@ export class RazorpayPaymentComponent implements OnInit {
     private orderService: OrderService,
     private router: Router
   ) {
+    this.backendUrl = environment.apiUrl+'/payments/razorpay'
     this.paymentForm = this.fb.group({
       amount: [0, [Validators.required, Validators.min(1)]],
       currency: ['INR', Validators.required],

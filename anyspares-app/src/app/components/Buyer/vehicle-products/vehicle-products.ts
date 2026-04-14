@@ -4,23 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { VehicleModelService } from '../../../services/Buyer/vehicle-model.services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VehicleProductService } from '../../../services/Buyer/vehicle-product.services';
+import { NavbarComponent } from "../navbar-component/navbar-component";
 
-interface VehicleProductDto {
-  id?: number;
-  name: string;
-  type: 'OEM' | 'Aftermarket';
-  rating: number;
-  reviews: number;
-  discountedPrice: number;
-  originalPrice: number;
-  discount: number;
-  imageUrl: string;
-}
+
 
 @Component({
   selector: 'app-vehicle-products',
   standalone: true, // ✅ required for standalone components
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent],
   templateUrl: './vehicle-products.html',
   styleUrls: ['./vehicle-products.css'], // ✅ plural
 })
@@ -48,8 +39,27 @@ export class VehicleProducts implements OnInit {
     this.vehicleType = this.route.snapshot.queryParamMap.get('vehicleType');
     console.log('Received vehicleType:', this.vehicleType);
 
+    this.getSessionData(this.modelId, this.category, this.vehicleType);
+
     this.loadProductsData();
   }
+
+
+  getSessionData(modelId: string | null, category: string | null, vehicleType: string | null): void {
+
+    if (!modelId || !category || !vehicleType) {
+      this.modelId = sessionStorage.getItem('selectedModelId');
+      this.category = sessionStorage.getItem('selectedCategory');
+      this.vehicleType = sessionStorage.getItem('selectedVehicleType');
+      console.warn('Missing query parameters. Attempting to retrieve from session storage.');
+      return;
+    }
+    sessionStorage.setItem('selectedModelId', modelId || '');
+    sessionStorage.setItem('selectedCategory', category || '');
+    sessionStorage.setItem('selectedVehicleType', vehicleType || '');
+
+  }
+
 
   loadProductsData(): void {
     this.vehicleProductService
@@ -115,8 +125,13 @@ export class VehicleProducts implements OnInit {
   }
 
   navigateToProductDetails(product: VehicleProductDto): void {
-    this.router.navigate(['/vehicle-productDetails'], {
-      state: { product: product }
-    });
+    this.router.navigate(['/vehicle-productDetails'], { queryParams: { product: JSON.stringify(product) } });
+  }
+
+  /**
+   * Navigate to dashboard
+   */
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

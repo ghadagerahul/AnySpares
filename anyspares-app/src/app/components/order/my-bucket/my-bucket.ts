@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { NavbarComponent } from '../../Buyer/navbar-component/navbar-component';
 import { OrderService, BucketItem } from '../../../services/order.service';
+import { Constants } from '../../../Constants/Constants';
 
 @Component({
     selector: 'app-my-bucket',
@@ -12,16 +11,16 @@ import { OrderService, BucketItem } from '../../../services/order.service';
     templateUrl: './my-bucket.html',
     styleUrl: './my-bucket.css'
 })
-export class MyBucketComponent implements OnInit, OnDestroy {
+export class MyBucketComponent implements OnInit {
     bucketItems: BucketItem[] = [];
-    totalPrice: number = 0;
-    totalItems: number = 0;
-    isPlacingOrder: boolean = false;
-    orderMessage: string = '';
-    showOrderMessage: boolean = false;
+    totalPrice = 0;
+    totalItems = 0;
+    isLoading = false;
+    isLoadingBucket = false;
+    orderMessage = '';
+    showOrderMessage = false;
     messageType: 'success' | 'error' = 'success';
-
-    private destroy$ = new Subject<void>();
+    userId: string | null = null;
 
     constructor(
         private orderService: OrderService,
@@ -29,130 +28,161 @@ export class MyBucketComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.loadBucketItems();
-
-        this.loadDummyBucketItemsData();
-
+        this.userId = this.getCurrentUserId();
+        this.loadBucket();
     }
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
+    private getCurrentUserId(): string | null {
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            return null;
+        }
+        try {
+            return JSON.parse(currentUser)?.id || null;
+        } catch {
+            return null;
+        }
     }
 
+    private loadBucket(): void {
+        if (!this.userId) {
+            this.showMessage('Please login to view your bucket.', 'error');
+            return;
+        }
 
-    loadDummyBucketItemsData(): void {
-        const dummyItems: BucketItem[] = [
-            {
-                id: '1',
-                productId: 'SP-8-2024',
-                productName: 'Carburetor Repair Kit',
-                price: 449,
-                quantity: 2,
-                imageUrl: 'assets/two-wheelers/product-services/carburetor-kit.jpg',
-                description: 'High-quality carburetor repair kit compatible with Hero, Honda, and Bajaj bikes.'
+        this.isLoadingBucket = true;
+        this.orderService.getBucketFromAPI(this.userId).subscribe({
+            next: (response) => {
+                this.isLoadingBucket = false;
+                if (response?.success && Array.isArray(response.data)) {
+                    this.bucketItems = response.data;
+                    this.updateTotals();
+                } else {
+                    this.showMessage(response?.message || 'Could not load bucket items.', 'error');
+                }
             },
-            {
-                id: '2',
-                productId: 'BP-5-2024',
-                productName: 'Brake Pads Set',
-                price: 299,
-                quantity: 1,
-                imageUrl: 'assets/two-wheelers/product-services/brake-pads.jpg',
-                description: 'Durable brake pads set for enhanced safety and performance.'
+            error: (error) => {
+                this.isLoadingBucket = false;
+                console.error('Error loading bucket:', error);
+                this.showMessage('Failed to load bucket items.', 'error');
             }
-        ];
-
-        // Simulate loading dummy data into the bucket
-        // this.orderService.bucketSubject.next(dummyItems);
-
-        this.bucketItems = dummyItems;
-        dummyItems.forEach(item => {
-            this.bucketItems.push(item);
         });
-
     }
 
-    /**
-     * Load bucket items from the service
-     */
-    private loadBucketItems(): void {
-        this.orderService.bucket$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(items => {
-                this.bucketItems = items;
-                this.calculateTotals();
-            });
+    private updateTotals(): void {
+        this.totalPrice = this.bucketItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        this.totalItems = this.bucketItems.reduce((count, item) => count + item.quantity, 0);
     }
 
-    /**
-     * Calculate total price and items count
-     */
-    private calculateTotals(): void {
-        this.totalPrice = this.orderService.getTotalPrice();
-        this.totalItems = this.orderService.getBucketCount();
-    }
-
-    /**
-     * Increase quantity of an item
-     */
     increaseQuantity(item: BucketItem): void {
-        this.orderService.updateItemQuantity(item.productId, item.quantity + 1);
+        this.updateQuantity(item, item.quantity + 1);
     }
 
-    /**
-     * Decrease quantity of an item
-     */
     decreaseQuantity(item: BucketItem): void {
-        if (item.quantity > 1) {
-            this.orderService.updateItemQuantity(item.productId, item.quantity - 1);
+        if (item.quantity <= 1) {
+            return;
         }
+        this.updateQuantity(item, item.quantity - 1);
     }
 
-    /**
-     * Remove item from bucket
-     */
+    private updateQuantity(item: BucketItem, quantity: number): void {
+       
+        if (!this.userId) {
+            this.showMessage('Please login to update bucket items.', 'error');
+            return;
+        }
+
+        this.isLoading = true;
+        this.orderService.updateBucketItemAPI(this.userId, item.productId, quantity).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                if (response?.success && Array.isArray(response.data)) {
+                    this.bucketItems = response.data;
+                    this.updateTotals();
+                    this.showMessage('Item quantity updated.', 'success');
+                } else {
+                    this.showMessage(response?.message || 'Could not update quantity.', 'error');
+                }
+            },
+            error: (error) => {
+                this.isLoading = false;
+                console.error('Error updating quantity:', error);
+                this.showMessage('Failed to update quantity.', 'error');
+            }
+        });
+    }
+
     removeItem(item: BucketItem): void {
-        if (confirm(`Remove ${item.productName} from bucket?`)) {
-            this.orderService.removeItemFromBucket(item.productId);
+        if (!confirm(`Remove ${item.productName} from bucket?`)) {
+            return;
         }
+        if (!this.userId) {
+            this.showMessage('Please login to remove bucket items.', 'error');
+            return;
+        }
+
+        this.isLoading = true;
+        this.orderService.removeBucketItemAPI(this.userId, item.productId, Constants.REMOVETYPE_SINGLE).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                if (response?.success && Array.isArray(response.data)) {
+                    this.bucketItems = response.data;
+                    this.updateTotals();
+                    this.showMessage('Item removed from bucket.', 'success');
+                } else {
+                    this.showMessage(response?.message || 'Could not remove item.', 'error');
+                }
+            },
+            error: (error) => {
+                this.isLoading = false;
+                console.error('Error removing item:', error);
+                this.showMessage('Failed to remove item.', 'error');
+            }
+        });
     }
 
-    /**
-     * Place order - Navigate to checkout
-     */
+    clearBucket(): void {
+        if (!confirm('Are you sure you want to clear the entire bucket?')) {
+            return;
+        }
+        if (!this.userId) {
+            this.showMessage('Please login to clear your bucket.', 'error');
+            return;
+        }
+
+        this.isLoading = true;
+        const dummyProductId =this.bucketItems[0].productId = "1"; // Using a dummy productId since the API expects it, but it will be ignored for clear operation 
+        this.orderService.clearBucketAPI(this.userId, dummyProductId).subscribe({
+            next: (response) => {
+                this.isLoading = false;
+                if (response?.success) {
+                    this.bucketItems = [];
+                    this.updateTotals();
+                    this.showMessage('Bucket cleared.', 'success');
+                } else {
+                    this.showMessage(response?.message || 'Could not clear bucket.', 'error');
+                }
+            },
+            error: (error) => {
+                this.isLoading = false;
+                console.error('Error clearing bucket:', error);
+                this.showMessage('Failed to clear bucket.', 'error');
+            }
+        });
+    }
+
     placeOrder(): void {
         if (this.bucketItems.length === 0) {
             this.showMessage('Bucket is empty. Add items before placing an order.', 'error');
             return;
         }
-
-        // Navigate to checkout instead of placing order directly
         this.router.navigate(['/checkout']);
     }
 
-    /**
-     * Continue shopping
-     */
     continueShopping(): void {
         this.router.navigate(['/vehicle-product']);
     }
 
-    /**
-     * Clear entire bucket
-     */
-    clearBucket(): void {
-        if (confirm('Are you sure you want to clear the entire bucket?')) {
-            this.orderService.clearBucket();
-            this.bucketItems = [];
-            this.calculateTotals();
-            this.showMessage('Bucket cleared', 'success');
-        }
-    }
-
-    /**
-     * Show message notification
-     */
     private showMessage(message: string, type: 'success' | 'error'): void {
         this.orderMessage = message;
         this.messageType = type;
