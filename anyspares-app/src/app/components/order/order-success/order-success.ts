@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NavbarComponent } from '../Buyer/navbar-component/navbar-component';
+import { NavbarComponent } from '../../Buyer/navbar-component/navbar-component';
 
 @Component({
   selector: 'app-order-success',

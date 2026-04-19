@@ -2,13 +2,15 @@
   <!-- Saved Addresses -->
   <div class="saved-addresses" *ngIf="savedAddresses.length > 0">
     <h3 class="section-title">Select Delivery Address</h3>
-    <div class="address-list">
+    <div class="loading" *ngIf="isLoading">Loading addresses...</div>
+    <div class="address-list" *ngIf="!isLoading">
       <div class="address-card" *ngFor="let address of savedAddresses"
-           [ngClass]="{'selected': selectedAddressId === address.id}"
-           (click)="selectAddress(address)">
+        [ngClass]="{'selected': selectedAddressId === address.id}" (click)="selectAddress(address)">
         <div class="address-header">
           <span class="address-name">{{ address.name }}</span>
           <span class="default-badge" *ngIf="address.isDefault">Default</span>
+          <button class="delete-btn" (click)="deleteAddress(address.id); $event.stopPropagation()" *ngIf="address.id"
+            title="Delete address">🗑️</button>
         </div>
         <div class="address-details">
           <p>{{ address.street }}, {{ address.city }}</p>
@@ -27,7 +29,7 @@
     <h3 class="section-title" *ngIf="savedAddresses.length > 0">Or Add New Address</h3>
     <h3 class="section-title" *ngIf="savedAddresses.length === 0">Add Delivery Address</h3>
 
-    <form [formGroup]="addressForm" (ngSubmit)="onAddressFormSubmit()" class="address-form">
+    <form type="submit" [formGroup]="addressForm" (ngSubmit)="onAddressFormSubmit()" class="address-form">
       <div class="form-row">
         <div class="form-group">
           <label for="name">Full Name *</label>
@@ -77,9 +79,15 @@
         </div>
       </div>
 
-      <button type="submit" class="btn-save-address" [disabled]="!isFormValid()">
-        {{ selectedAddressId ? 'Update Address' : 'Save Address' }}
-      </button>
+      <div class="form-actions">
+        <button type="submit" class="btn-save-address" [disabled]="!isFormValid()">
+          <span *ngIf="isSaving">Saving...</span>
+          <span *ngIf="!isSaving">{{ selectedAddressId ? 'Update Address' : 'Save Address' }}</span>
+        </button>
+        <button type="button" class="btn-add-new" *ngIf="selectedAddressId" (click)="addNewAddress()">
+          Add New Address
+        </button>
+      </div>
     </form>
   </div>
 </div>

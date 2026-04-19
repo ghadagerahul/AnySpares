@@ -53,8 +53,9 @@
       <button class="btn-primary" *ngIf="currentStep < totalSteps" [disabled]="!canProceedToNext()" (click)="nextStep()">
         Next →
       </button>
-      <button class="btn-primary" *ngIf="currentStep === totalSteps" [disabled]="!canProceedToNext()" (click)="proceedToPayment()">
-        Process Payment
+      <button class="btn-primary" *ngIf="currentStep === totalSteps" [disabled]="!canProceedToNext() || isPlacingOrder" (click)="proceedToPayment()">
+        <span *ngIf="isPlacingOrder">Placing Order...</span>
+        <span *ngIf="!isPlacingOrder">Place Order</span>
       </button>
     </div>
   </div>

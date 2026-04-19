@@ -13,6 +13,8 @@ export class AddressSelectionComponent implements OnInit {
   addressForm: FormGroup;
   savedAddresses: Address[] = [];
   selectedAddressId: string = '';
+  isLoading: boolean = false;
+  isSaving: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,43 +32,39 @@ export class AddressSelectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSavedAddresses();
-    const currentAddress = this.checkoutService.getCheckoutData().address;
-    if (currentAddress) {
-      this.addressForm.patchValue(currentAddress);
-      this.selectedAddressId = currentAddress.id || '';
-    }
   }
 
   loadSavedAddresses(): void {
-    // Load from localStorage or service
-    const saved = localStorage.getItem('savedAddresses');
-    if (saved) {
-      this.savedAddresses = JSON.parse(saved);
-    } else {
-      // Add some dummy addresses for demo
-      this.savedAddresses = [
-        {
-          id: '1',
-          name: 'John Doe',
-          phone: '9876543210',
-          street: '123 Main Street, Sector 15',
-          city: 'Gurgaon',
-          state: 'Haryana',
-          pincode: '122001',
-          isDefault: true
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          phone: '9123456789',
-          street: '456 Park Avenue, MG Road',
-          city: 'Delhi',
-          state: 'Delhi',
-          pincode: '110001'
+    this.isLoading = true;
+    this.checkoutService.getUserAddresses().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.savedAddresses = response.data || [];
+          // Check if there's a current address from checkout data and it's in the list
+          const currentAddress = this.checkoutService.getCheckoutData().address;
+          if (currentAddress && currentAddress.id && this.savedAddresses.some(addr => addr.id === currentAddress.id)) {
+            this.selectAddress(currentAddress);
+          } else if (!this.selectedAddressId && this.savedAddresses.length > 0) {
+            // Auto-select logic: default first, or first if only one
+            const defaultAddress = this.savedAddresses.find(addr => addr.isDefault);
+            if (defaultAddress) {
+              this.selectAddress(defaultAddress);
+            } else if (this.savedAddresses.length === 1) {
+              this.selectAddress(this.savedAddresses[0]);
+            }
+          }
+        } else {
+          this.savedAddresses = [];
         }
-      ];
-      localStorage.setItem('savedAddresses', JSON.stringify(this.savedAddresses));
-    }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading addresses:', error);
+        this.savedAddresses = [];
+        this.isLoading = false;
+        alert('No Addresses found. Please add a new address to proceed with checkout.');
+      }
+    });
   }
 
   selectAddress(address: Address): void {
@@ -76,19 +74,60 @@ export class AddressSelectionComponent implements OnInit {
   }
 
   onAddressFormSubmit(): void {
+    console.log('Submitting address form with value:', this.addressForm.value);
+    console.log('Selected Address ID:', this.selectedAddressId);
     if (this.addressForm.valid) {
-      const address: Address = {
+      this.isSaving = true;
+      const addressData: Address = {
         ...this.addressForm.value,
-        id: this.selectedAddressId || `addr_${Date.now()}`
+        id: this.selectedAddressId || undefined
       };
-      this.checkoutService.setAddress(address);
 
-      // Save to saved addresses if not already saved
-      if (!this.selectedAddressId) {
-        this.savedAddresses.push(address);
-        localStorage.setItem('savedAddresses', JSON.stringify(this.savedAddresses));
+      // For updates, set the address as default
+      if (this.selectedAddressId) {
+        addressData.isDefault = true;
       }
+
+      const operation = this.selectedAddressId
+        ? this.checkoutService.updateAddress(this.selectedAddressId, addressData)
+        : this.checkoutService.saveAddress(addressData);
+
+      operation.subscribe({
+        next: (response) => {
+          if (response.success) {
+            const savedAddress = response.data;
+            if (savedAddress?.id) {
+              this.selectedAddressId = savedAddress.id;
+            }
+            this.checkoutService.setAddress(savedAddress || addressData);
+            this.loadSavedAddresses(); // Refresh the list
+            if (!this.selectedAddressId) {
+              this.addressForm.reset();
+            } else {
+              this.addressForm.markAsPristine();
+            }
+          } else {
+            alert('Failed to save address. Please try again.');
+          }
+          this.isSaving = false;
+        },
+        error: (error) => {
+          console.error('Error saving address:', error);
+          this.isSaving = false;
+          alert('Failed to save address. Please check your connection and try again.');
+        }
+      });
     }
+  }
+
+  private saveToLocalStorage(address: Address): void {
+    const addressWithId = {
+      ...address,
+      id: address.id || `addr_${Date.now()}`
+    };
+    this.savedAddresses.push(addressWithId);
+    localStorage.setItem('savedAddresses', JSON.stringify(this.savedAddresses));
+    this.checkoutService.setAddress(addressWithId);
   }
 
   addNewAddress(): void {
@@ -96,7 +135,29 @@ export class AddressSelectionComponent implements OnInit {
     this.addressForm.reset();
   }
 
+  deleteAddress(addressId: string): void {
+    if (confirm('Are you sure you want to delete this address?')) {
+      this.checkoutService.deleteAddress(addressId).subscribe({
+        next: (response) => {
+          if (response.success) {
+            this.loadSavedAddresses();
+            if (this.selectedAddressId === addressId) {
+              this.selectedAddressId = '';
+              this.addressForm.reset();
+            }
+          } else {
+            alert('Failed to delete address. Please try again.');
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting address:', error);
+          alert('Failed to delete address. Please check your connection and try again.');
+        }
+      });
+    }
+  }
+
   isFormValid(): boolean {
-    return this.addressForm.valid;
+    return this.addressForm.valid && !this.isSaving;
   }
 }
