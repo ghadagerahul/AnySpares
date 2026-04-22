@@ -38,31 +38,33 @@ export class AddressSelectionComponent implements OnInit {
     this.isLoading = true;
     this.checkoutService.getUserAddresses().subscribe({
       next: (response) => {
-        if (response.success) {
-          this.savedAddresses = response.data || [];
-          // Check if there's a current address from checkout data and it's in the list
+        this.savedAddresses = Array.isArray(response?.data) ? response.data : [];
+
+        if (response?.success && this.savedAddresses.length > 0) {
           const currentAddress = this.checkoutService.getCheckoutData().address;
-          if (currentAddress && currentAddress.id && this.savedAddresses.some(addr => addr.id === currentAddress.id)) {
-            this.selectAddress(currentAddress);
+          const selectedSavedAddress = currentAddress && currentAddress.id
+            ? this.savedAddresses.find(addr => addr.id === currentAddress.id)
+            : null;
+
+          if (selectedSavedAddress) {
+            this.selectAddress(selectedSavedAddress);
           } else if (!this.selectedAddressId && this.savedAddresses.length > 0) {
-            // Auto-select logic: default first, or first if only one
             const defaultAddress = this.savedAddresses.find(addr => addr.isDefault);
-            if (defaultAddress) {
-              this.selectAddress(defaultAddress);
-            } else if (this.savedAddresses.length === 1) {
-              this.selectAddress(this.savedAddresses[0]);
-            }
+            this.selectAddress(defaultAddress ?? this.savedAddresses[0]);
           }
         } else {
           this.savedAddresses = [];
+          this.selectedAddressId = '';
         }
+
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading addresses:', error);
         this.savedAddresses = [];
+        this.selectedAddressId = '';
         this.isLoading = false;
-        alert('No Addresses found. Please add a new address to proceed with checkout.');
+        alert('Unable to load addresses. Please log in and try again.');
       }
     });
   }

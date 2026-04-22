@@ -141,7 +141,7 @@ public class VehicleCartCheckoutServiceImpl implements VehicleCartCheckoutServic
 					}).toList();
 
 			if (vehicleOrderContactDtoList == null || vehicleOrderContactDtoList.isEmpty()) {
-				String url = Constants.USER_SERVICE_URL + "/v1/buyerAuth/user-details/" + userId;
+				String url = Constants.USER_SERVICE_URL + "/v1/auth/user-details/" + userId;
 				logger.info("No local contacts found. Calling UserService API: {}", url);
 				try {
 					BuyerUserRegistrationDto user = restTemplate.getForObject(url, BuyerUserRegistrationDto.class);

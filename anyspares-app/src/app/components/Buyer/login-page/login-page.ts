@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Constants } from '../../../Constants/Constants';
+import { UserDetails } from '../../shared/user-details.model';
 
 
 interface LoginRequest {
@@ -20,8 +21,9 @@ interface LoginRequest {
   styleUrls: ['./login-page.css']
 })
 export class LoginPage {
-  mobile: string = '9370005745';
-  password: string = 'Test@123';
+
+  mobile: string = '';
+  password: string = '';
 
   loginDataNew: LoginRequest = { emailId: '', mobileNo: '', password: '', userType: Constants.USER_BUYER };
 
@@ -72,4 +74,11 @@ export class LoginPage {
     this.mobile = '',
       this.password = ''
   }
+
+  testReouting() {
+    console.log('Retrieving current user ID from localStorage: ' + localStorage.getItem('currentUser'));
+    let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}') as UserDetails;
+    console.log('Current User:', currentUser?.id);
+  }
+
 }
