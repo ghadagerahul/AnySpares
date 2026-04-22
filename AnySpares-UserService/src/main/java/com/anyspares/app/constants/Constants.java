@@ -15,4 +15,7 @@ public class Constants {
 	public static final String USER_SELLER = "seller";
 	public static final String USER_BUYER = "buyer";
 
+    //Exception Constant
+    public static final String FAILURE = "failed";
+
 }
