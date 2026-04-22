@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import {  ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from "../navbar-component/navbar-component";
 import { VehicleProductDetailsService, ProductData } from '../../../services/Buyer/vehicle-productdetails.services';
+import { UserDetails } from '../../shared/user-details.model';
+
 
 @Component({
   selector: 'app-vehicle-product-details',
@@ -23,9 +25,9 @@ export class VehicleProductDetails implements OnInit {
   product: ProductData | null = null;
   relatedProducts: ProductData[] = [];
   productReviews: any[] = [];
+  vehicleProductDto!: VehicleProductDto;
 
-  // Default product for fallback
-  defaultProduct: ProductData = {
+  defaultProduct1: ProductData = {
     name: "Carburetor Repair Kit",
     type: "Aftermarket",
     rating: 4.2,
@@ -45,60 +47,61 @@ export class VehicleProductDetails implements OnInit {
       dimensions: "15 x 10 x 5 cm",
     }
   };
+  currentUser!: UserDetails;
 
-  constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private vehicleProductDetailsService: VehicleProductDetailsService
-  ) { }
+  constructor(private router: Router, private route: ActivatedRoute,
+    private vehicleProductDetailsService: VehicleProductDetailsService) { }
+
 
   ngOnInit(): void {
-    // Try to get product from router state first
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state?.['product']) {
-      this.product = navigation.extras.state['product'] as ProductData;
-      if (this.product?.id) {
-        this.loadProductDetails(this.product.id);
-        this.loadRelatedProducts(this.product.id);
-        this.loadProductReviews(this.product.id);
-      }
-    } else {
-      // Try to get product ID from route parameters
-      this.route.paramMap.subscribe(params => {
-        const productId = params.get('id');
-        if (productId) {
-          this.loadProductDetails(parseInt(productId));
-          this.loadRelatedProducts(parseInt(productId));
-          this.loadProductReviews(parseInt(productId));
-        } else {
-          // Fallback to default product
-          this.product = this.defaultProduct;
-        }
-      });
-    }
+    const productParam1 = this.route.snapshot.queryParamMap.get('product');
+    console.log('##Received product from route:', productParam1);
+    this.vehicleProductDto = productParam1
+      ? JSON.parse(productParam1) as VehicleProductDto
+      : {} as VehicleProductDto;
+
+
+    console.log('Current User from sessionStorage:' + JSON.stringify(localStorage.getItem('currentUser')));
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}') as UserDetails;
+    console.log('!!!!!!!!!!Parsed currentUser:', this.currentUser);
+    console.log('!!!!!!!!!!Current User ID:', this.currentUser?.id);
+    this.loadAllProductData(this.vehicleProductDto.id || 0, this.currentUser.id);
+  }
+
+
+
+  /**
+   * Load all product-related data (details, related products, reviews)
+   */
+  private loadAllProductData(productId: number, userId: number): void {
+    console.log('#@#@##@Loading data for product ID:', productId);
+    console.log('@#@#@#Current User ID:', userId);
+    this.loadProductDetails(productId, userId);
+   // this.loadRelatedProducts(productId, userId);
+    //this.loadProductReviews(productId, userId);
   }
 
   /**
    * Load product details from API
    */
-  loadProductDetails(productId: number): void {
+  loadProductDetails(productId: number, userId: number): void {
     this.isLoading = true;
     this.error = null;
 
-    this.vehicleProductDetailsService.getProductById(productId).subscribe({
+    this.vehicleProductDetailsService.getProductById(productId, userId).subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.product = response.data;
         } else {
           console.warn('Failed to fetch product details, using default');
-          this.product = this.defaultProduct;
+         // this.product = this.defaultProduct;
         }
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading product details:', err);
         this.error = 'Failed to load product details';
-        this.product = this.defaultProduct;
+        //this.product = this.defaultProduct;
         this.isLoading = false;
       }
     });
@@ -107,7 +110,7 @@ export class VehicleProductDetails implements OnInit {
   /**
    * Load related products
    */
-  loadRelatedProducts(productId: number): void {
+  loadRelatedProducts(productId: number, userId: number): void {
     this.vehicleProductDetailsService.getRelatedProducts(productId, 5).subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -123,7 +126,7 @@ export class VehicleProductDetails implements OnInit {
   /**
    * Load product reviews
    */
-  loadProductReviews(productId: number): void {
+  loadProductReviews(productId: number, userId: number): void {
     this.vehicleProductDetailsService.getProductReviews(productId).subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -144,33 +147,9 @@ export class VehicleProductDetails implements OnInit {
    * Add product to cart
    */
   addToCart(): void {
-    if (!this.product || !this.product.id) {
-      this.error = 'Product not available';
-      
-      
-      
-      return;
-    }
-
-    this.isLoading = true;
-    this.error = null;
-
-    this.vehicleProductDetailsService.addToBucket(this.product.id, this.quantity).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.successMessage = `${this.quantity} item(s) added to cart successfully!`;
-          this.isLoading = false;
-          setTimeout(() => this.successMessage = null, 3000);
-        } else {
-          this.error = response.message || 'Failed to add to cart';
-          this.isLoading = false;
-        }
-      },
-      error: (err) => {
-        console.error('Error adding to cart:', err);
-        this.error = err.error?.message || 'Failed to add to cart';
-        this.isLoading = false;
-      }
+    this.addToBucket(() => {
+      this.successMessage = `${this.quantity} item(s) added to cart successfully!`;
+      setTimeout(() => this.successMessage = null, 3000);
     });
   }
 
@@ -178,21 +157,40 @@ export class VehicleProductDetails implements OnInit {
    * Buy now - proceed to checkout
    */
   buyNow(): void {
-    if (!this.product || !this.product.id) {
+    this.addToBucket(() => {
+      this.router.navigate(['/view-cart']);
+    });
+  }
+
+  /**
+   * Private method to add product to bucket with common logic
+   */
+  private addToBucket(onSuccess?: () => void): void {
+    if (!this.product?.id) {
       this.error = 'Product not available';
       return;
     }
 
+    if (this.quantity <= 0) {
+      this.error = 'Quantity must be at least 1';
+      return;
+    }
+
     this.isLoading = true;
-    // First add to cart, then navigate to checkout
-    this.vehicleProductDetailsService.addToBucket(this.product.id, this.quantity).subscribe({
-      next: () => {
+    this.error = null;
+
+    this.vehicleProductDetailsService.addToBucket(this.product.id, this.quantity, this.currentUser.id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          onSuccess?.();
+        } else {
+          this.error = response.message || 'Failed to add to cart';
+        }
         this.isLoading = false;
-        this.router.navigate(['/checkout']);
       },
       error: (err) => {
-        console.error('Error in buy now:', err);
-        this.error = 'Failed to proceed to checkout';
+        console.error('Error adding to cart:', err);
+        this.error = err.error?.message || 'Failed to add to cart';
         this.isLoading = false;
       }
     });
@@ -209,7 +207,7 @@ export class VehicleProductDetails implements OnInit {
    * Navigate to cart/bucket page
    */
   goToBucket(): void {
-    this.router.navigate(['/my-bucket']);
+    this.router.navigate(['/view-cart']);
   }
 
   /**
@@ -219,5 +217,19 @@ export class VehicleProductDetails implements OnInit {
     this.router.navigate(['/vehicle-productDetails'], {
       state: { product: product }
     });
+  }
+
+  /**
+   * Navigate to dashboard
+   */
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  /**
+   * Navigate to products page
+   */
+  goToProducts(): void {
+    this.router.navigate(['/vehicle-products']);
   }
 }

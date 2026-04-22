@@ -42,7 +42,7 @@ public interface AuthService {
 	 * Checks if a user exists in the system by mobile number.
 	 *
 	 * @param mobileno mobile number to check
-	 * @param userType 
+	 * @param userType
 	 * @return {@code true} if user exists, otherwise {@code false}
 	 */
 	public boolean isUserPresent(Long mobileno, String userType);
@@ -66,5 +66,7 @@ public interface AuthService {
 	public boolean resetSellerPassword(String mobileNo, String otp, String newPassword);
 
 	public boolean validateUserLogin(UserLoginDto details);
+
+	public BuyerUserDetails getUserDetails(Long userId);
 
 }

@@ -44,7 +44,7 @@ export interface ApiResponse<T> {
 })
 export class VehicleProductDetailsService {
 
-    private appUrl = environment.apiUrl + "/buyers/vehicle-products";
+    private productUrl = environment.apiUrl + "/buyers/vehicle-products";
     private cartUrl = environment.apiUrl + "/buyers/cart";
     private ordersUrl = environment.apiUrl + "/buyers/orders";
 
@@ -53,8 +53,9 @@ export class VehicleProductDetailsService {
     /**
      * Load product data by product ID
      */
-    getProductById(productId: number): Observable<ApiResponse<ProductData>> {
-        return this.http.get<ApiResponse<ProductData>>(`${this.appUrl}/${productId}`);
+    getProductById(productId: number, userId: number): Observable<ApiResponse<ProductData>> {
+        const url = `${this.productUrl}/details/${productId}/${userId}`;
+        return this.http.get<ApiResponse<ProductData>>(url);
     }
 
     /**
@@ -72,31 +73,31 @@ export class VehicleProductDetailsService {
             params = params.set('vehicleType', vehicleType);
         }
 
-        return this.http.get(this.appUrl, { params });
+        return this.http.get(this.productUrl, { params });
     }
 
     /**
      * Add product to shopping bucket/cart
      */
-    addToBucket(productId: number, quantity: number): Observable<ApiResponse<CartItem>> {
+    addToBucket(productId: number, quantity: number, userId: number): Observable<ApiResponse<CartItem>> {
         const url = `${this.cartUrl}/add`;
-        const body = { productId, quantity };
+        const body = { productId, quantity, userId };
         return this.http.post<ApiResponse<CartItem>>(url, body);
     }
 
     /**
      * Update cart item quantity
      */
-    updateCartItem(productId: number, quantity: number): Observable<ApiResponse<CartItem>> {
+    updateCartItem(productId: number, quantity: number, userId: number): Observable<ApiResponse<CartItem>> {
         const url = `${this.cartUrl}/update`;
-        const body = { productId, quantity };
+        const body = { productId, quantity, userId };
         return this.http.put<ApiResponse<CartItem>>(url, body);
     }
 
     /**
      * Remove item from cart
      */
-    removeFromCart(productId: number): Observable<ApiResponse<any>> {
+    removeFromCart(productId: number, userId: number ): Observable<ApiResponse<any>> {
         const url = `${this.cartUrl}/${productId}`;
         return this.http.delete<ApiResponse<any>>(url);
     }
@@ -119,7 +120,7 @@ export class VehicleProductDetailsService {
      * Get product reviews
      */
     getProductReviews(productId: number): Observable<ApiResponse<any[]>> {
-        return this.http.get<ApiResponse<any[]>>(`${this.appUrl}/${productId}/reviews`);
+        return this.http.get<ApiResponse<any[]>>(`${this.productUrl}/${productId}/reviews`);
     }
 
     /**
@@ -127,7 +128,7 @@ export class VehicleProductDetailsService {
      */
     submitReview(productId: number, rating: number, comment: string): Observable<ApiResponse<any>> {
         const body = { rating, comment };
-        return this.http.post<ApiResponse<any>>(`${this.appUrl}/${productId}/reviews`, body);
+        return this.http.post<ApiResponse<any>>(`${this.productUrl}/${productId}/reviews`, body);
     }
 
     /**
@@ -136,7 +137,7 @@ export class VehicleProductDetailsService {
     getRelatedProducts(productId: number, limit: number = 5): Observable<ApiResponse<ProductData[]>> {
         let params = new HttpParams();
         params = params.set('limit', limit.toString());
-        return this.http.get<ApiResponse<ProductData[]>>(`${this.appUrl}/${productId}/related`, { params });
+        return this.http.get<ApiResponse<ProductData[]>>(`${this.productUrl}/${productId}/related`, { params });
     }
 }
 

@@ -1,5 +1,18 @@
-<app-navbar-component></app-navbar-component>
-<div class="product-container">
+<div class="main-wrapper">
+  <app-navbar-component></app-navbar-component>
+
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb-nav">
+    <div class="container-fluid px-3 py-2">
+      <button class="btn-breadcrumb" (click)="goToDashboard()">Dashboard</button>
+      <span class="separator">/</span>
+      <button class="btn-breadcrumb" (click)="goToProducts()">Products</button>
+      <span class="separator">/</span>
+      <span class="current-page">{{ product?.name || 'Product Details' }}</span>
+    </div>
+  </nav>
+
+  <div class="product-container">
   <!-- Error and Success Messages -->
   <div *ngIf="error" class="alert alert-error" role="alert">
     {{ error }}
@@ -35,7 +48,7 @@
       </p>
 
       <div class="quantity-selector">
-        <label>Quantity</label>
+        <label for="quantity">Quantity</label>
         <button (click)="quantity = Math.max(1, quantity - 1)">−</button>
         <span>{{ quantity }}</span>
         <button (click)="quantity = quantity + 1">+</button>
@@ -44,6 +57,7 @@
       <p class="total">Total: ₹{{ total }}</p>
 
       <div class="actions">
+        <p *ngIf="!product.inStock" class="text-danger small">{{product.name}} is Out of stock currently.</p>
         <button class="add-to-cart" (click)="addToCart()" [disabled]="isLoading || !product.inStock">Add to Cart</button>
         <button class="buy-now" (click)="buyNow()" [disabled]="isLoading || !product.inStock">Buy Now</button>
         <button class="orders-btn" (click)="goToOrders()">My Orders</button>
@@ -111,5 +125,6 @@
         <p class="rating">⭐ {{ relatedProduct.rating }}</p>
       </button>
     </div>
+  </div>
   </div>
 </div>

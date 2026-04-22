@@ -38,10 +38,10 @@ import com.razorpay.Utils;
  *
  * @author Rahul
  */
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = { RequestMethod.GET,
-		RequestMethod.POST })
+//@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = { RequestMethod.GET,
+//		RequestMethod.POST })
 @RestController
-@RequestMapping("/rozorpay")
+@RequestMapping("/razorpay")
 public class RozorPayController {
 
 	@Autowired

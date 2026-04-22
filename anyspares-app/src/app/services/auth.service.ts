@@ -33,7 +33,7 @@ export class AuthService {
       .pipe(
         tap((response: any) => {
           localStorage.setItem('authToken', response.token);
-          localStorage.setItem('currentUser', response.user);
+          localStorage.setItem('currentUser', JSON.stringify(response.user));
           this.isAuthenticated.set(true);
           this.currentUser.set(response.user);
         })

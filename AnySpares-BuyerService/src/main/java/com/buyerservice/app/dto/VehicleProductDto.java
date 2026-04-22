@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class VehicleProductDto {
 
+	private long id;
 	private String name;
 	private String type;
 	private double rating;
@@ -13,5 +14,10 @@ public class VehicleProductDto {
 	private double originalPrice;
 	private double discount;
 	private String imageUrl;
+
+	// need to Enhance Flow for Below Fields
+	private String description;
+	private boolean inStock;
+	private ProductSpecificationsDto specs;
 
 }

@@ -14,4 +14,7 @@ export class Constants {
 
     static readonly Empty_STRING = "";
     static readonly ZERO_NUMBER = 0;
+
+    static readonly REMOVETYPE_ALL = "all";
+    static readonly REMOVETYPE_SINGLE = "single";
 }

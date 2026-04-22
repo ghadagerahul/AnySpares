@@ -11,13 +11,20 @@
   --page-bg: linear-gradient(135deg, #f0f9ff, #e0f2fe, #e0e7ff);
 }
 
-/* ====== PAGE BACKGROUND ====== */
-body,
+/* ====== MAIN WRAPPER ====== */
 .main-wrapper {
-  background: var(--page-bg);
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe, #e0e7ff);
   min-height: 100vh;
   color: var(--text-dark);
   font-family: 'Poppins', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure navbar dropdowns appear above content */
+.main-wrapper > app-navbar-component {
+  position: relative;
+  z-index: 1200;
 }
 
 

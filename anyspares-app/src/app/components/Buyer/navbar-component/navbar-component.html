@@ -14,10 +14,10 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" id="productsDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="nav-link dropdown-toggle text-light btn btn-link" id="productsDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" (keydown)="handleKeydown($event)">
                         Products
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" aria-labelledby="productsDropdown">
                         <li><a class="dropdown-item" href="#">Engine Parts</a></li>
                         <li><a class="dropdown-item" href="#">Electricals</a></li>
@@ -26,10 +26,10 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" id="servicesDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="nav-link dropdown-toggle text-light btn btn-link" id="servicesDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" (keydown)="handleKeydown($event)">
                         Services
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
                         <li><a class="dropdown-item" href="#">Repair</a></li>
                         <li><a class="dropdown-item" href="#">Installation</a></li>
@@ -37,10 +37,10 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" id="ordersDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="nav-link dropdown-toggle text-light btn btn-link" id="ordersDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" (keydown)="handleKeydown($event)">
                         Orders
-                    </a>
+                    </button>
                     <ul class="dropdown-menu" aria-labelledby="ordersDropdown">
                         <li><a class="dropdown-item" href="#">Order Bucket</a></li>
                         <li><a class="dropdown-item" href="#">Track My Orders</a></li>
@@ -49,11 +49,11 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-light" href="#" id="ordersDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <button class="nav-link dropdown-toggle text-light btn btn-link" id="aboutDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false" (keydown)="handleKeydown($event)">
                         About
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="ordersDropdown">
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                         <li><a class="dropdown-item" href="#">Our Vision</a></li>
                         <li><a class="dropdown-item" href="#">Career</a></li>
                         <li><a class="dropdown-item" href="#">Contact us</a></li>
@@ -61,11 +61,11 @@
                 </li>
             </ul>
 
-            <!-- use ngSubmit (angular friendly) -->
-            <form class="d-flex gap-2 align-items-center" role="search" (ngSubmit)="$event.preventDefault()">
+            <!-- Search form -->
+            <form class="d-flex gap-2 align-items-center" role="search" (submit)="onSearch($event)">
                 <input class="form-control form-control-sm rounded-pill" type="search" placeholder="Search parts"
-                    aria-label="Search" />
-                <button class="btn btn-sm btn-accent rounded-pill" type="button"><i class="bi bi-search"></i></button>
+                    aria-label="Search" [(ngModel)]="searchTerm" name="searchTerm" />
+                <button class="btn btn-sm btn-accent rounded-pill" type="submit"><i class="bi bi-search"></i></button>
             </form>
         </div>
     </div>

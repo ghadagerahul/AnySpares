@@ -1,42 +1,113 @@
 <div class="contact-details">
-  <div class="contact-form-container">
+  <div class="contact-form-container" [class.is-loading]="isLoading">
+    <h2 class="form-title">Contact Details</h2>
     <p class="description">
       Please provide your contact details for order confirmation and delivery updates.
     </p>
 
-    <form [formGroup]="contactForm" (ngSubmit)="onContactFormSubmit()" class="contact-form">
+    <!-- Debug Info (Remove in production) -->
+    <div class="debug-info" *ngIf="false">
+      <p>isLoading: {{ isLoading }}</p>
+      <p>isFormDisabled: {{ isFormDisabled }}</p>
+      <p>fetchedData: {{ fetchedData | json }}</p>
+      <p>Form Value: {{ contactForm.value | json }}</p>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading your contact details...</p>
+    </div>
+
+    <!-- Success Message -->
+    <div class="alert alert-success" *ngIf="successMessage && !isLoading">
+      <span>✓ {{ successMessage }}</span>
+      <button type="button" class="btn-close" (click)="clearMessages()">×</button>
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-error" *ngIf="errorMessage && !isLoading">
+      <span>⚠ {{ errorMessage }}</span>
+      <button type="button" class="btn-close" (click)="clearMessages()">×</button>
+    </div>
+
+    <!-- Contact Form -->
+    <form [formGroup]="contactForm" (ngSubmit)="onContactFormSubmit()" class="contact-form"
+      [class.form-disabled]="isFormDisabled">
+
+      <!-- Full Name Field -->
       <div class="form-group">
-        <label for="name">Full Name *</label>
-        <input type="text" id="name" formControlName="name" placeholder="Enter your full name">
-        <div class="error" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
-          Name is required and must be at least 2 characters
+        <label for="name">
+          Full Name
+          <span class="required">*</span>
+        </label>
+        <input type="text" id="name" formControlName="name" placeholder="Enter your full name"
+          [disabled]="isFormDisabled"
+          [class.is-invalid]="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+        <div class="error-message" *ngIf="contactForm.get('name')?.invalid && contactForm.get('name')?.touched">
+          <small *ngIf="contactForm.get('name')?.errors?.['required']">Name is required</small>
+          <small *ngIf="contactForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</small>
         </div>
       </div>
 
+      <!-- Phone Number Field -->
       <div class="form-group">
-        <label for="phone">Phone Number *</label>
-        <input type="tel" id="phone" formControlName="phone" placeholder="Enter 10-digit phone number">
-        <div class="error" *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">
-          Please enter a valid 10-digit phone number
+        <label for="phone">
+          Phone Number
+          <span class="required">*</span>
+        </label>
+        <input type="tel" id="phone" formControlName="phone"
+          placeholder="Enter 10-digit phone number (e.g., 9876543210)" [disabled]="isFormDisabled"
+          [class.is-invalid]="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">
+        <div class="error-message" *ngIf="contactForm.get('phone')?.invalid && contactForm.get('phone')?.touched">
+          <small *ngIf="contactForm.get('phone')?.errors?.['required']">Phone number is required</small>
+          <small *ngIf="contactForm.get('phone')?.errors?.['pattern']">Please enter a valid 10-digit phone number
+            starting with 6-9</small>
         </div>
       </div>
 
+      <!-- Email Address Field -->
       <div class="form-group">
-        <label for="email">Email Address *</label>
-        <input type="email" id="email" formControlName="email" placeholder="Enter your email address">
-        <div class="error" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
-          Please enter a valid email address
+        <label for="email">
+          Email Address
+          <span class="required">*</span>
+        </label>
+        <input type="email" id="email" formControlName="email"
+          placeholder="Enter your email address (e.g., user@example.com)" [disabled]="isFormDisabled"
+          [class.is-invalid]="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+        <div class="error-message" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+          <small *ngIf="contactForm.get('email')?.errors?.['required']">Email address is required</small>
+          <small *ngIf="contactForm.get('email')?.errors?.['email']">Please enter a valid email address</small>
         </div>
       </div>
 
+      <!-- Info Section -->
       <div class="form-info">
-        <p>📧 We'll send order confirmation and tracking updates to this email</p>
-        <p>📞 Delivery partner will contact you on this number</p>
+        <p><strong>📧 Email:</strong> We'll send order confirmation and tracking updates to this email</p>
+        <p><strong>📞 Phone:</strong> Delivery partner will contact you on this number</p>
       </div>
 
-      <button type="submit" class="btn-save-contact" [disabled]="!isFormValid()">
-        Save Contact Details
+      <div class="">
+        <input type="checkbox" (change)="onCheckboxChange($event)" id="useThisAddress"> &nbsp;
+        <label for="useThisAddress">Use This Address</label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn-save-contact" [disabled]="!isFormValid() || isFormDisabled"
+        [class.is-loading]="isSaving">
+        <span *ngIf="isSaving" class="spinner-small"></span>
+        <span *ngIf="isSaving">Saving...</span>
+        <span *ngIf="!isSaving">Update Contact Details</span>
       </button>
+
+      <!-- Form Status -->
+      <div class="form-status">
+        <p *ngIf="contactForm.valid && !isSaving && !isFormDisabled" class="form-valid">✓ Form is valid and ready to
+          submit</p>
+        <p *ngIf="contactForm.invalid && !isFormDisabled" class="form-invalid">Please fill all required fields correctly
+        </p>
+      </div>
     </form>
+
   </div>
 </div>

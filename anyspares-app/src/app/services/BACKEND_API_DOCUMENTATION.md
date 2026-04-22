@@ -4,7 +4,340 @@ This document provides the backend API endpoints and request/response formats ne
 
 ## Base URL
 ```
-{API_BASE_URL}/orders
+{API_BASE_URL}/api
+```
+
+## Endpoints
+
+### User Management APIs
+
+#### 1. Save User Address
+**Endpoint:** `POST /api/user/addresses`
+
+**Description:** Saves a new address for the user.
+
+**Request Body:**
+```json
+{
+  "userId": "user-123",
+  "name": "John Doe",
+  "phone": "9876543210",
+  "street": "123 Main Street, Sector 15",
+  "city": "Gurgaon",
+  "state": "Haryana",
+  "pincode": "122001",
+  "isDefault": false
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Address saved successfully",
+  "data": {
+    "id": "addr_123456",
+    "userId": "user-123",
+    "name": "John Doe",
+    "phone": "9876543210",
+    "street": "123 Main Street, Sector 15",
+    "city": "Gurgaon",
+    "state": "Haryana",
+    "pincode": "122001",
+    "isDefault": false,
+    "createdAt": "2026-04-14T10:00:00.000Z"
+  }
+}
+```
+
+#### 2. Get User Addresses
+**Endpoint:** `GET /api/user/addresses/{userId}`
+
+**Description:** Retrieves all saved addresses for a user.
+
+**Parameters:**
+- `userId` (path parameter): The ID of the user
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Addresses retrieved successfully",
+  "data": [
+    {
+      "id": "addr_123456",
+      "userId": "user-123",
+      "name": "John Doe",
+      "phone": "9876543210",
+      "street": "123 Main Street, Sector 15",
+      "city": "Gurgaon",
+      "state": "Haryana",
+      "pincode": "122001",
+      "isDefault": true,
+      "createdAt": "2026-04-14T10:00:00.000Z"
+    },
+    {
+      "id": "addr_789012",
+      "userId": "user-123",
+      "name": "Jane Smith",
+      "phone": "9123456789",
+      "street": "456 Park Avenue, MG Road",
+      "city": "Delhi",
+      "state": "Delhi",
+      "pincode": "110001",
+      "isDefault": false,
+      "createdAt": "2026-04-14T11:00:00.000Z"
+    }
+  ]
+}
+```
+
+#### 3. Update User Address
+**Endpoint:** `PUT /api/user/addresses/{addressId}`
+
+**Description:** Updates an existing address.
+
+**Parameters:**
+- `addressId` (path parameter): The ID of the address to update
+
+**Request Body:**
+```json
+{
+  "name": "John Doe Updated",
+  "phone": "9876543210",
+  "street": "456 New Street, Sector 20",
+  "city": "Gurgaon",
+  "state": "Haryana",
+  "pincode": "122001",
+  "isDefault": true
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Address updated successfully",
+  "data": {
+    "id": "addr_123456",
+    "userId": "user-123",
+    "name": "John Doe Updated",
+    "phone": "9876543210",
+    "street": "456 New Street, Sector 20",
+    "city": "Gurgaon",
+    "state": "Haryana",
+    "pincode": "122001",
+    "isDefault": true,
+    "updatedAt": "2026-04-14T12:00:00.000Z"
+  }
+}
+```
+
+#### 4. Delete User Address
+**Endpoint:** `DELETE /api/user/addresses/{addressId}`
+
+**Description:** Deletes a user address.
+
+**Parameters:**
+- `addressId` (path parameter): The ID of the address to delete
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Address deleted successfully"
+}
+```
+
+#### 5. Save User Contact Details
+**Endpoint:** `POST /api/user/contact`
+
+**Description:** Saves or updates user contact details.
+
+**Request Body:**
+```json
+{
+  "userId": "user-123",
+  "name": "John Doe",
+  "phone": "9876543210",
+  "email": "john.doe@example.com"
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Contact details saved successfully",
+  "data": {
+    "userId": "user-123",
+    "name": "John Doe",
+    "phone": "9876543210",
+    "email": "john.doe@example.com",
+    "updatedAt": "2026-04-14T10:00:00.000Z"
+  }
+}
+```
+
+#### 6. Get User Contact Details
+**Endpoint:** `GET /api/user/contact/{userId}`
+
+**Description:** Retrieves user contact details.
+
+**Parameters:**
+- `userId` (path parameter): The ID of the user
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Contact details retrieved successfully",
+  "data": {
+    "userId": "user-123",
+    "name": "John Doe",
+    "phone": "9876543210",
+    "email": "john.doe@example.com",
+    "createdAt": "2026-04-14T10:00:00.000Z",
+    "updatedAt": "2026-04-14T10:00:00.000Z"
+  }
+}
+```
+
+### Order Management APIs
+
+#### 7. Place Order
+**Endpoint:** `POST /api/orders/place-order`
+
+**Description:** Creates a new order from the bucket items.
+
+**Request Body:**
+```json
+{
+  "userId": "user-123",
+  "items": [
+    {
+      "productId": "prod-123",
+      "productName": "Carburetor Repair Kit",
+      "price": 449,
+      "quantity": 2,
+      "imageUrl": "assets/two-wheelers/product-services/carburetor-kit.jpg"
+    }
+  ],
+  "address": {
+    "name": "John Doe",
+    "phone": "9876543210",
+    "street": "123 Main Street, Sector 15",
+    "city": "Gurgaon",
+    "state": "Haryana",
+    "pincode": "122001"
+  },
+  "contact": {
+    "name": "John Doe",
+    "phone": "9876543210",
+    "email": "john.doe@example.com"
+  },
+  "paymentMethod": "cod",
+  "totalAmount": 898
+}
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Order placed successfully",
+  "data": {
+    "orderId": "ORD-2026-001",
+    "userId": "user-123",
+    "totalAmount": 898,
+    "status": "Pending",
+    "itemCount": 2,
+    "orderDate": "2026-04-14T11:30:00.000Z",
+    "estimatedDelivery": "2026-04-18T00:00:00.000Z"
+  }
+}
+```
+
+#### 8. Get User Orders
+**Endpoint:** `GET /api/orders/user/{userId}`
+
+**Description:** Retrieves all orders for a specific user.
+
+**Parameters:**
+- `userId` (path parameter): The ID of the user
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Orders retrieved successfully",
+  "data": [
+    {
+      "orderId": "ORD-2026-001",
+      "userId": "user-123",
+      "totalAmount": 898,
+      "status": "Delivered",
+      "itemCount": 2,
+      "orderDate": "2026-04-10T10:00:00.000Z",
+      "items": [
+        {
+          "productId": "prod-123",
+          "productName": "Carburetor Repair Kit",
+          "price": 449,
+          "quantity": 2
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### 9. Get Order By ID
+**Endpoint:** `GET /api/orders/{orderId}`
+
+**Description:** Retrieves details of a specific order.
+
+**Parameters:**
+- `orderId` (path parameter): The ID of the order
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "message": "Order retrieved successfully",
+  "data": {
+    "orderId": "ORD-2026-001",
+    "userId": "user-123",
+    "totalAmount": 898,
+    "status": "Delivered",
+    "itemCount": 2,
+    "orderDate": "2026-04-10T10:00:00.000Z",
+    "estimatedDelivery": "2026-04-18T00:00:00.000Z",
+    "actualDelivery": "2026-04-16T15:30:00.000Z",
+    "address": {
+      "name": "John Doe",
+      "phone": "9876543210",
+      "street": "123 Main Street, Sector 15",
+      "city": "Gurgaon",
+      "state": "Haryana",
+      "pincode": "122001"
+    },
+    "contact": {
+      "name": "John Doe",
+      "phone": "9876543210",
+      "email": "john.doe@example.com"
+    },
+    "items": [
+      {
+        "productId": "prod-123",
+        "productName": "Carburetor Repair Kit",
+        "price": 449,
+        "quantity": 2,
+        "imageUrl": "assets/two-wheelers/product-services/carburetor-kit.jpg"
+      }
+    ]
+  }
+}
 ```
 
 ## Endpoints

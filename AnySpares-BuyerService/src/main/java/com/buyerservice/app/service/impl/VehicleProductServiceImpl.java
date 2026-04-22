@@ -49,6 +49,7 @@ public class VehicleProductServiceImpl implements VehicleProductService {
 				.stream().map(entry -> {
 					VehicleProductDto dto = new VehicleProductDto();
 
+					dto.setId(entry.getProduct_id());
 					dto.setName(entry.getName());
 					dto.setType(entry.getType());
 
@@ -66,6 +67,39 @@ public class VehicleProductServiceImpl implements VehicleProductService {
 					return dto;
 				}).collect(Collectors.toList());
 
+	}
+
+	@Override
+	public VehicleProductDto getProductDetails(long productId) {
+		VehicleProductEntiry productDetails = null;
+		try {
+			productDetails = productRepo.findById(productId).get();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (null == productDetails) {
+			return null;
+		}
+
+		VehicleProductDto dto = new VehicleProductDto();
+
+		dto.setId(productDetails.getProduct_id());
+		dto.setName(productDetails.getName());
+		dto.setType(productDetails.getType());
+
+		dto.setRating(0); // need to calculate
+		dto.setDiscountedPrice(0); // need to calcaulate
+
+		dto.setOriginalPrice(productDetails.getPrice());
+		dto.setDiscount(0); // Need to calculate
+
+		String prisignedUrlFromName = StringUtils.isNotBlank(productDetails.getProductimage())
+				? awsS3Urils.getPrisignedUrlFromName(productDetails.getProductimage())
+				: "";
+		dto.setImageUrl(prisignedUrlFromName);
+
+		return dto;
 	}
 
 }

@@ -7,7 +7,6 @@ import { NavbarComponent } from '../../Buyer/navbar-component/navbar-component';
 import { AddressSelectionComponent } from '../address-selection/address-selection';
 import { ContactDetailsComponent } from '../contact-details/contact-details';
 import { OrderSummaryComponent } from '../order-summary/order-summary';
-import { PaymentMethodComponent } from '../payment-method/payment-method';
 
 @Component({
     selector: 'app-checkout',
@@ -16,8 +15,7 @@ import { PaymentMethodComponent } from '../payment-method/payment-method';
         NavbarComponent,
         AddressSelectionComponent,
         ContactDetailsComponent,
-        OrderSummaryComponent,
-        PaymentMethodComponent
+        OrderSummaryComponent
     ],
     templateUrl: './checkout.html',
     styleUrl: './checkout.css'
@@ -26,13 +24,13 @@ import { PaymentMethodComponent } from '../payment-method/payment-method';
 export class CheckoutComponent implements OnInit {
     checkoutData: CheckoutData;
     currentStep: number = 1;
-    totalSteps: number = 4;
+    totalSteps: number = 3;
+    isPlacingOrder: boolean = false;
 
     steps = [
         { id: 1, name: 'Address', icon: '📍' },
         { id: 2, name: 'Contact', icon: '📞' },
-        { id: 3, name: 'Review', icon: '👀' },
-        { id: 4, name: 'Payment', icon: '💳' }
+        { id: 3, name: 'Review', icon: '👀' }
     ];
 
     constructor(
@@ -82,8 +80,6 @@ export class CheckoutComponent implements OnInit {
                 return !!this.checkoutData.contact;
             case 3:
                 return this.checkoutData.items.length > 0;
-            case 4:
-                return !!this.checkoutData.paymentMethod;
             default:
                 return false;
         }
@@ -94,8 +90,62 @@ export class CheckoutComponent implements OnInit {
     }
 
     proceedToPayment(): void {
-        if (this.checkoutService.isCheckoutComplete()) {
-            this.router.navigate(['/payment']);
+        if (this.isCheckoutReady()) {
+            console.log("CALLING proceedToPayment() ....!!!!")
+            this.placeOrder();
         }
+    }
+
+    private isCheckoutReady(): boolean {
+        return !!(this.checkoutData.items.length > 0 &&
+            this.checkoutData.address &&
+            this.checkoutData.contact);
+    }
+
+    private placeOrder(): void {
+        console.log("CALLING placeOrder() ....!!!!")
+        if (!this.isCheckoutReady()) {
+            alert('Please complete all required information before placing the order.');
+            return;
+        }
+
+        this.isPlacingOrder = true;
+        const userId = this.getCurrentUserId();
+
+        const orderData = {
+            userId,
+            items: this.checkoutData.items,
+            address: this.checkoutData.address!,
+            contact: this.checkoutData.contact!,
+            paymentMethod: 'cod', // Default to COD for now
+            totalAmount: this.checkoutData.totalAmount
+        };
+
+        this.checkoutService.placeOrder(orderData).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    // Clear the bucket and checkout data
+                    this.orderService.clearBucket();
+                    this.checkoutService.clearCheckoutData();
+
+                    // Navigate to order success page with order details
+                    this.router.navigate(['/order-success'], {
+                        queryParams: { orderId: response.data.orderId }
+                    });
+                } else {
+                    alert('Failed to place order: ' + (response.message || 'Unknown error'));
+                }
+                this.isPlacingOrder = false;
+            },
+            error: (error) => {
+                console.error('Order placement error:', error);
+                alert('Failed to place order. Please try again.');
+                this.isPlacingOrder = false;
+            }
+        });
+    }
+
+    private getCurrentUserId(): string {
+        return localStorage.getItem('userId') || 'guest';
     }
 }

@@ -1,5 +1,30 @@
-<div class="product-grid">
-  <div class="product-card" *ngFor="let product of products" (click)="navigateToProductDetails(product)">
+<div class="main-wrapper">
+  <app-navbar-component></app-navbar-component>
+
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb-nav">
+    <div class="container-fluid px-3 py-2">
+      <button class="btn-breadcrumb" (click)="goToDashboard()">Dashboard</button>
+      <span class="separator">/</span>
+      <span class="current-page">Products</span>
+    </div>
+  </nav>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-info">
+      <h2>Browse Spare Parts</h2>
+      <p *ngIf="modelId || category || vehicleType" class="filter-tags">
+        <span *ngIf="modelId" class="tag">Model: {{ modelId }}</span>
+        <span *ngIf="category" class="tag">Category: {{ category }}</span>
+        <span *ngIf="vehicleType" class="tag">Type: {{ vehicleType }}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="product-grid">
+  <button class="product-card" *ngFor="let product of products" (click)="navigateToProductDetails(product)"
+    type="button">
     <div class="product-image-container">
       <img [src]="product.imageUrl" [alt]="product.name" />
       <div class="discount-badge">{{ product.discount }}% OFF</div>
@@ -17,5 +42,6 @@
       </div>
       <button class="view-details-btn">View Details</button>
     </div>
+  </button>
   </div>
 </div>
