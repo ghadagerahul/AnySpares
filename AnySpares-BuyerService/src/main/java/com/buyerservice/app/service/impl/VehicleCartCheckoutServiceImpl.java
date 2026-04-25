@@ -150,7 +150,7 @@ public class VehicleCartCheckoutServiceImpl implements VehicleCartCheckoutServic
 						orderContactDto.setUserId(userId);
 						orderContactDto.setName(user.getUserName());
 						orderContactDto.setPhone(String.valueOf(user.getMobileNo()));
-						orderContactDto.setEmail(user.getEmail());
+						orderContactDto.setEmail(user.getEmailId());
 						VehicleCheckoutContactDto saved = saveOrderContacts(orderContactDto);
 						logger.info("UserService API returned user. Saved contact for userId: {}", userId);
 						return List.of(saved);

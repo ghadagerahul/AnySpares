@@ -24,10 +24,11 @@ import { Orders } from './components/order/orders/orders';
 import { MyBucketComponent } from './components/order/my-bucket/my-bucket';
 import { CheckoutComponent } from './components/checkout/checkout/checkout';
 import { OrderSuccessComponent } from './components/order/order-success/order-success';
+import { LandingPageComponent } from './components/landing-page/landing-page';
 
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingPageComponent },
   { path: 'login', component: LoginPage },
   { path: 'register', component: RegisterationPage },
 

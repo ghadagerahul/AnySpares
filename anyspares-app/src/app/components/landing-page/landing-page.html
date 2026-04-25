@@ -1,0 +1,219 @@
+<div class="landing-page">
+  <!-- Sticky Header -->
+  <header class="sticky-header">
+    <div class="header-container">
+      <div class="logo">
+        <h1>AnySpares</h1>
+        <span class="tagline">Premium Vehicle Parts</span>
+      </div>
+      <nav class="nav-menu">
+        <a href="#brands" class="nav-link">Brands</a>
+        <a href="#categories" class="nav-link">Categories</a>
+        <a href="#products" class="nav-link">Products</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-outline" (click)="navigateToLogin()">Login</button>
+        <button class="btn-primary" (click)="navigateToRegister()">Sign Up</button>
+        <button class="cart-btn" (click)="navigateToCart()">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-count">{{ cartCount }}</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title">Find Genuine Spare Parts for Your Vehicle</h1>
+        <p class="hero-subtitle">Browse thousands of parts across all vehicle brands. Fast delivery, secure payments,
+          and expert support.</p>
+        <div class="hero-ctas">
+          <button class="btn-primary-large" (click)="navigateToProducts()">Browse Parts</button>
+          <button class="btn-outline-large" (click)="navigateToSellerRegister()">Become a Seller</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-image-container">
+          <img src="assets/anyspare-landing-image.png" alt="Vehicle Spare Parts" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vehicle Brands Section -->
+  <section id="brands" class="brands-section">
+    <div class="section-container">
+      <h2 class="section-title">Popular Vehicle Brands</h2>
+      <p class="section-subtitle">Choose your vehicle brand to find compatible parts</p>
+      <div class="brands-grid">
+        <div class="brand-card" *ngFor="let brand of popularBrands" (click)="selectBrand(brand)">
+          <div class="brand-logo">
+            <img [src]="brand.logo" [alt]="brand.name" loading="lazy" />
+          </div>
+          <h3>{{ brand.name }}</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section id="categories" class="categories-section">
+    <div class="section-container">
+      <h2 class="section-title">Shop by Category</h2>
+      <p class="section-subtitle">Find parts for every vehicle component</p>
+      <div class="categories-grid">
+        <div class="category-card" *ngFor="let category of categories" (click)="selectCategory(category)">
+          <div class="category-icon">{{ category.icon }}</div>
+          <h3>{{ category.name }}</h3>
+          <p>{{ category.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section id="products" class="products-section">
+    <div class="section-container">
+      <h2 class="section-title">Featured Products</h2>
+      <p class="section-subtitle">Handpicked quality parts at great prices</p>
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of featuredProducts" (click)="viewProduct(product)">
+          <div class="product-image">
+            <img [src]="product.image" [alt]="product.name" loading="lazy" />
+          </div>
+          <div class="product-info">
+            <h3>{{ product.name }}</h3>
+            <p class="product-price">₹{{ product.price }}</p>
+            <button class="btn-primary-small">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="how-it-works-section">
+    <div class="section-container">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Browse & Select</h3>
+          <p>Choose your vehicle brand and find the perfect parts</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Add to Cart</h3>
+          <p>Securely add items to your cart with real-time updates</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Checkout</h3>
+          <p>Complete payment with COD or online options</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Fast Delivery</h3>
+          <p>Get genuine parts delivered to your doorstep</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Indicators -->
+  <section class="trust-section">
+    <div class="section-container">
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon">🚚</div>
+          <h3>Fast Delivery</h3>
+          <p>Express shipping across India</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">✅</div>
+          <h3>Genuine Parts</h3>
+          <p>100% authentic, quality assured</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🔒</div>
+          <h3>Secure Payment</h3>
+          <p>COD and Razorpay integration</p>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🛡️</div>
+          <h3>Warranty</h3>
+          <p>Extended warranty on all parts</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <h2 class="section-title">What Our Customers Say</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <p>"Found the exact brake pads for my bike. Delivery was super fast!"</p>
+          <div class="testimonial-author">
+            <strong>Rajesh K.</strong> - Bike Enthusiast
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p>"Genuine parts at competitive prices. Highly recommend AnySpares."</p>
+          <div class="testimonial-author">
+            <strong>Priya M.</strong> - Car Owner
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p>"Easy to use app with great customer support."</p>
+          <div class="testimonial-author">
+            <strong>Amit S.</strong> - Mechanic
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>AnySpares</h3>
+          <p>Your trusted partner for vehicle spare parts.</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <a href="#brands">Brands</a>
+          <a href="#categories">Categories</a>
+          <a href="#products">Products</a>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <a href="#contact">Contact Us</a>
+          <a href="#faq">FAQ</a>
+          <a href="#shipping">Shipping Info</a>
+        </div>
+        <div class="footer-section">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook"> <i class="bi bi-facebook text-white fs-3"></i> </a>
+            <a href="#" class="social-link" aria-label="Instagram"> <i class="bi bi-instagram text-white fs-3"></i> </a>
+            <a href="#" class="social-link" aria-label="Twitter"> <i class="bi bi-twitter text-white fs-3"></i> </a>
+            <a href="#" class="social-link" aria-label="WhatsApp"> <i class="bi bi-whatsapp text-white fs-3"></i> </a>
+            <a href="#" class="social-link" aria-label="Telegram"> <i class="bi bi-telegram text-white fs-3"></i> </a>
+            <a href="mailto:anyspares.support@gmail.com" class="social-link" aria-label="Gmail"><i
+                class="bi bi-envelope-fill text-white fs-3"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 AnySpares. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>

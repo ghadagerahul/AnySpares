@@ -7,7 +7,7 @@ public class BuyerUserRegistrationDto {
 
 	private String firstName;
 	private String lastName;
-	private String email;
+	private String emailId;
 	private Long mobileNo;
 	private String userName;
 	private String password;

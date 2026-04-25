@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CheckoutService } from '../../../services/checkout.service';
 import { OrderService } from '../../../services/order.service';
 import { environment } from '../../../../environments/environment.prod';
+import { Observable } from 'rxjs';
 
 declare var Razorpay: any;
 
@@ -20,9 +21,9 @@ export class RazorpayPaymentComponent implements OnInit {
   loading = false;
   message = '';
   checkoutData: any;
+  orderId: string = '';
+  orderAmount: number = 0;
 
-  
-  
   private backendUrl = '';
   private razorpayKey = 'rzp_test_SHeIIvLsLonxGH';
 
@@ -32,9 +33,10 @@ export class RazorpayPaymentComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private checkoutService: CheckoutService,
     private orderService: OrderService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
-    this.backendUrl = environment.apiUrl+'/payments/razorpay'
+    this.backendUrl = environment.apiUrl + '/payments/razorpay';
     this.paymentForm = this.fb.group({
       amount: [0, [Validators.required, Validators.min(1)]],
       currency: ['INR', Validators.required],
@@ -43,17 +45,31 @@ export class RazorpayPaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.checkoutData = this.checkoutService.getCheckoutData();
-
-    // Set amount from checkout data
-    const totalAmount = this.calculateTotalAmount();
-    this.paymentForm.patchValue({
-      amount: totalAmount
+    // Get order data from query params and checkout service
+    this.route.queryParams.subscribe(params => {
+      this.orderId = params['orderId'] || localStorage.getItem('pendingOrderId') || '';
+      this.orderAmount = parseFloat(params['amount']) || 0;
     });
 
-    // If COD, place order directly
-    if (this.checkoutData.paymentMethod === 'cod') {
-      this.placeOrderForCOD();
+    // Subscribe to checkout data for order details
+    this.checkoutService.checkoutData$.subscribe(data => {
+      this.checkoutData = data;
+    });
+
+    // Get current checkout data
+    this.checkoutData = this.checkoutService.getCheckoutData();
+
+    // Set amount from order or checkout data
+    const amount = this.orderAmount || this.calculateTotalAmount();
+    this.paymentForm.patchValue({
+      amount: amount
+    });
+
+    // If we have an order ID, proceed with payment
+    if (this.orderId) {
+      this.createOrder();
+    } else {
+      this.message = 'Order information not found. Please try again.';
     }
   }
 
@@ -61,36 +77,7 @@ export class RazorpayPaymentComponent implements OnInit {
     const subtotal = this.checkoutData.items.reduce((total: number, item: any) => total + (item.price * item.quantity), 0);
     const shipping = subtotal > 500 ? 0 : 50;
     const tax = Math.round(subtotal * 0.18);
-    const codCharges = this.checkoutData.paymentMethod === 'cod' ? 50 : 0;
-    return subtotal + shipping + tax + codCharges;
-  }
-
-  placeOrderForCOD(): void {
-    this.loading = true;
-    this.message = 'Placing your order...';
-
-    const buyerId = localStorage.getItem('userId') || 'guest-user';
-
-    this.orderService.placeOrder(buyerId)
-      .subscribe({
-        next: (response: any) => {
-          if (response.success) {
-            this.checkoutService.clearCheckoutData();
-            this.orderService.clearBucket();
-            this.router.navigate(['/order-success'], {
-              queryParams: { orderId: response.orderId || 'COD001' }
-            });
-          } else {
-            this.message = response.message || 'Failed to place order';
-            this.loading = false;
-          }
-        },
-        error: (error: any) => {
-          console.error('Error placing COD order:', error);
-          this.message = 'Failed to place order. Please try again.';
-          this.loading = false;
-        }
-      });
+    return subtotal + shipping + tax;
   }
 
   // STEP 1 → User clicks Pay
@@ -171,6 +158,14 @@ export class RazorpayPaymentComponent implements OnInit {
 
           // Place the order after successful payment
           this.placeOrderAfterPayment();
+
+          this.router.navigate(['/orders'], {
+            queryParams: {
+              orderId: this.orderId,
+              paymentStatus: 'success',
+              message: 'Payment completed successfully'
+            }
+          }); 
         },
         error: () => {
           this.loading = false;
@@ -184,25 +179,37 @@ export class RazorpayPaymentComponent implements OnInit {
   }
 
   private placeOrderAfterPayment(): void {
-    const buyerId = localStorage.getItem('userId') || 'guest-user';
+    // Update order payment status
+    this.updateOrderPaymentStatus(this.orderId, 'paid').subscribe({
+      next: (response: any) => {
+        if (response && response.success !== false) {
+          // Clear the bucket and checkout data
+          this.checkoutService.clearCheckoutData();
+          this.orderService.clearBucket();
 
-    this.orderService.placeOrder(buyerId)
-      .subscribe({
-        next: (response: any) => {
-          if (response.success) {
-            this.checkoutService.clearCheckoutData();
-            this.orderService.clearBucket();
-            this.router.navigate(['/order-success'], {
-              queryParams: { orderId: response.orderId || 'PAY001' }
-            });
-          } else {
-            this.message = 'Order placement failed after payment. Please contact support.';
-          }
-        },
-        error: (error: any) => {
-          console.error('Error placing order after payment:', error);
-          this.message = 'Order placement failed. Please contact support.';
+          // Clear pending order ID
+          localStorage.removeItem('pendingOrderId');
+
+          // Navigate to orders page with success status
+          this.router.navigate(['/orders'], {
+            queryParams: {
+              orderId: this.orderId,
+              paymentStatus: 'success',
+              message: 'Payment completed successfully'
+            }
+          });
+        } else {
+          this.message = 'Order update failed after payment. Please contact support.';
         }
-      });
+      },
+      error: (error: any) => {
+        console.error('Error updating order after payment:', error);
+        this.message = 'Order update failed. Please contact support.';
+      }
+    });
+  }
+
+  private updateOrderPaymentStatus(orderId: string, status: string): Observable<any> {
+    return this.http.put<any>(`${environment.apiUrl}/buyers/vehicle-orders/payment-status/${orderId}/${status}`, {});
   }
 }

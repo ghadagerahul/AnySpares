@@ -19,8 +19,7 @@ import { OrderSummaryComponent } from '../order-summary/order-summary';
     ],
     templateUrl: './checkout.html',
     styleUrl: './checkout.css'
-})
-
+}) 
 export class CheckoutComponent implements OnInit {
     checkoutData: CheckoutData;
     currentStep: number = 1;
@@ -42,7 +41,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // Load items from bucket if not already set
+
         if (this.checkoutData.items.length === 0) {
             const bucketItems = this.orderService.getBucketItems();
             if (bucketItems.length === 0) {
@@ -51,10 +50,79 @@ export class CheckoutComponent implements OnInit {
             }
             this.checkoutService.setItems(bucketItems);
         }
+        
         this.checkoutService.checkoutData$.subscribe(data => {
             this.checkoutData = data;
         });
     }
+
+    proceedToPayment(): void {
+        if (this.isCheckoutReady()) {
+            console.log("CALLING proceedToPayment() ....!!!!")
+            this.placeOrder();
+        }
+    }
+
+
+
+    private placeOrder(): void {
+        console.log("CALLING placeOrder() ....!!!!")
+        if (!this.isCheckoutReady()) {
+            alert('Please complete all required information before placing the order.');
+            return;
+        }
+
+        this.isPlacingOrder = true;
+        const userId = this.checkoutService.getCurrentUserId()?.toString();
+
+        if (!userId || userId === '0') {
+            this.isPlacingOrder = false;
+            alert('Unable to place order because the user is not authenticated. Please login again.');
+            return;
+        }
+
+        const orderData = {
+            userId,
+            items: this.checkoutData.items,
+            address: this.checkoutData.address!,
+            contact: this.checkoutData.contact!,
+            paymentMethod: 'online', // Set to online for payment processing
+            totalAmount: this.checkoutData.totalAmount
+        };
+
+        this.orderService.proceedToPayment(orderData).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    // Store order ID for payment component
+                    localStorage.setItem('pendingOrderId', response.data.orderId);
+
+                    // Navigate to payment component with order details
+                    this.router.navigate(['/payment'], {
+                        queryParams: {
+                            orderId: response.data.orderId,
+                            amount: this.checkoutData.totalAmount
+                        }
+                    });
+                } else {
+                    alert('Failed to place order: ' + (response.message || 'Unknown error'));
+                }
+                this.isPlacingOrder = false;
+            },
+            error: (error) => {
+                console.error('Order placement error:', error);
+                alert('Failed to place order. Please try again.');
+                this.isPlacingOrder = false;
+            }
+        });
+    }
+
+
+    private isCheckoutReady(): boolean {
+        return !!(this.checkoutData.items.length > 0 &&
+            this.checkoutData.address &&
+            this.checkoutData.contact);
+    }
+
 
     nextStep(): void {
         if (this.currentStep < this.totalSteps) {
@@ -89,63 +157,4 @@ export class CheckoutComponent implements OnInit {
         return this.isStepValid(this.currentStep);
     }
 
-    proceedToPayment(): void {
-        if (this.isCheckoutReady()) {
-            console.log("CALLING proceedToPayment() ....!!!!")
-            this.placeOrder();
-        }
-    }
-
-    private isCheckoutReady(): boolean {
-        return !!(this.checkoutData.items.length > 0 &&
-            this.checkoutData.address &&
-            this.checkoutData.contact);
-    }
-
-    private placeOrder(): void {
-        console.log("CALLING placeOrder() ....!!!!")
-        if (!this.isCheckoutReady()) {
-            alert('Please complete all required information before placing the order.');
-            return;
-        }
-
-        this.isPlacingOrder = true;
-        const userId = this.getCurrentUserId();
-
-        const orderData = {
-            userId,
-            items: this.checkoutData.items,
-            address: this.checkoutData.address!,
-            contact: this.checkoutData.contact!,
-            paymentMethod: 'cod', // Default to COD for now
-            totalAmount: this.checkoutData.totalAmount
-        };
-
-        this.checkoutService.placeOrder(orderData).subscribe({
-            next: (response) => {
-                if (response.success) {
-                    // Clear the bucket and checkout data
-                    this.orderService.clearBucket();
-                    this.checkoutService.clearCheckoutData();
-
-                    // Navigate to order success page with order details
-                    this.router.navigate(['/order-success'], {
-                        queryParams: { orderId: response.data.orderId }
-                    });
-                } else {
-                    alert('Failed to place order: ' + (response.message || 'Unknown error'));
-                }
-                this.isPlacingOrder = false;
-            },
-            error: (error) => {
-                console.error('Order placement error:', error);
-                alert('Failed to place order. Please try again.');
-                this.isPlacingOrder = false;
-            }
-        });
-    }
-
-    private getCurrentUserId(): string {
-        return localStorage.getItem('userId') || 'guest';
-    }
 }

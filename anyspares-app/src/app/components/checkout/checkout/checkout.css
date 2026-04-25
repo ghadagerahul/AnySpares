@@ -105,7 +105,8 @@
   align-items: center;
 }
 
-.btn-primary, .btn-secondary {
+.btn-primary,
+.btn-secondary {
   padding: 12px 24px;
   border: none;
   border-radius: 6px;

@@ -2,16 +2,53 @@
 <div class="orders-container">
   <div class="container">
     <h2>My Orders</h2>
-    <div class="orders-list">
+
+    <!-- Payment Success Message -->
+    <div *ngIf="paymentMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      <strong>Payment Successful!</strong> {{ paymentMessage }}
+      <button type="button" class="btn-close" (click)="dismissMessage()" aria-label="Close"></button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-4">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p>Loading your orders...</p>
+    </div>
+
+    <!-- Orders List -->
+    <div class="orders-list" *ngIf="!loading">
       <div class="order-card" *ngFor="let order of orders">
         <div class="order-header">
-          <h5>{{ order.product }}</h5>
-          <span class="status" [ngClass]="order.status.toLowerCase().replace(' ', '-')">{{ order.status }}</span>
+          <h5>Order #{{ order.id || order.orderId }}</h5>
+          <span class="status" [ngClass]="(order.status || order.orderStatus || 'pending').toLowerCase().replace(' ', '-')">
+            {{ order.status || order.orderStatus || 'Pending' }}
+          </span>
         </div>
-        <p>Order Date: {{ order.date }}</p>
-        <p>Price: ₹{{ order.price }}</p>
+        <div class="order-details">
+          <p><strong>Order Date:</strong> {{ order.orderDate ? (order.orderDate | date:'medium') : 'N/A' }}</p>
+          <p><strong>Total Amount:</strong> ₹{{ order.totalAmount || order.totalPrice || 0 }}</p>
+          <p><strong>Payment Status:</strong>
+            <span [ngClass]="order.paymentStatus === 'paid' ? 'text-success' : 'text-warning'">
+              {{ order.paymentStatus || 'Pending' }}
+            </span>
+          </p>
+        </div>
+        <div class="order-items" *ngIf="order.items && order.items.length > 0">
+          <h6>Items:</h6>
+          <ul>
+            <li *ngFor="let item of order.items">
+              {{ item.productName || item.name }} (Qty: {{ item.quantity }})
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <p *ngIf="orders.length === 0">No orders found.</p>
+
+    <div *ngIf="!loading && orders.length === 0" class="text-center my-4">
+      <p>No orders found.</p>
+      <a href="/vehicle-product" class="btn btn-primary">Start Shopping</a>
+    </div>
   </div>
 </div>

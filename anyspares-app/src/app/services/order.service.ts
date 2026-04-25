@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Constants } from '../Constants/Constants';
+import { Address, ContactDetails } from './checkout.service';
 
 export interface BucketItem {
   id: string;
@@ -28,7 +29,7 @@ export interface Order {
   providedIn: 'root'
 })
 export class OrderService {
-  private apiUrl = environment.apiUrl + '/orders';
+  private apiUrl = environment.apiUrl + '/buyers';
   private bucketSubject = new BehaviorSubject<BucketItem[]>([]);
   public bucket$ = this.bucketSubject.asObservable();
 
@@ -394,4 +395,20 @@ export class OrderService {
       })
     );
   }
+
+
+
+  // Order Management APIs
+  //===================================================
+  proceedToPayment(orderData: {
+    userId: string;
+    items: BucketItem[];
+    address: Address;
+    contact: ContactDetails;
+    paymentMethod: string;
+    totalAmount: number;
+  }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/vehicle-orders/place-order`, orderData);
+  }
+
 }

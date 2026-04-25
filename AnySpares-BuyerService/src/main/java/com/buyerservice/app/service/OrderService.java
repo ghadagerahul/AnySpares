@@ -14,4 +14,6 @@ public interface OrderService {
 
 	OrderEntity getOrderById(Long orderId);
 
+	void updateOrderStatus(Long orderId, String status);
+
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.buyerservice.app.constants.Constants;
 import com.buyerservice.app.dto.VehicleOrderRequestDTO;
 import com.buyerservice.app.dto.VehicleOrderResponseDTO;
 import com.buyerservice.app.entity.OrderAddressEntity;
@@ -66,11 +67,11 @@ public class OrderServiceImpl implements OrderService {
 			List<OrderItemsEntity> orderItems = request.getItems().stream().map(itemDTO -> {
 				OrderItemsEntity item = new OrderItemsEntity();
 				item.setOrder(savedOrder);
-				item.setItemId(itemDTO.getId());
-				item.setName(itemDTO.getName());
+				item.setItemId(itemDTO.getProductId());
+				item.setName(itemDTO.getProductName());
 				item.setPrice(itemDTO.getPrice());
 				item.setQuantity(itemDTO.getQuantity());
-				item.setImageUrl(itemDTO.getImageUrl());
+				item.setImageUrl(getImageNameFromUrl(itemDTO.getImageUrl()));
 				return item;
 			}).collect(Collectors.toList());
 
@@ -81,8 +82,8 @@ public class OrderServiceImpl implements OrderService {
 
 			logger.info("Order created successfully for userId: {} with orderId: {}", request.getUserId(),
 					savedOrder.getId());
-			return new VehicleOrderResponseDTO(savedOrder.getId(), "Order placed successfully",
-					savedOrder.getTotalAmount(), savedOrder.getStatus());
+			return new VehicleOrderResponseDTO(savedOrder.getId(), Constants.ORDER_PLACED, savedOrder.getTotalAmount(),
+					savedOrder.getStatus());
 		} catch (Exception ex) {
 			logger.error("Error creating order for userId {}: {}", request != null ? request.getUserId() : null,
 					ex.getMessage(), ex);
@@ -108,6 +109,20 @@ public class OrderServiceImpl implements OrderService {
 			logger.error("Error fetching order by id {}: {}", orderId, ex.getMessage(), ex);
 			throw new RuntimeException("Order not found");
 		}
+	}
+
+	public String getImageNameFromUrl(String url) {
+		if (url == null || url.isEmpty()) {
+			return null;
+		}
+		String path = url.split("\\?")[0];
+		return path.substring(path.lastIndexOf("/") + 1);
+	}
+
+	@Override
+	public void updateOrderStatus(Long orderId, String status) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

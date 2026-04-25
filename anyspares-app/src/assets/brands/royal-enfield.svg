@@ -1,0 +1,11 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="reGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a4a4a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#reGrad)"/>
+  <text x="100" y="105" font-size="24" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">Royal</text>
+  <text x="100" y="135" font-size="24" font-weight="bold" fill="#FF6B00" text-anchor="middle" font-family="Arial">Enfield</text>
+</svg>

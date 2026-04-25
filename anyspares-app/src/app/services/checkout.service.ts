@@ -51,6 +51,7 @@ export class CheckoutService {
   public checkoutData$ = this.checkoutDataSubject.asObservable();
 
   private apiUrl = environment.apiUrl + '/buyers/checkout';
+  private orderApiUrl = environment.apiUrl + '/buyers';
 
   constructor(private http: HttpClient) { }
 
@@ -158,7 +159,7 @@ export class CheckoutService {
     paymentMethod: string;
     totalAmount: number;
   }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/vehicle-orders/place-order`, orderData);
+    return this.http.post(`${this.orderApiUrl}/vehicle-orders/place-order`, orderData);
   }
 
   getUserOrders(): Observable<any> {

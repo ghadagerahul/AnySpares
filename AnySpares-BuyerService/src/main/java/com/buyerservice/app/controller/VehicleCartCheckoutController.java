@@ -146,7 +146,7 @@ public class VehicleCartCheckoutController {
 		}
 	}
 
-	@GetMapping("order-contact/{userId}")
+	@GetMapping("/order-contact/{userId}")
 	public ResponseEntity<Map<String, Object>> getOrderContactDetails(@PathVariable String userId) {
 		Map<String, Object> response = new HashMap<>();
 		try {
@@ -177,7 +177,7 @@ public class VehicleCartCheckoutController {
 		}
 	}
 
-	@PostMapping("order-contact")
+	@PostMapping("/order-contact")
 	public ResponseEntity<Map<String, Object>> getOrderContactDetails(@RequestBody VehicleCheckoutContactDto dto) {
 		Map<String, Object> response = new HashMap<>();
 		try {

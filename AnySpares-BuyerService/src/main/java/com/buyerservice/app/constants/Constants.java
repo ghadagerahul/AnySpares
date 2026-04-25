@@ -7,5 +7,5 @@ public class Constants {
 
 	// Service URLs
 	public static final String USER_SERVICE_URL = "http://USERSERVICE";
-
+	public static final String ORDER_PLACED = "Order placed successfully";
 }

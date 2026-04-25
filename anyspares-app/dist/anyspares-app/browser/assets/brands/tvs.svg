@@ -1,0 +1,11 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tvsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DD0000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#AA0000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="90" fill="url(#tvsGrad)"/>
+  <text x="100" y="120" font-size="38" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">TVS</text>
+  <text x="100" y="155" font-size="14" font-weight="600" fill="white" text-anchor="middle">MOTORS</text>
+</svg>

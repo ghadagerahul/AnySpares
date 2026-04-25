@@ -79,6 +79,7 @@ export class LoginPage {
     console.log('Retrieving current user ID from localStorage: ' + localStorage.getItem('currentUser'));
     let currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}') as UserDetails;
     console.log('Current User:', currentUser?.id);
+    this.router.navigate(['/vehicle-product']);
   }
 
 }
